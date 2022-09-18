@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#011B17">
+    <ImageView
+        android:id="@+id/iconBack"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:gravity="center"
+        app:srcCompat="@drawable/android_icon" />
+    </LinearLayout>
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="#011B17"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/serensa_logo" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="0dp"
+            android:paddingLeft="0dp"
+            android:paddingTop="0dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/serensa_name" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="76dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="5dp"
+                android:paddingTop="0dp"
+                android:paddingBottom="2dp"
+                android:src="@drawable/serensa_ltd" />
+
+
+        </LinearLayout>
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/chonburi"
+            android:text="BOLTS  DETAILS"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="0dp"
+        android:background="#ECE8AA"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="0dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardId"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="1dp"
+            app:cardBackgroundColor="#02334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardCat"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/txtOilId"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="textStart"                android:text="Bolt ID"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="12sp" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardCat"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            app:cardBackgroundColor="#03334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardQnty"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardId"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/txtOilCtgry"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="textStart"                android:text="Category"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="12sp" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardQnty"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="50dp"
+            app:cardBackgroundColor="#00334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardBp"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardCat"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/txtOilQnty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="textStart"                android:text="Quantity"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="12sp" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardBp"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            app:cardBackgroundColor="#05334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardSp"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardQnty"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/txtOilBp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="textEnd"                android:text="Buying Price"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="12sp" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardSp"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            app:cardBackgroundColor="#00334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardBp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/txtOilSp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="textEnd"                android:text="Selling Price"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="12sp" />
+        </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="5dp"
+        android:id="@+id/recyclerViewBolt"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

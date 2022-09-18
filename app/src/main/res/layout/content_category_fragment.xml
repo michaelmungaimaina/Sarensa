@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activities.SaleCategoryViewActivity"
+    tools:showIn="@layout/activity_category">
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:background="#011B17"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iconBack"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_gravity="top"
+            android:onClick="navigateBack"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/android_icon" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_gravity="center"
+            android:src="@drawable/serensa_logo" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:text="SARENSA ENTERPRISES LIMITED"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewStationName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="2dp"
+            android:fontFamily="sans-serif-black"
+            android:text="STATION NAME"
+            android:textColor="#0C0707"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="2dp"
+            android:fontFamily="sans-serif-black"
+            android:text=" STATION"
+            android:textColor="#0C0707"
+            android:textSize="12sp" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="2dp"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-condensed"
+            android:text="CATEGORY"
+            android:textColor="#000DFF"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="90dp"
+            android:layout_marginBottom="2dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:text=" ITEMS"
+            android:textColor="#000DFF"
+            android:textSize="12sp" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="3dp"
+        android:layout_gravity="center"
+        android:gravity="center">
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/catLay"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/itemLay">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerCategory"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/itemLay"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/catLay"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerItem"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/noCatTextView"
+            android:elevation="6dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="30dp"
+            android:background="#02FFFFFF"
+            android:gravity="start"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-light"
+            android:text="NO REGISTERED CATEGORY!"
+            android:textColor="#999"
+            app:layout_anchor="@id/catLay"
+            app:layout_anchorGravity="center_horizontal" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/noItemTextView"
+            android:elevation="6dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="30dp"
+            android:background="#02FFFFFF"
+            android:gravity="start"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-light"
+            android:text="NO REGISTERED Item!"
+            android:textColor="#999"
+            app:layout_anchor="@id/itemLay"
+            app:layout_anchorGravity="center_horizontal" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

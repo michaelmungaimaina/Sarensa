@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nestedScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2C040E"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00FFFFFF"
+        android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="#0051D8C7"
+        app:cardBackgroundColor="#02FFFFFF">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00FFFFFF"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/iconBack"
+                android:layout_width="50dp"
+                android:layout_height="20dp"
+                android:background="#03AA1010"
+                android:gravity="center"
+                app:srcCompat="@drawable/android_icon" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:background="#0087A67C"
+                android:layout_marginStart="20dp"
+                android:gravity="center|left"
+                android:text="Powersaw Registration"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00FFFFFF"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/serensa_logo" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/laySawCtgry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editSawCtgry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Category"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="#FFFFFF" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/laySawBp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editSawBp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Buying Price"
+                android:inputType="number"
+                android:maxLines="1"
+                android:textColor="#FFFFFF" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/laySawSp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editSawSp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Selling Price"
+                android:inputType="number"
+                android:maxLines="1"
+                android:textColor="#FFFFFF" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="0dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="1dp"
+                app:cardBackgroundColor="#334DF1"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="15dp">
+
+                <TextView
+                    android:id="@+id/txtSawClear"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="CLEAR"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="#290707"
+                    android:textSize="15sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="100dp"
+                app:cardBackgroundColor="#CB128805"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="15dp">
+
+                <TextView
+                    android:id="@+id/txtSawSubmit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="SUBMIT"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="#290707"
+                    android:textSize="15sp" />
+            </androidx.cardview.widget.CardView>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
