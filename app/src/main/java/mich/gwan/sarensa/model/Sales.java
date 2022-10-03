@@ -7,6 +7,7 @@ public class Sales {
     String saleType;
     String stationName;
     String itemName;
+    String itemCategory;
     int itemQnty;
     int sellPrice;
     int profit;
@@ -29,6 +30,9 @@ public class Sales {
     }
     public void setItemName(String itemName) {
         this.itemName = itemName;
+    }
+    public void setItemCategory(String category) {
+        this.itemCategory = category;
     }
     public void setItemQnty(int itemQnty) {
         this.itemQnty = itemQnty;
@@ -57,6 +61,9 @@ public class Sales {
     }
     public String getStationName() {
         return stationName;
+    }
+    public String getItemCategory() {
+        return itemCategory;
     }
     public String getItemName() {
         return itemName;

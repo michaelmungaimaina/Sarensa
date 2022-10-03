@@ -12,7 +12,8 @@
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/font/dhujarati.xml" value="0.103125" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/font/oleo_script_swash_caps.xml" value="0.103125" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/font/sonsie_one.xml" value="0.103125" />
-        <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/activity_category.xml" value="0.1" />
+        <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/activity_bolt_list.xml" value="0.1" />
+        <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/activity_category.xml" value="0.2211690363349131" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/activity_control.xml" value="0.1" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/activity_login.xml" value="0.203125" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/activity_main.xml" value="0.14" />
@@ -21,6 +22,7 @@
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/activity_users_list.xml" value="0.1" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/app_bar_main.xml" value="0.1" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/bolt_dialog.xml" value="0.1" />
+        <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/cart_dialog.xml" value="0.2211690363349131" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/category_dialog.xml" value="0.22" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/category_recycler.xml" value="0.3074074074074074" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/content_category_fragment.xml" value="0.29045643153526973" />
@@ -29,7 +31,8 @@
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/fragment_home.xml" value="0.22" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/item_category.xml" value="0.18" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/item_dialog.xml" value="0.18" />
-        <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/item_recycler.xml" value="0.33" />
+        <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/item_recycler.xml" value="0.22" />
+        <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/sell_recycler.xml" value="0.22" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/station_dialog.xml" value="0.20208333333333334" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/station_recycler.xml" value="0.44986449864498645" />
         <entry key="..\:/Users/panta/IdeaProjects/Sarensa/app/src/main/res/layout/user_dialog.xml" value="0.1" />

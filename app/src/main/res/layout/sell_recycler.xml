@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/selector_recyclerview"
@@ -14,7 +13,7 @@
         android:id="@+id/cardInitialOuter"
         android:layout_height="27dp"
         android:layout_width="27dp"
-        app:cardBackgroundColor="#054AFA"
+        app:cardBackgroundColor="#030A1B"
         android:layout_marginEnd="1dp"
         android:layout_marginStart="2dp"
         android:layout_marginBottom="1dp"
@@ -26,7 +25,7 @@
         android:id="@+id/cardInitialInner"
         android:layout_height="24dp"
         android:layout_width="24dp"
-        app:cardBackgroundColor="#FFFFFF"
+        app:cardBackgroundColor="#78A16B"
         android:layout_gravity="center"
         app:cardCornerRadius="17dp"
         app:cardElevation="0dp">
@@ -54,7 +53,7 @@
         <TextView
             android:id="@+id/itemName"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
+            android:layout_height="25dp"
             android:fontFamily="sans-serif-black"
             android:gravity="center"
             android:layout_gravity="start"
@@ -92,8 +91,8 @@
                         android:gravity="center"
                         android:text="QNTY: "
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="#807B7B"
-                        android:textSize="10sp" />
+                        android:textColor="#080813"
+                        android:textSize="11sp" />
                 </androidx.cardview.widget.CardView>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
@@ -117,8 +116,8 @@
                         android:gravity="center"
                         android:text="100"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="#807B7B"
-                        android:textSize="10sp" />
+                        android:textColor="#080813"
+                        android:textSize="11sp" />
                 </androidx.cardview.widget.CardView>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
@@ -139,10 +138,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="SP: "
+                        android:text="UNIT P: "
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="#807B7B"
-                        android:textSize="10sp" />
+                        android:textColor="#080813"
+                        android:textSize="11sp" />
                 </androidx.cardview.widget.CardView>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
@@ -162,15 +161,15 @@
                     app:cardCornerRadius="0sp"
                     app:cardElevation="0dp">
                     <TextView
-                        android:id="@+id/textSellPrice"
+                        android:id="@+id/textUnitPrice"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:gravity="center|left"
                         android:text="150"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="#807B7B"
-                        android:textSize="10sp" />
+                        android:textColor="#080813"
+                        android:textSize="11sp" />
                 </androidx.cardview.widget.CardView>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
@@ -194,10 +193,10 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:gravity="center|left"
-                        android:text="BP: "
+                        android:text="TOTAL: "
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="#807B7B"
-                        android:textSize="10sp" />
+                        android:textColor="#080813"
+                        android:textSize="11sp" />
                 </androidx.cardview.widget.CardView>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
@@ -218,20 +217,20 @@
                     app:cardCornerRadius="0sp"
                     app:cardElevation="0dp">
                     <TextView
-                        android:id="@+id/textBuyPrice"
+                        android:id="@+id/textTotalPrice"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:gravity="center|left"
                         android:text="100"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="#807B7B"
-                        android:textSize="10sp" />
+                        android:textColor="#080813"
+                        android:textSize="11sp" />
                 </androidx.cardview.widget.CardView>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
-                android:layout_width="40dp"
-                android:layout_height="20dp"
+                android:layout_width="45dp"
+                android:layout_height="25dp"
                 android:layout_gravity="center"
                 android:layout_marginStart="0dp"
                 android:layout_marginEnd="0dp"
@@ -240,7 +239,7 @@
                 app:cardElevation="0dp">
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/cardSell"
+                    android:id="@+id/cardRemove"
                     android:layout_height="match_parent"
                     android:layout_width="match_parent"
                     app:cardBackgroundColor="#181918"
@@ -251,7 +250,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="SELL"
+                        android:text="REMOVE"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:textColor="#FFFFFF"
                         android:textSize="10sp" />
@@ -299,26 +298,25 @@
             app:cardElevation="15dp"/>
     </LinearLayout>
     </LinearLayout>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardCount"
+        android:layout_height="15dp"
+        android:layout_width="15dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="2dp"
+        android:layout_alignParentEnd="true"
+        app:cardBackgroundColor="#FF0000"
+        app:cardCornerRadius="7sp"
+        app:cardElevation="0dp">
     <TextView
         android:id="@+id/textCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="2dp"
-        android:layout_alignParentEnd="true"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:fontFamily="sans-serif-light"
-        android:text="0"
-        android:textColor="#000000"
+        android:text="00"
+        android:textColor="#FFFFFF"
         android:textSize="10sp" />
-    <TextView
-        android:id="@+id/textWarning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="100dp"
-        android:layout_marginTop="2dp"
-        android:layout_alignParentEnd="true"
-        android:fontFamily="sans-serif-light"
-        android:text="Kindly add Stock!"
-        android:textColor="#00000000"
-        android:textSize="10sp" />
+    </androidx.cardview.widget.CardView>
 </RelativeLayout>

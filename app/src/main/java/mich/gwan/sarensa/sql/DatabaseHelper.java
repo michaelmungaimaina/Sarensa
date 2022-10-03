@@ -4,21 +4,24 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import mich.gwan.sarensa.model.Cart;
 import mich.gwan.sarensa.model.Category;
 import mich.gwan.sarensa.model.Item;
 import mich.gwan.sarensa.model.Sales;
 import mich.gwan.sarensa.model.Station;
+import mich.gwan.sarensa.model.TempCart;
 import mich.gwan.sarensa.model.User;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     // Database Version
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     // Database Name
     private static final String DATABASE_NAME = "sarensalimited.db";
@@ -29,6 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_CATEGORY = "category";
     private static final String TABLE_ITEM = "items";
     private static final String TABLE_SALES = "sales";
+    private static final String TABLE_CART = "cart";
 
     // Station Table column names
     private static final String COLUMN_STATION_ID = "id";
@@ -64,10 +68,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_SALE_STATION = "station";
     private static final String COLUMN_SALE_TYPE = "type";
     private static final String COLUMN_SALE_CATEGORY = "category";
+    private static final String COLUMN_SALE_ITEM = "item";
     private static final String COLUMN_SALE_QUANTITY = "quantity";
     private static final String COLUMN_SALE_UNITPRICE = "sellprice";
     private static final String COLUMN_SALE_TOTAL = "total";
     private static final String COLUMN_SALE_PROFIT = "profit";
+
+    // Cart Table Column names
+    private static final String COLUMN_CART_ID = "id";
+    private static final String COLUMN_CART_STATION = "station";
+    private static final String COLUMN_CART_CATEGORY = "category";
+    private static final String COLUMN_CART_ITEM = "item";
+    private static final String COLUMN_CART_QUANTITY = "quantity";
+    private static final String COLUMN_CART_UNITPRICE = "sellprice";
+    private static final String COLUMN_CART_BUYPRICE = "buyprice";
 
     /**
      * ---------------------------------------------------------------------------------------------
@@ -96,13 +110,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_SALE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,"
             + COLUMN_SALE_DAY + " TEXT,"
             + COLUMN_SALE_TIME + " TIME,"
-            + COLUMN_SALE_TYPE + " TEXT,"
+            + COLUMN_SALE_TYPE + " TEXT DEFAULT 'CASH',"
             + COLUMN_SALE_STATION + " TEXT,"
             + COLUMN_SALE_CATEGORY + " TEXT,"
+            + COLUMN_SALE_ITEM + " TEXT,"
             + COLUMN_SALE_QUANTITY + " INTEGER,"
             + COLUMN_SALE_UNITPRICE + " INTEGER,"
             + COLUMN_SALE_TOTAL + " INTEGER,"
             + COLUMN_SALE_PROFIT + " INTEGER" + ")";
+
+    // create table sales sql query
+    private final String CREATE_CART_TABLE = "CREATE TABLE " + TABLE_CART + "("
+            + COLUMN_CART_ID + " INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,"
+            + COLUMN_CART_STATION + " TEXT,"
+            + COLUMN_CART_CATEGORY + " TEXT,"
+            + COLUMN_CART_ITEM + " TEXT,"
+            + COLUMN_CART_QUANTITY + " INTEGER,"
+            + COLUMN_CART_BUYPRICE + " INTEGER,"
+            + COLUMN_CART_UNITPRICE + " INTEGER" + ")";
 
     // create table item sql query
     private final String CREATE_ITEM_TABLE = "CREATE TABLE " + TABLE_ITEM + "("
@@ -129,6 +154,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private final String DROP_USER_TABLE = "DROP TABLE IF EXISTS " + TABLE_USER;
     private final String DROP_STATION_TABLE = "DROP TABLE IF EXISTS " + TABLE_STATION;
     private final String DROP_SALES_TABLE = "DROP TABLE IF EXISTS " + TABLE_SALES;
+    private final String DROP_CART_TABLE = "DROP TABLE IF EXISTS " + TABLE_CART;
     private final String DROP_ITEM_TABLE = "DROP TABLE IF EXISTS " + TABLE_ITEM;
     private final String DROP_CATEGORY_TABLE = "DROP TABLE IF EXISTS " + TABLE_CATEGORY;
 
@@ -155,6 +181,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_USER_TABLE);
         db.execSQL(CREATE_SALES_TABLE);
+        db.execSQL(CREATE_CART_TABLE);
         db.execSQL(CREATE_ITEM_TABLE);
         db.execSQL(CREATE_CATEGORY_TABLE);
         db.execSQL(CREATE_STATION_TABLE);
@@ -174,12 +201,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         /*
         db.execSQL(DROP_STATION_TABLE);
         db.execSQL(DROP_SALES_TABLE);
-        db.execSQL(CREATE_SALES_TABLE);
         db.execSQL(CREATE_ITEM_TABLE);
         db.execSQL(CREATE_STATION_TABLE);
-         */
         db.execSQL(DROP_ITEM_TABLE);
         db.execSQL(CREATE_ITEM_TABLE);
+        db.execSQL(DROP_CART_TABLE);
+        db.execSQL(CREATE_CART_TABLE);
+         */
+
     }
 
     /**
@@ -193,7 +222,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL(DROP_SALES_TABLE);
+        db.execSQL(CREATE_SALES_TABLE);
     }
 
     /**
@@ -207,9 +237,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COLUMN_SALE_DAY, sales.getDate());
         values.put(COLUMN_SALE_TIME, sales.getTime());
-        values.put(COLUMN_SALE_TYPE, sales.getSaleType());
+        //values.put(COLUMN_SALE_TYPE, sales.getSaleType());
         values.put(COLUMN_SALE_STATION, sales.getStationName());
-        values.put(COLUMN_SALE_CATEGORY, sales.getItemName());
+        values.put(COLUMN_SALE_CATEGORY, sales.getItemCategory());
+        values.put(COLUMN_SALE_ITEM, sales.getItemName());
         values.put(COLUMN_SALE_QUANTITY, sales.getItemQnty());
         values.put(COLUMN_SALE_UNITPRICE, sales.getSellPrice());
         values.put(COLUMN_SALE_TOTAL, sales.getTotal());
@@ -217,6 +248,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //Insert Row
         db.insert(TABLE_SALES, null, values);
+        db.close();
+    }
+    /**
+     *
+     * Method to create cart record
+     * @param cart Cart model
+     * ---------------------------------------------------------------------------------------------
+     */
+    public void addCart(Cart cart) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_CART_STATION, cart.getStationName());
+        values.put(COLUMN_CART_CATEGORY, cart.getCategoryName());
+        values.put(COLUMN_CART_ITEM, cart.getItemName());
+        values.put(COLUMN_CART_QUANTITY, cart.getItemQnty());
+        values.put(COLUMN_CART_UNITPRICE, cart.getSellPrice());
+        values.put(COLUMN_CART_BUYPRICE, cart.getBuyPrice());
+
+        //Insert Row
+        db.insert(TABLE_CART, null, values);
         db.close();
     }
      /**
@@ -293,6 +344,209 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_USER, null, values);
         db.close();
     }
+
+    /**
+     * method to check if cart table is empty
+     * @return false
+     */
+    public boolean checkIfEmptyCart() {
+        String[] columns = {"*"};
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_CART, columns, null, null, null, null, null);
+        if (cursor != null) {
+            try {
+                //if it is empty, returns true.
+                cursor.moveToFirst();
+                return cursor.getInt(0) == 0;
+            } catch(CursorIndexOutOfBoundsException e) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     *
+     * fetch distinct data from cart where station is specified
+     * @param station Specified station
+     * ---------------------------------------------------------------------------------------------
+     **/
+    @SuppressLint("Range")
+    public List<TempCart> getCat(String station){
+        //selection argument
+        String[] selectionArgs = {station};
+        List<TempCart> list = new ArrayList<TempCart>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT DISTINCT " +
+                        //COLUMN_CART_STATION+","+ COLUMN_CART_CATEGORY+","+
+                        COLUMN_CART_ITEM+","+
+                COLUMN_CART_QUANTITY+","+COLUMN_CART_UNITPRICE+","+COLUMN_CART_BUYPRICE +
+                        " FROM "+TABLE_CART+ " WHERE "+ COLUMN_CART_STATION + " = ? ", selectionArgs
+                );
+        //Traversing through all rows and adding to list
+        if(cursor!=null && cursor.getCount() > 0) {
+            if (cursor.moveToFirst()) {
+                do {
+                    TempCart cart = new TempCart();
+                    //cart.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_CART_STATION)));
+                    //cart.setCategoryName(cursor.getString(cursor.getColumnIndex(COLUMN_CART_CATEGORY)));
+                    cart.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_CART_ITEM)));
+                    cart.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_CART_QUANTITY))));
+                    cart.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_CART_UNITPRICE))));
+                    cart.setBuyPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_CART_BUYPRICE))));
+                    list.add(cart);
+                }
+                while (cursor.moveToNext());
+            }
+        }
+        cursor.close();
+        return list;
+    }
+    /**
+     *
+     * fetch all data from cart where station is specified
+     * @param station Specified station
+     * ---------------------------------------------------------------------------------------------
+     **/
+    @SuppressLint("Range")
+    public List<Cart> getAllCat(String station){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_CART_STATION,
+                COLUMN_CART_CATEGORY,
+                COLUMN_CART_ITEM,
+                COLUMN_CART_QUANTITY,
+                COLUMN_CART_UNITPRICE,
+                COLUMN_CART_BUYPRICE
+        };
+        //selection argument
+        String[] selectionArgs = {station};
+        //Sorting order
+        String sortOder = COLUMN_CART_ID + " ASC";
+        //selection criteria
+        String selection = COLUMN_CART_STATION + " = ?";
+        List<Cart> list = new ArrayList<Cart>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_CART, //table to query
+                columns,  //columns to return
+                selection,  //columns for the where clause
+                selectionArgs,  //the values for the where clause
+                null,   //group the rows
+                null,   //filter by row groups
+                sortOder);
+        //Traversing through all rows and adding to list
+        if(cursor!=null && cursor.getCount() > 0) {
+            if (cursor.moveToFirst()) {
+                do {
+                    Cart cart = new Cart();
+                    cart.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_CART_STATION)));
+                    cart.setCategoryName(cursor.getString(cursor.getColumnIndex(COLUMN_CART_CATEGORY)));
+                    cart.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_CART_ITEM)));
+                    cart.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_CART_QUANTITY))));
+                    cart.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_CART_UNITPRICE))));
+                    cart.setBuyPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_CART_BUYPRICE))));
+                    list.add(cart);
+                }
+                while (cursor.moveToNext());
+            }
+        }
+        cursor.close();
+        return list;
+    }
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * This method for returning category name for the specified station and item names
+     * @return category name
+     * ---------------------------------------------------------------------------------------------
+     */
+
+    @SuppressLint("Range")
+    public String getCartCategory(String station, String item){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT " +COLUMN_ITEM_CATEGORY+" FROM "+TABLE_ITEM+" WHERE "
+                +COLUMN_ITEM_STATION+" =? AND "+COLUMN_ITEM_NAME+" =?";
+        Cursor cursor = db.rawQuery(query,new String[]{station,item});
+        String category = null;
+        while (cursor.moveToNext()){
+            category = cursor.getString(0);
+        }
+        cursor.close();
+        db.close();
+        return category;
+    }
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * This method for returning category name for the specified station, category and item names
+     * @param item item name
+     * @param station station name
+     * @param category category name
+     * @return selling price
+     * ---------------------------------------------------------------------------------------------
+     */
+
+    @SuppressLint("Range")
+    public int getSellingPrice(String station,String category, String item){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT " +COLUMN_ITEM_SELLPRICE+" FROM "+TABLE_ITEM+" WHERE "
+                +COLUMN_ITEM_STATION+" =? AND "+COLUMN_ITEM_CATEGORY+" =? AND "+COLUMN_ITEM_NAME+" =?";
+        Cursor cursor = db.rawQuery(query,new String[]{station,category,item});
+        int sellPrice = 0;
+        while (cursor.moveToNext()){
+            sellPrice = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return sellPrice;
+    }
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * This method for returning item quantity for the specified station, category and item names
+     * @param item item name
+     * @param station station name
+     * @param category category name
+     * @return selling price
+     * ---------------------------------------------------------------------------------------------
+     */
+
+    @SuppressLint("Range")
+    public int getItemQnty(String station,String category, String item){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT " +COLUMN_ITEM_QUANTITY+" FROM "+TABLE_ITEM+" WHERE "
+                +COLUMN_ITEM_STATION+" =? AND "+COLUMN_ITEM_CATEGORY+" =? AND "+COLUMN_ITEM_NAME+" =?";
+        Cursor cursor = db.rawQuery(query,new String[]{station,category,item});
+        int qnty = 0;
+        while (cursor.moveToNext()){
+            qnty = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return qnty;
+    }
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * This method for returning category name for the specified station, category and item names
+     * @param item item name
+     * @param station station name
+     * @param category category name
+     * @return selling price
+     * ---------------------------------------------------------------------------------------------
+     */
+
+    @SuppressLint("Range")
+    public int getBuyingPrice(String station,String category, String item){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT " +COLUMN_ITEM_BUYPRICE+" FROM "+TABLE_ITEM+" WHERE "
+                +COLUMN_ITEM_STATION+" =? AND "+COLUMN_ITEM_CATEGORY+" =? AND "+COLUMN_ITEM_NAME+" =?";
+        Cursor cursor = db.rawQuery(query,new String[]{station,category,item});
+        int buyingPrice = 0;
+        while (cursor.moveToNext()){
+            buyingPrice = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return buyingPrice;
+    }
     /**
      * ---------------------------------------------------------------------------------------------
      * This method is to fetch all allsales and return the list of the sale records
@@ -310,6 +564,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_SALE_TYPE,
                 COLUMN_SALE_STATION,
                 COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
                 COLUMN_SALE_QUANTITY,
                 COLUMN_SALE_UNITPRICE,
                 COLUMN_SALE_TOTAL,
@@ -333,9 +588,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Sales sale = new Sales();
                 sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
                 sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
                 sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
                 sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
                 sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
@@ -363,6 +619,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_SALE_TYPE,
                 COLUMN_SALE_STATION,
                 COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
                 COLUMN_SALE_QUANTITY,
                 COLUMN_SALE_UNITPRICE,
                 COLUMN_SALE_TOTAL,
@@ -390,9 +647,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Sales sale = new Sales();
                 sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
                 sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
                 sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
                 sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
                 sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
@@ -421,6 +679,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_SALE_TYPE,
                 COLUMN_SALE_STATION,
                 COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
                 COLUMN_SALE_QUANTITY,
                 COLUMN_SALE_UNITPRICE,
                 COLUMN_SALE_TOTAL,
@@ -429,7 +688,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //Sorting order
         String sortOder = COLUMN_SALE_ID + " ASC";
         //selection criteria
-        String selection = COLUMN_SALE_DAY + " = ? AND "+ COLUMN_SALE_CATEGORY+ " =?";
+        String selection = COLUMN_SALE_DAY + " = ? AND "+ COLUMN_SALE_ITEM+ " =?";
         //selection argument
         String[] selectionArgs = {date,item};
         List<Sales> list = new ArrayList<Sales>();
@@ -448,9 +707,70 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Sales sale = new Sales();
                 sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
                 sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
+                sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
+                sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
+                sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
+                sale.setProfit(cursor.getInt(cursor.getColumnIndex(COLUMN_SALE_PROFIT)));
+                list.add(sale);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * single date all station selective category
+     * fetch data from all stations where date and category is specified
+     * @param date dateSpecified
+     * @param category categorySpecified
+     * ---------------------------------------------------------------------------------------------
+     **/
+    @SuppressLint("Range")
+    public List<Sales> getAllSalesItemCat(String date, String category){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_SALE_DAY,
+                COLUMN_SALE_TIME,
+                COLUMN_SALE_TYPE,
+                COLUMN_SALE_STATION,
+                COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
+                COLUMN_SALE_QUANTITY,
+                COLUMN_SALE_UNITPRICE,
+                COLUMN_SALE_TOTAL,
+                COLUMN_SALE_PROFIT
+        };
+        //Sorting order
+        String sortOder = COLUMN_SALE_ID + " ASC";
+        //selection criteria
+        String selection = COLUMN_SALE_DAY + " = ? AND "+ COLUMN_SALE_CATEGORY+ " =?";
+        //selection argument
+        String[] selectionArgs = {date,category};
+        List<Sales> list = new ArrayList<Sales>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_SALES, //table to query
+                columns,  //columns to return
+                selection,  //columns for the where clause
+                selectionArgs,  //the values for the where clause
+                null,   //group the rows
+                null,   //filter by row groups
+                sortOder);  //the sortorder
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Sales sale = new Sales();
+                sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
+                sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
                 sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
                 sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
                 sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
@@ -479,6 +799,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_SALE_TYPE,
                 COLUMN_SALE_STATION,
                 COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
                 COLUMN_SALE_QUANTITY,
                 COLUMN_SALE_UNITPRICE,
                 COLUMN_SALE_TOTAL,
@@ -506,9 +827,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Sales sale = new Sales();
                 sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
                 sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
                 sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
                 sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
                 sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
@@ -538,6 +860,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_SALE_TYPE,
                 COLUMN_SALE_STATION,
                 COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
                 COLUMN_SALE_QUANTITY,
                 COLUMN_SALE_UNITPRICE,
                 COLUMN_SALE_TOTAL,
@@ -546,7 +869,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //Sorting order
         String sortOder = COLUMN_SALE_ID + " ASC";
         //selection criteria
-        String selection = COLUMN_SALE_DAY + " = ? AND " + COLUMN_SALE_STATION + " = ? AND " +COLUMN_SALE_CATEGORY+" =?";
+        String selection = COLUMN_SALE_DAY + " = ? AND " + COLUMN_SALE_STATION + " = ? AND " +COLUMN_SALE_ITEM+" =?";
         //selection argument
         String[] selectionArgs = {date,station,item};
         List<Sales> list = new ArrayList<Sales>();
@@ -565,9 +888,71 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Sales sale = new Sales();
                 sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
                 sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
+                sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
+                sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
+                sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
+                sale.setProfit(cursor.getInt(cursor.getColumnIndex(COLUMN_SALE_PROFIT)));
+                list.add(sale);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * single date selective station, selective item
+     * fetch data from specified station using specified date and item
+     * @param station spicificStation
+     * @param date specificDate
+     * @param item specifiedItem
+     * ---------------------------------------------------------------------------------------------
+     **/
+    @SuppressLint("Range")
+    public List<Sales> getAllSales(String date, String station, String category, String item){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_SALE_DAY,
+                COLUMN_SALE_TIME,
+                COLUMN_SALE_TYPE,
+                COLUMN_SALE_STATION,
+                COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
+                COLUMN_SALE_QUANTITY,
+                COLUMN_SALE_UNITPRICE,
+                COLUMN_SALE_TOTAL,
+                COLUMN_SALE_PROFIT
+        };
+        //Sorting order
+        String sortOder = COLUMN_SALE_ID + " ASC";
+        //selection criteria
+        String selection = COLUMN_SALE_DAY + " = ? AND " + COLUMN_SALE_STATION + " = ? AND "+COLUMN_SALE_CATEGORY+" = ? AND " +COLUMN_SALE_ITEM+" =?";
+        //selection argument
+        String[] selectionArgs = {date,station,category,item};
+        List<Sales> list = new ArrayList<Sales>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_SALES, //table to query
+                columns,  //columns to return
+                selection,  //columns for the where clause
+                selectionArgs,  //the values for the where clause
+                null,   //group the rows
+                null,   //filter by row groups
+                sortOder);  //the sortorder
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Sales sale = new Sales();
+                sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
+                sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
                 sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
                 sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
                 sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
@@ -596,6 +981,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_SALE_TYPE,
                 COLUMN_SALE_STATION,
                 COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
                 COLUMN_SALE_QUANTITY,
                 COLUMN_SALE_UNITPRICE,
                 COLUMN_SALE_TOTAL,
@@ -623,9 +1009,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Sales sale = new Sales();
                 sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
                 sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
                 sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
                 sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
                 sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
@@ -655,6 +1042,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_SALE_TYPE,
                 COLUMN_SALE_STATION,
                 COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
                 COLUMN_SALE_QUANTITY,
                 COLUMN_SALE_UNITPRICE,
                 COLUMN_SALE_TOTAL,
@@ -663,7 +1051,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //Sorting order
         String sortOder = COLUMN_SALE_ID + " ASC";
         //selection criteria
-        String selection = COLUMN_SALE_DAY + " >= ? AND " + COLUMN_SALE_DAY + " <= ? AND "+COLUMN_SALE_CATEGORY+" =?";
+        String selection = COLUMN_SALE_DAY + " >= ? AND " + COLUMN_SALE_DAY + " <= ? AND "+COLUMN_SALE_ITEM+" =?";
         //selection argument
         String[] selectionArgs = {startDate,endDate,item};
         List<Sales> list = new ArrayList<Sales>();
@@ -682,9 +1070,71 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Sales sale = new Sales();
                 sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
                 sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
+                sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
+                sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
+                sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
+                sale.setProfit(cursor.getInt(cursor.getColumnIndex(COLUMN_SALE_PROFIT)));
+                list.add(sale);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * double date all station, selective category
+     * fetch sold items from all stations with the specified category between the specified dates
+     * @param endDate 'to' date
+     * @param startDate 'fro' date
+     * @param category specifiedItem
+     * ---------------------------------------------------------------------------------------------
+     **/
+    @SuppressLint("Range")
+    public List<Sales> getAllSalesBtwnCat(String startDate, String endDate, String category){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_SALE_DAY,
+                COLUMN_SALE_TIME,
+                COLUMN_SALE_TYPE,
+                COLUMN_SALE_STATION,
+                COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
+                COLUMN_SALE_QUANTITY,
+                COLUMN_SALE_UNITPRICE,
+                COLUMN_SALE_TOTAL,
+                COLUMN_SALE_PROFIT
+        };
+        //Sorting order
+        String sortOder = COLUMN_SALE_ID + " ASC";
+        //selection criteria
+        String selection = COLUMN_SALE_DAY + " >= ? AND " + COLUMN_SALE_DAY + " <= ? AND "+COLUMN_SALE_CATEGORY+" =?";
+        //selection argument
+        String[] selectionArgs = {startDate,endDate,category};
+        List<Sales> list = new ArrayList<Sales>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_SALES, //table to query
+                columns,  //columns to return
+                selection,  //columns for the where clause
+                selectionArgs,  //the values for the where clause
+                null,   //group the rows
+                null,   //filter by row groups
+                sortOder);  //the sortorder
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Sales sale = new Sales();
+                sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
+                sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
                 sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
                 sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
                 sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
@@ -714,6 +1164,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_SALE_TYPE,
                 COLUMN_SALE_STATION,
                 COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
                 COLUMN_SALE_QUANTITY,
                 COLUMN_SALE_UNITPRICE,
                 COLUMN_SALE_TOTAL,
@@ -741,9 +1192,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Sales sale = new Sales();
                 sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
                 sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
                 sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
                 sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
                 sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
@@ -758,7 +1210,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * ---------------------------------------------------------------------------------------------
      * double date selective station, selective item
-     * fetch specified item between specified dates from specified station
+     * fetch specified item between specified dates and station
      * @param station specificStation
      * @param startDate fro date
      * @param item specificItem
@@ -774,6 +1226,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_SALE_TYPE,
                 COLUMN_SALE_STATION,
                 COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
                 COLUMN_SALE_QUANTITY,
                 COLUMN_SALE_UNITPRICE,
                 COLUMN_SALE_TOTAL,
@@ -783,7 +1236,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String sortOder = COLUMN_SALE_ID + " ASC";
         //selection criteria
         String selection = COLUMN_SALE_DAY + " >= ? AND " + COLUMN_SALE_DAY + " <= ? "
-                +COLUMN_SALE_STATION+" = ? AND "+ COLUMN_SALE_CATEGORY+" = ?";
+                +COLUMN_SALE_STATION+" = ? AND "+ COLUMN_SALE_ITEM+" = ?";
         //selection argument
         String[] selectionArgs = {startDate,endDate,station,item};
         List<Sales> list = new ArrayList<Sales>();
@@ -802,9 +1255,136 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Sales sale = new Sales();
                 sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
                 sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
-                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
+                sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
+                sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
+                sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
+                sale.setProfit(cursor.getInt(cursor.getColumnIndex(COLUMN_SALE_PROFIT)));
+                list.add(sale);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * double date selective station, selective item
+     * fetch specified item between specified dates and station
+     * @param station specificStation
+     * @param startDate fro date
+     * @param item specificItem
+     * @param endDate to date
+     * ---------------------------------------------------------------------------------------------
+    **/
+    @SuppressLint("Range")
+    public List<Sales> getAllSalesBetween(String startDate, String endDate, String station, String category, String item){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_SALE_DAY,
+                COLUMN_SALE_TIME,
+                COLUMN_SALE_TYPE,
+                COLUMN_SALE_STATION,
+                COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
+                COLUMN_SALE_QUANTITY,
+                COLUMN_SALE_UNITPRICE,
+                COLUMN_SALE_TOTAL,
+                COLUMN_SALE_PROFIT
+        };
+        //Sorting order
+        String sortOder = COLUMN_SALE_ID + " ASC";
+        //selection criteria
+        String selection = COLUMN_SALE_DAY + " >= ? AND " + COLUMN_SALE_DAY + " <= ? "
+                +COLUMN_SALE_STATION+" = ? AND "+COLUMN_SALE_CATEGORY+" = ? AND "+ COLUMN_SALE_ITEM+" = ?";
+        //selection argument
+        String[] selectionArgs = {startDate,endDate,station,category,item};
+        List<Sales> list = new ArrayList<Sales>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_SALES, //table to query
+                columns,  //columns to return
+                selection,  //columns for the where clause
+                selectionArgs,  //the values for the where clause
+                null,   //group the rows
+                null,   //filter by row groups
+                sortOder);  //the sortorder
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Sales sale = new Sales();
+                sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
+                sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
+                sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
+                sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
+                sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
+                sale.setProfit(cursor.getInt(cursor.getColumnIndex(COLUMN_SALE_PROFIT)));
+                list.add(sale);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * double date selective station, selective item
+     * fetch specified item between specified dates and station
+     * @param station specificStation
+     * @param startDate fro date
+     * @param category specificCategory
+     * @param endDate to date
+     * ---------------------------------------------------------------------------------------------
+    **/
+    @SuppressLint("Range")
+    public List<Sales> getAllSalesBetweenCat(String startDate, String endDate, String station, String category){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_SALE_DAY,
+                COLUMN_SALE_TIME,
+                COLUMN_SALE_TYPE,
+                COLUMN_SALE_STATION,
+                COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
+                COLUMN_SALE_QUANTITY,
+                COLUMN_SALE_UNITPRICE,
+                COLUMN_SALE_TOTAL,
+                COLUMN_SALE_PROFIT
+        };
+        //Sorting order
+        String sortOder = COLUMN_SALE_ID + " ASC";
+        //selection criteria
+        String selection = COLUMN_SALE_DAY + " >= ? AND " + COLUMN_SALE_DAY + " <= ? "
+                +COLUMN_SALE_STATION+" = ? AND "+ COLUMN_SALE_CATEGORY+" = ?";
+        //selection argument
+        String[] selectionArgs = {startDate,endDate,station,category};
+        List<Sales> list = new ArrayList<Sales>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_SALES, //table to query
+                columns,  //columns to return
+                selection,  //columns for the where clause
+                selectionArgs,  //the values for the where clause
+                null,   //group the rows
+                null,   //filter by row groups
+                sortOder);  //the sortorder
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Sales sale = new Sales();
+                sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
+                sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
                 sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
                 sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
                 sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
@@ -1117,12 +1697,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void updateItem(Item par) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(COLUMN_ITEM_NAME, par.getItemName());
         values.put(COLUMN_ITEM_QUANTITY, par.getItemQnty());
         values.put(COLUMN_ITEM_BUYPRICE, par.getBuyPrice());
         values.put(COLUMN_ITEM_SELLPRICE, par.getSellPrice());
         // updating row
         db.update(TABLE_ITEM, values, COLUMN_ITEM_ID + " = ?",
                 new String[]{String.valueOf(par.getItemId())});
+        db.close();
+    }
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * method to update item quantity
+     * @param par item model
+     *
+     * ---------------------------------------------------------------------------------------------
+     */
+    public void updateItemQnty(Item par) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ITEM_QUANTITY, par.getItemQnty());
+        // updating row
+        db.update(TABLE_ITEM, values, COLUMN_ITEM_STATION + " = ? AND "
+                        + COLUMN_ITEM_CATEGORY + " = ? AND " + COLUMN_ITEM_NAME + " = ?",
+                new String[]{par.getStationName(),par.getCategoryName(),String.valueOf(par.getItemName())});
         db.close();
     }
     /**
@@ -1157,6 +1755,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // updating row
         db.update(TABLE_STATION, values, COLUMN_STATION_ID + " = ?",
                 new String[]{String.valueOf(par.getStationId())});
+        db.close();
+    }
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * method to update cart quantity
+     * @param par cart model
+     *
+     * ---------------------------------------------------------------------------------------------
+     */
+    public void updateQuantity(Cart par) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_CART_QUANTITY, par.getItemQnty());
+
+        // updating row
+        db.update(TABLE_CART, values, COLUMN_CART_CATEGORY + " = ? AND " +COLUMN_CART_ITEM + " = ?",
+                new String[]{String.valueOf(par.getCategoryName()),par.getItemName()});
         db.close();
     }
     /**
@@ -1242,6 +1857,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
     /**
+     * This method is to delete cart records
+     * ---------------------------------------------------------------------------------------------
+     */
+    public void deleteCart() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // delete all records
+        db.delete(TABLE_CART, null, null);
+        db.close();
+    }
+    /**
      * ---------------------------------------------------------------------------------------------
      * This method to check user exist or not
      * @param email
@@ -1321,7 +1946,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * method to fetch category on the given station
-     * @param station station where
+     * @param station station name
      * @return available category in that station
      */
     public int getCategoryCount(String station) {
@@ -1338,6 +1963,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // return count
         return cursor.getCount();
     }
+
+    /**
+     * method to return the no of items from the give station
+     * and categry parameters
+     * @param station
+     * @param category
+     * @return no of items
+     */
     public int getItemCount(String station, String category) {
         //columns to fetch
         String[] columns = {"*"};
@@ -1351,5 +1984,59 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 TABLE_CATEGORY, columns, selection, selectionArgs, null, null, null);
         // return count
         return cursor.getCount();
+    }
+
+    /**
+     * Method to return available distinct item qnty from cart table
+     * @param station specified station name
+     * @param category specified category name
+     * @param item specified item name
+     * @return item count
+     */
+    public int getCartQnty(String station, String category, String item) {
+        //columns to fetch
+        String[] columns = {COLUMN_CART_QUANTITY};
+        // selection criteria
+        String selection =COLUMN_CART_STATION + " = ? AND " + COLUMN_CART_CATEGORY + " = ? AND " + COLUMN_CART_ITEM + " = ?";
+        // selection arguments
+        String[] selectionArgs = {station,category,item};
+        SQLiteDatabase db = this.getReadableDatabase();
+        // query table with conditions
+        Cursor cursor = db.query(
+                TABLE_CART, columns, selection, selectionArgs, null, null, null);
+        // return count
+        int qnty = 0;
+        if (cursor.getCount() > 0){
+            while (cursor.moveToNext()) {
+                qnty = cursor.getInt(0);
+            }
+        }
+        return qnty;
+    }
+
+    /**
+     * boolean method to check if an item exists from cart table
+     * @param station station name
+     * @param category category name
+     * @param item item name
+     * @return true if exists
+     */
+    public boolean checkCart(String station,String category,String item) {
+        // array of columns to fetch
+        String[] columns = {
+                COLUMN_CART_ITEM
+        };
+        SQLiteDatabase db = this.getReadableDatabase();
+        // selection criteria
+        String selection = COLUMN_CART_STATION + " = ? AND "+ COLUMN_CART_CATEGORY + " = ? AND "+ COLUMN_CART_ITEM + " = ?";
+        // selection argument
+        String[] selectionArgs = {station,category,item};
+        // query table with condition
+        Cursor cursor = db.query(
+                TABLE_CART, columns, selection, selectionArgs, null, null, null);
+        int cursorCount = cursor.getCount();
+        cursor.close();
+        db.close();
+        return cursorCount >= 1;
     }
 }
