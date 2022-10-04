@@ -12,14 +12,14 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="mich.gwan.sarensa.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_sales"
+        android:name="mich.gwan.sarensa.ui.sale.SaleFragment"
+        android:label="Sales"
+        tools:layout="@layout/activity_sale" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="mich.gwan.sarensa.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
+        android:id="@+id/nav_users"
+        android:name="mich.gwan.sarensa.ui.user.UserFragment"
+        android:label="Manage Users"
         tools:layout="@layout/fragment_slideshow" />
 </navigation>

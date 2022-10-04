@@ -60,6 +60,7 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
         holder.textInitial.setText(String.valueOf(firstChar));
         // declare and initialize databashelper object
         DatabaseHelper databaseHelper = new DatabaseHelper(holder.itemView.getContext());
+        SaleCategoryViewActivity saleCategoryViewActivity = new SaleCategoryViewActivity();
 
         holder.itemView.setSelected(index == position);
         //check if the item exists in cart and set its count value
@@ -77,10 +78,12 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
                 list.get(position).getItemName()) <= 5){
             //holder.inner.setCardBackgroundColor(ContextCompat.getColor(context,R.color.less_item));
             holder.outer.setCardBackgroundColor(Color.RED);
+            holder.textInitial.setTextColor(Color.RED);
             holder.itemName.setTextColor(ContextCompat.getColor(context,R.color.less_item));
         } else {
             holder.outer.setCardBackgroundColor(Color.BLUE);
             holder.itemName.setTextColor(Color.BLACK);
+            holder.textInitial.setTextColor(Color.BLACK);
         }
         List<Cart> cart = new ArrayList<>();
         count = databaseHelper.getItemQnty(list.get(position).getStationName(),list.get(position).getCategoryName(),
@@ -91,20 +94,7 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
             public void onClick(View view) {
                 // add item to cart
                 count--;
-                if (count <= 0) {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            holder.textWarning.setText("");
-                            holder.textWarning.setTextColor(Color.TRANSPARENT);
-                            holder.textWarning.setBackgroundColor(Color.TRANSPARENT);
-                        }
-                    }, 3000);
-                    holder.textWarning.setText("Stock is depleted, Kindly add stock!");
-                    holder.textWarning.setTextColor(Color.WHITE);
-                    holder.textWarning.setBackgroundColor(Color.RED);
-
-                    } else {
+                if (count >= 1) {
                     Cart par = new Cart();
                     par.setStationName(list.get(position).getStationName());
                     par.setCategoryName(list.get(position).getCategoryName());
@@ -134,13 +124,18 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
                                 list.get(position).getStationName(), list.get(position).getCategoryName(),
                                 list.get(position).getItemName())));
                     }
-                    //listInterface.onListCallback(holder.cartList);
-                    //int totalBuyPrice = counter * list.get(position).getBuyPrice();
-                    //int totalSellPrice = counter * list.get(position).getSellPrice();
-                    //int profit = totalSellPrice - totalBuyPrice;
-                    //List<Sales> cart = new ArrayList<>();
-
-                    // pass sale list to interface
+                    } else {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            holder.textWarning.setText("");
+                            holder.textWarning.setTextColor(Color.TRANSPARENT);
+                            holder.textWarning.setBackgroundColor(Color.TRANSPARENT);
+                        }
+                    }, 3000);
+                    holder.textWarning.setText("Stock is depleted, Kindly add stock!");
+                    holder.textWarning.setTextColor(Color.WHITE);
+                    holder.textWarning.setBackgroundColor(Color.RED);
                 }
             }
         });

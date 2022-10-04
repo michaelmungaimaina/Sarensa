@@ -7,13 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
-    <!--com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        tools:ignore="MissingClass"
-    </com.google.android.material.appbar.AppBarLayout-->
-
     <include
         android:id="@+id/home_view"
         layout="@layout/content_home"
@@ -27,7 +20,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:backgroundTint="#042560"
-        app:srcCompat="@drawable/ic_add_white_24dp"
+        app:srcCompat="@drawable/ic_add_white"
         android:contentDescription="@string/click_me_to_add_new_stations" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

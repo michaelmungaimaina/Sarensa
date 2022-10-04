@@ -24,6 +24,7 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
     private int index = RecyclerView.NO_POSITION;
     private int count = 0;
     int newQnty = 0;
+    int counter = 0;
 
     public CartRecyclerAdapter(List<Cart> list) {
         this.list = list;
@@ -47,21 +48,33 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
         holder.totalPrice.setText(String.valueOf(total));
         holder.sellPrice.setText(String.valueOf(list.get(position).getSellPrice()));
         holder.textInitial.setText(String.valueOf(firstChar));
-        // declare and initialize databashelper object
+        // declare and initialize databasehelper object
         DatabaseHelper databaseHelper = new DatabaseHelper(holder.itemView.getContext());
+        SaleCategoryViewActivity saleCategoryViewActivity = new SaleCategoryViewActivity();
 
         holder.itemView.setSelected(index == position);
         holder.count.setText(String.valueOf(0));
         int currentQnty = list.get(position).getItemQnty();
+        counter = list.get(position).getItemQnty() + 1;
         holder.cardRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 count++;
-                newQnty = currentQnty - count;
-                list.get(position).setItemQnty(newQnty);
-                 holder.quantity.setText(String.valueOf(newQnty));
-                // display the new count value
-                holder.count.setText(String.valueOf(count));
+                counter--;
+                if(counter >= 1) {
+                    newQnty = currentQnty - count;
+                    list.get(position).setItemQnty(newQnty);
+                    holder.quantity.setText(String.valueOf(newQnty));
+                    // display the new count value
+                    holder.count.setText(String.valueOf(count));
+                    count = 0;
+                    counter = 0;
+                } else {
+                    list.remove(position);
+                    notifyItemChanged(position);
+                    count = 0;
+                    counter = 0;
+                }
             }
         });
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {

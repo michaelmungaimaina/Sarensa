@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.InflateException;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -56,6 +57,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        try{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         //Objects.requireNonNull(getSupportActionBar()).hide();
@@ -74,7 +76,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
          spinner.setAdapter(dataAdapter);
         Window window = this.getWindow();
         window.setStatusBarColor(this.getResources().getColor(android.R.color.holo_green_dark));
+        } catch (InflateException e){
+            e.getCause().printStackTrace();
+        } catch (Exception e) {
 
+            // generic exception handling
+            e.printStackTrace();
+        }
     }
     /**
      * This method is to initialize views

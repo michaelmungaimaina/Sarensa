@@ -907,13 +907,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * ---------------------------------------------------------------------------------------------
      * single date selective station, selective item
      * fetch data from specified station using specified date and item
-     * @param station spicificStation
      * @param date specificDate
-     * @param item specifiedItem
+     * @param category specified category
      * ---------------------------------------------------------------------------------------------
      **/
     @SuppressLint("Range")
-    public List<Sales> getAllSales(String date, String station, String category, String item){
+    public List<Sales> getAllSalesCat(String date, String category){
         //Columns to fetch
         String[] columns = {
                 COLUMN_SALE_DAY,
@@ -930,9 +929,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //Sorting order
         String sortOder = COLUMN_SALE_ID + " ASC";
         //selection criteria
-        String selection = COLUMN_SALE_DAY + " = ? AND " + COLUMN_SALE_STATION + " = ? AND "+COLUMN_SALE_CATEGORY+" = ? AND " +COLUMN_SALE_ITEM+" =?";
+        String selection = COLUMN_SALE_DAY + " = ? AND "+COLUMN_SALE_CATEGORY+" = ?";
         //selection argument
-        String[] selectionArgs = {date,station,category,item};
+        String[] selectionArgs = {date,category};
         List<Sales> list = new ArrayList<Sales>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.query(
@@ -1173,7 +1172,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //Sorting order
         String sortOder = COLUMN_SALE_ID + " ASC";
         //selection criteria
-        String selection = COLUMN_SALE_DAY + " >= ? AND " + COLUMN_SALE_DAY + " <= ? "+COLUMN_SALE_STATION+" =?";
+        String selection = COLUMN_SALE_DAY + " >= ? AND " + COLUMN_SALE_DAY + " <= ? "+COLUMN_SALE_STATION+" = ?";
         //selection argument
         String[] selectionArgs = {startDate,endDate,station};
         List<Sales> list = new ArrayList<Sales>();
@@ -1239,6 +1238,165 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 +COLUMN_SALE_STATION+" = ? AND "+ COLUMN_SALE_ITEM+" = ?";
         //selection argument
         String[] selectionArgs = {startDate,endDate,station,item};
+        List<Sales> list = new ArrayList<Sales>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_SALES, //table to query
+                columns,  //columns to return
+                selection,  //columns for the where clause
+                selectionArgs,  //the values for the where clause
+                null,   //group the rows
+                null,   //filter by row groups
+                sortOder);  //the sortorder
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Sales sale = new Sales();
+                sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
+                sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
+                sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
+                sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
+                sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
+                sale.setProfit(cursor.getInt(cursor.getColumnIndex(COLUMN_SALE_PROFIT)));
+                list.add(sale);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    @SuppressLint("Range")
+    public List<Sales> getAllSale(String startDate, String station, String cat){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_SALE_DAY,
+                COLUMN_SALE_TIME,
+                COLUMN_SALE_TYPE,
+                COLUMN_SALE_STATION,
+                COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
+                COLUMN_SALE_QUANTITY,
+                COLUMN_SALE_UNITPRICE,
+                COLUMN_SALE_TOTAL,
+                COLUMN_SALE_PROFIT
+        };
+        //Sorting order
+        String sortOder = COLUMN_SALE_ID + " ASC";
+        //selection criteria
+        String selection = COLUMN_SALE_DAY + " >= ? AND "
+                +COLUMN_SALE_STATION+" = ? AND "+ COLUMN_SALE_CATEGORY+" = ?";
+        //selection argument
+        String[] selectionArgs = {startDate,station,cat};
+        List<Sales> list = new ArrayList<Sales>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_SALES, //table to query
+                columns,  //columns to return
+                selection,  //columns for the where clause
+                selectionArgs,  //the values for the where clause
+                null,   //group the rows
+                null,   //filter by row groups
+                sortOder);  //the sortorder
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Sales sale = new Sales();
+                sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
+                sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
+                sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
+                sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
+                sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
+                sale.setProfit(cursor.getInt(cursor.getColumnIndex(COLUMN_SALE_PROFIT)));
+                list.add(sale);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    @SuppressLint("Range")
+    public List<Sales> getAllSaleItem(String startDate, String station, String item){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_SALE_DAY,
+                COLUMN_SALE_TIME,
+                COLUMN_SALE_TYPE,
+                COLUMN_SALE_STATION,
+                COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
+                COLUMN_SALE_QUANTITY,
+                COLUMN_SALE_UNITPRICE,
+                COLUMN_SALE_TOTAL,
+                COLUMN_SALE_PROFIT
+        };
+        //Sorting order
+        String sortOder = COLUMN_SALE_ID + " ASC";
+        //selection criteria
+        String selection = COLUMN_SALE_DAY + " >= ? AND "
+                +COLUMN_SALE_STATION+" = ? AND "+ COLUMN_SALE_ITEM+" = ?";
+        //selection argument
+        String[] selectionArgs = {startDate,station,item};
+        List<Sales> list = new ArrayList<Sales>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_SALES, //table to query
+                columns,  //columns to return
+                selection,  //columns for the where clause
+                selectionArgs,  //the values for the where clause
+                null,   //group the rows
+                null,   //filter by row groups
+                sortOder);  //the sortorder
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Sales sale = new Sales();
+                sale.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_DAY)));
+                sale.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TIME)));
+                sale.setSaleType(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TYPE)));
+                sale.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_STATION)));
+                sale.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_CATEGORY)));
+                sale.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_ITEM)));
+                sale.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_QUANTITY))));
+                sale.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_UNITPRICE))));
+                sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
+                sale.setProfit(cursor.getInt(cursor.getColumnIndex(COLUMN_SALE_PROFIT)));
+                list.add(sale);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    @SuppressLint("Range")
+    public List<Sales> getAllSaleItem(String startDate, String station, String category, String item){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_SALE_DAY,
+                COLUMN_SALE_TIME,
+                COLUMN_SALE_TYPE,
+                COLUMN_SALE_STATION,
+                COLUMN_SALE_CATEGORY,
+                COLUMN_SALE_ITEM,
+                COLUMN_SALE_QUANTITY,
+                COLUMN_SALE_UNITPRICE,
+                COLUMN_SALE_TOTAL,
+                COLUMN_SALE_PROFIT
+        };
+        //Sorting order
+        String sortOder = COLUMN_SALE_ID + " ASC";
+        //selection criteria
+        String selection = COLUMN_SALE_DAY + " >= ? AND "
+                +COLUMN_SALE_STATION+" = ? AND "+COLUMN_SALE_CATEGORY + " = ? AND "+ COLUMN_SALE_ITEM+" = ?";
+        //selection argument
+        String[] selectionArgs = {startDate,station,category,item};
         List<Sales> list = new ArrayList<Sales>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.query(
@@ -1614,6 +1772,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 par.setName(cursor.getString(cursor.getColumnIndex(COLUMN_STATION_NAME)));
                 par.setLocation(cursor.getString(cursor.getColumnIndex(COLUMN_STATION_LOCATION)));
                 list.add(par);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * fetch all station names
+     * @return list of all station names
+     * ---------------------------------------------------------------------------------------------
+     */
+
+    @SuppressLint("Range")
+    public List<String> getStation(){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_STATION_NAME
+        };
+        //Sorting order
+        String sortOder = COLUMN_STATION_ID + " ASC";
+        List<String> list = new ArrayList<String>();
+        list.add("Select Station");
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_STATION, //table to query
+                columns,  //columns to return
+                null,  //columns for the where clause
+                null,  //the values for the where clause
+                null,   //group the rows
+                null,   //filter by row groups
+                sortOder);  //the sortorder
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                list.add(cursor.getString(cursor.getColumnIndex(COLUMN_STATION_NAME)));
             }
             while (cursor.moveToNext());
         }

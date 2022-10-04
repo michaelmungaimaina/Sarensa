@@ -125,15 +125,11 @@ public class HomeFragment extends Fragment{
      */
     @SuppressLint("NotifyDataSetChanged")
     private void insertValue(String station, String location) {
-        // inserting value in db and getting
-        // newly inserted value id
+        // inserting value in db
         Station par = new Station();
         par.setName(station);
         par.setLocation(location);
         databaseHelper.addStation(par);
-        //long id = db.insertNote(station, location);
-        // get the newly inserted note from db
-        //Station n = db.getNote(id);
 
         // adding new values to array list at 0 position
         list.add(0, par);

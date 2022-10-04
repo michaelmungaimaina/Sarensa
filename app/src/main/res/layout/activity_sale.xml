@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/home_layout"
+    android:id="@+id/sale_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.SaleCategoryViewActivity">
-
-    <!--com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        tools:ignore="MissingClass">
-    </com.google.android.material.appbar.AppBarLayout-->
+    tools:context=".ui.sale.SaleFragment">
 
     <include
-        android:id="@+id/category_view"
-        layout="@layout/content_category_fragment" />
+        android:id="@+id/sale_fragment"
+        layout="@layout/fragment_sales" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/categoryRegister"
+    <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
-        android:onClick="addCategory"
         android:layout_margin="@dimen/fab_margin"
-        android:backgroundTint="#6AA570"
-        app:srcCompat="@drawable/ic_add_white"
-        android:contentDescription="Click me to add a new category." />
+        android:backgroundTint="#240A97"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="5dp">
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/spinner"
+            android:layout_width="110dp"
+            android:layout_height="match_parent"/>
+    </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/sellCard"
@@ -35,8 +31,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:layout_margin="@dimen/fab_margin"
-        android:backgroundTint="#C38888"
-        android:onClick="actionSell"
+        android:backgroundTint="#BD9898"
+        android:onClick="generatePDF"
         app:cardCornerRadius="12dp"
         app:cardElevation="5dp">
 
@@ -51,7 +47,7 @@
                 android:layout_height="30dp"
                 android:layout_gravity="center"
                 android:gravity="center"
-                app:srcCompat="@drawable/sellicon" />
+                app:srcCompat="@drawable/pdf" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -60,22 +56,49 @@
                 android:layout_marginStart="5dp"
                 android:fontFamily="sans-serif-black"
                 android:gravity="center"
-                android:text="  SELL  "
+                android:text="PDF  "
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#000000"
                 android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/itemRegister"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:onClick="addItem"
         android:layout_margin="@dimen/fab_margin"
-        android:backgroundTint="#6AA570"
-        app:srcCompat="@drawable/ic_add_white"
-        android:contentDescription="Click me to add a new item." />
+        android:backgroundTint="#7FD8A3"
+        android:layout_gravity="bottom|end"
+        android:onClick="actionSearch"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="5dp">
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                app:srcCompat="@drawable/search" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="start"
+                android:layout_marginStart="5dp"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:text="SEARCH  "
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/selector_recyclerview"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:gravity="center">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -139,7 +140,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="SP: "
+                        android:text="BP: "
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:textColor="#807B7B"
                         android:textSize="10sp" />
@@ -162,7 +163,7 @@
                     app:cardCornerRadius="0sp"
                     app:cardElevation="0dp">
                     <TextView
-                        android:id="@+id/textSellPrice"
+                        android:id="@+id/textBuyPrice"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
@@ -194,7 +195,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:gravity="center|left"
-                        android:text="BP: "
+                        android:text="SP: "
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:textColor="#807B7B"
                         android:textSize="10sp" />
@@ -218,7 +219,7 @@
                     app:cardCornerRadius="0sp"
                     app:cardElevation="0dp">
                     <TextView
-                        android:id="@+id/textBuyPrice"
+                        android:id="@+id/textSellPrice"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
@@ -314,9 +315,10 @@
         android:id="@+id/textWarning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="100dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
         android:layout_marginTop="2dp"
-        android:layout_alignParentEnd="true"
         android:fontFamily="sans-serif-light"
         android:text="Kindly add Stock!"
         android:textColor="#00000000"

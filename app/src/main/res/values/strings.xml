@@ -24,7 +24,7 @@
     <string name="error_mssage_phone">Phone Number Not Valid</string>
     <string name="error_mssage_password">Password Too Weak</string>
     <string name="error_message_spinner">Select User Type</string>
-    <string name="success_message">Registration was Successfull!</string>
+    <string name="success_message">Registration was Successful!</string>
     <string name="error_email_exists">Email Already Exists!</string>
     <string name="lbl_register">Register  Station</string>
     <string name="lbl_edit">Edit Details</string>

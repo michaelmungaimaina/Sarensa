@@ -32,6 +32,15 @@
             android:textSize="16sp"
             android:textStyle="bold" />
     </androidx.appcompat.widget.LinearLayoutCompat>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:lineSpacingExtra="8sp"
+        android:text="Category Name:"
+        android:textColor="@color/dialog_text"
+        android:textSize="16sp"
+        android:textStyle="bold" />
         <EditText
             android:id="@+id/textInputEditTextCatName"
             android:layout_width="match_parent"
@@ -42,6 +51,15 @@
             android:maxLines="1"
             android:textColor="@color/colorText"
             tools:ignore="Deprecated" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:lineSpacingExtra="8sp"
+        android:text="Item Name:"
+        android:textColor="@color/dialog_text"
+        android:textSize="16sp"
+        android:textStyle="bold" />
         <EditText
             android:id="@+id/textInputEditTextItemName"
             android:layout_width="match_parent"
@@ -50,14 +68,53 @@
             android:inputType="text"
             android:maxLines="1"
             android:textColor="@color/colorText" />
+    <TextView
+        android:id="@+id/textViewCurrentQnty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:lineSpacingExtra="8sp"
+        android:text="Current Quantity:"
+        android:textColor="@color/dialog_text"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/textViewCurrentQntyText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:lineSpacingExtra="8sp"
+        android:text="0"
+        android:textColor="@color/colorText"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:lineSpacingExtra="8sp"
+        android:text="New Quantity:"
+        android:textColor="@color/dialog_text"
+        android:textSize="16sp"
+        android:textStyle="bold" />
         <EditText
-            android:id="@+id/textInputEditTextItemQnty"
+            android:id="@+id/textInputEditTextItemNewQnty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter Item Quantity"
             android:inputType="numberDecimal"
             android:maxLines="1"
             android:textColor="@color/colorText" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:lineSpacingExtra="8sp"
+        android:text="Buying Price:"
+        android:textColor="@color/dialog_text"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
         <EditText
             android:id="@+id/textInputEditTextItemBuyPrice"
             android:layout_width="match_parent"
@@ -66,6 +123,15 @@
             android:inputType="numberDecimal"
             android:maxLines="1"
             android:textColor="@color/colorText" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:lineSpacingExtra="8sp"
+        android:text="Selling Price:"
+        android:textColor="@color/dialog_text"
+        android:textSize="16sp"
+        android:textStyle="bold" />
         <EditText
             android:id="@+id/textInputEditTextItemSellPrice"
             android:layout_width="match_parent"

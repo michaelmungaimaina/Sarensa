@@ -1,4 +1,4 @@
-package mich.gwan.sarensa.ui.slideshow;
+package mich.gwan.sarensa.ui.user;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,20 +12,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import mich.gwan.sarensa.databinding.FragmentSlideshowBinding;
 
-public class SlideshowFragment extends Fragment {
+public class UserFragment extends Fragment {
 
     private FragmentSlideshowBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SlideshowViewModel slideshowViewModel =
-                new ViewModelProvider(this).get(SlideshowViewModel.class);
 
         binding = FragmentSlideshowBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textSlideshow;
-        slideshowViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

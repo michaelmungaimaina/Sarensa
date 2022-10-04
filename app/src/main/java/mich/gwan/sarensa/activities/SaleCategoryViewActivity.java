@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
+import android.text.InputType;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.os.Handler;
@@ -160,7 +162,6 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     public void run() {
-                        // yourMethod();
                         getItemsFromSQlite();
                         toggleItemViews();
                     }
@@ -449,18 +450,21 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
 
         final EditText categoryName = view.findViewById(R.id.textInputEditTextCatName);
         final EditText itemName = view.findViewById(R.id.textInputEditTextItemName);
-        final EditText qnty = view.findViewById(R.id.textInputEditTextItemQnty);
+        final EditText newQuantity = view.findViewById(R.id.textInputEditTextItemNewQnty);
         final EditText buyPrice = view.findViewById(R.id.textInputEditTextItemBuyPrice);
         final EditText sellPrice = view.findViewById(R.id.textInputEditTextItemSellPrice);
         final TextView stationName = view.findViewById(R.id.textStationName);
+        final TextView currentQuantity = view.findViewById(R.id.textViewCurrentQnty);
+        final TextView currentQuantityText = view.findViewById(R.id.textViewCurrentQntyText);
         TextView dialogTitle = view.findViewById(R.id.title);
         dialogTitle.setText(!shouldUpdate ? getString(R.string.lbl_register_item) : getString(R.string.lbl_edit));
 
         if (shouldUpdate && item != null) {
             // display text to views
             categoryName.setText(item.getCategoryName());
+            categoryName.setInputType(InputType.TYPE_NULL);
             itemName.setText(item.getItemName());
-            qnty.setText(String.valueOf(item.getItemQnty()));
+            currentQuantityText.setText(String.valueOf(item.getItemQnty()));
             buyPrice.setText(String.valueOf(item.getBuyPrice()));
             sellPrice.setText(String.valueOf(item.getSellPrice()));
             stationName.setText(item.getStationName());
@@ -494,8 +498,8 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
                     itemName.requestFocus();
                     return;
                 }
-                if(!inputValidation.isEditTextOccupied(qnty,getString(R.string.error_message_item_qnty))){
-                    qnty.requestFocus();
+                if(!inputValidation.isEditTextOccupied(newQuantity,getString(R.string.error_message_item_qnty))){
+                    newQuantity.requestFocus();
                     return;
                 }
                 if(!inputValidation.isEditTextOccupied(buyPrice,getString(R.string.error_message_item_buy_price))){
@@ -512,13 +516,16 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
 
                 // check if user is updating values
                 if (shouldUpdate && item != null) {
+                    int quantity = Integer.parseInt(currentQuantityText.getText().toString()) + Integer.parseInt(newQuantity.getText().toString());
                     // update values by it's position
                     updateItem(stationName.getText().toString().toUpperCase(), categoryName.getText().toString().toUpperCase(),
-                            itemName.getText().toString().toUpperCase(), qnty.getText().toString().toUpperCase(),
+                            itemName.getText().toString().toUpperCase(), String.valueOf(quantity),
                             buyPrice.getText().toString().toUpperCase(), sellPrice.getText().toString().toUpperCase(), position);
                 } else {
+                    currentQuantity.setHeight(0);
+                    currentQuantityText.setHeight(0);
                     // create new note
-                    insertItem(itemName.getText().toString().toUpperCase(), qnty.getText().toString().toUpperCase(),
+                    insertItem(itemName.getText().toString().toUpperCase(), newQuantity.getText().toString().toUpperCase(),
                             buyPrice.getText().toString().toUpperCase(), sellPrice.getText().toString().toUpperCase());
                 }
             }
@@ -618,6 +625,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
                     itemRecyclerAdapter.notifyDataSetChanged();
                     dialog.cancel();
                     System.out.println("Dialog dismissed");
+                    getItemsFromSQlite();
                 }
             });
         } catch (InflateException e){
@@ -719,7 +727,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(@SuppressLint("StaticFieldLeak") Void... params) {
-                //item.clear();
+                listItem.clear();
                 listItem.addAll(databaseHelper.getAllItems(myStation,myCategory));
                 return null;
             }
