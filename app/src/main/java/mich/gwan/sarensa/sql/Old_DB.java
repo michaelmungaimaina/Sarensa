@@ -16,10 +16,9 @@ import mich.gwan.sarensa.model.Category;
 import mich.gwan.sarensa.model.Item;
 import mich.gwan.sarensa.model.Sales;
 import mich.gwan.sarensa.model.Station;
-import mich.gwan.sarensa.model.TempCart;
 import mich.gwan.sarensa.model.User;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+public class Old_DB extends SQLiteOpenHelper {
     // Database Version
     private static final int DATABASE_VERSION = 4;
 
@@ -139,7 +138,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_ITEM_BUYPRICE + " TEXT,"
             + COLUMN_ITEM_SELLPRICE + " TEXT" + ")";
 
-// create table station sql query
+    // create table station sql query
     private final String CREATE_STATION_TABLE = "CREATE TABLE " + TABLE_STATION + "("
             + COLUMN_STATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,"
             + COLUMN_STATION_NAME + " TEXT,"
@@ -166,7 +165,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param context open SQLite database
      * ---------------------------------------------------------------------------------------------
      */
-    public DatabaseHelper(Context context) {
+    public Old_DB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
     }
@@ -207,7 +206,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_ITEM_TABLE);
         db.execSQL(DROP_CART_TABLE);
         db.execSQL(CREATE_CART_TABLE);
-        db.execSQL(CREATE_SALES_TABLE);
          */
 
     }
@@ -223,7 +221,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL(DROP_SALES_TABLE);
+        db.execSQL(CREATE_SALES_TABLE);
     }
 
     /**
@@ -270,10 +269,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_CART, null, values);
         db.close();
     }
-     /**
-      *---------------------------------------------------------------------------------------------
-      Method to create sale record
-      @param item Item model
+    /**
+     *---------------------------------------------------------------------------------------------
+     Method to create sale record
+     @param item Item model
       *---------------------------------------------------------------------------------------------
      */
     public void addItem(Item item){
@@ -1181,7 +1180,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param item specificItem
      * @param endDate to date
      * ---------------------------------------------------------------------------------------------
-    **/
+     **/
     @SuppressLint("Range")
     public List<Sales> getAllSalesBetween(String startDate, String endDate, String station, String item){
         //Columns to fetch
@@ -1403,7 +1402,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param item specificItem
      * @param endDate to date
      * ---------------------------------------------------------------------------------------------
-    **/
+     **/
     @SuppressLint("Range")
     public List<Sales> getAllSalesBetween(String startDate, String endDate, String station, String category, String item){
         //Columns to fetch
@@ -1524,7 +1523,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param category specificCategory
      * @param endDate to date
      * ---------------------------------------------------------------------------------------------
-    **/
+     **/
     @SuppressLint("Range")
     public List<Sales> getAllSalesBetweenCat(String startDate, String endDate, String station, String category){
         //Columns to fetch
@@ -2060,7 +2059,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         // delete record by id
         db.delete(TABLE_ITEM, COLUMN_ITEM_STATION + " = ? AND " + COLUMN_ITEM_CATEGORY + " = ? AND "
-                + COLUMN_ITEM_NAME + " = ?",
+                        + COLUMN_ITEM_NAME + " = ?",
                 new String[]{par.getStationName(), par.getCategoryName(), par.getItemName()});
         db.close();
     }

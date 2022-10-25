@@ -1,5 +1,5 @@
 <resources>
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -7,7 +7,7 @@
         <item name="android:textColorHint">@color/colorText</item>
         <item name="colorControlNormal">#FFFFFF</item>
         <item name="android:windowDisablePreview">true</item>
-        <item name="colorControlActivated">@color/colorText</item>
+        <item name="colorControlActivated">#FFFFFF</item>
     </style>
     <style name="LoginTextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
         <item name="boxStrokeColor">#fff</item>

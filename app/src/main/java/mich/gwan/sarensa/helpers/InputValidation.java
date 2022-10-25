@@ -13,6 +13,7 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -91,6 +92,25 @@ public class InputValidation {
 
         return true;
     }
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * method to check InputEditText occupied.
+     * @param textInputEditText
+     * @param message
+     * @return
+     * ---------------------------------------------------------------------------------------------
+     * */
+    public boolean isEditTextMatch(EditText textInputEditText, String message) {
+        String value = textInputEditText.getText().toString().toUpperCase().trim();
+        String [] options =  {"ADMIN","EMPLOYEE","MANAGER"};
+            if(!Arrays.asList(options).contains(value))
+            {
+                textInputEditText.setError(message);
+                hideKeyboardFrom(textInputEditText);
+                return false;
+            }
+        return true;
+    }
 
 
     /**
@@ -110,6 +130,15 @@ public class InputValidation {
             return false;
         } else {
             textInputLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+    public boolean isInputEditTextEmail(EditText textEditText, String message) {
+        String value = textEditText.getText().toString().trim();
+        if (value.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches()) {
+            textEditText.setError(message);
+            hideKeyboardFrom(textEditText);
+            return false;
         }
         return true;
     }
@@ -182,6 +211,17 @@ public class InputValidation {
             return false;
         } else {
             textInputLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+    public boolean isValidPhoneNumber(EditText textEditText, String message){
+        String value = textEditText.getText().toString();
+        String password="^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$";
+        Pattern pattern= Pattern.compile(password);
+        Matcher matcher=pattern.matcher(value);
+        if (value.isEmpty() || !matcher.matches()){
+            textEditText.setError(message);
+            return false;
         }
         return true;
     }

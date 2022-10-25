@@ -7,7 +7,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
+    <string name="menu_home">Home - Stations</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="login">Login</string>
@@ -38,4 +38,18 @@
     <string name="error_message_item_sell_price">Enter Item Selling Price</string>
     <string name="error_message_password_confirm">Confirm Password!</string>
     <string name="click_me_to_add_new_stations">Click me to add new stations.</string>
+    <string name="lbl_register_user">New User</string>
+    <string name="lbl_edit_user">Edit User</string>
+    <string name="error_message_user_name">Input User Name</string>
+    <string name="error_user_type">Select Station!</string>
+    <string name="error_spinner">Enter \"Employee\" \"Admin\" or \"Manager\"</string>
+    <string name="item_exists">Item already exists, Update Quantity!</string>
+    <string name="item_updated">Item Updated Successfully!</string>
+    <string name="category_update">Category Updated Successfully!</string>
+    <string name="category_exists">Category already exists!</string>
+    <string name="category_registered">Category Registered Successfully!</string>
+    <string name="station_exists">Station Already Exists!</string>
+    <string name="station_update">Station Updated Successfully!</string>
+    <string name="station_registered">Station Registered Successfully!</string>
+    <string name="action_logout">Logout</string>
 </resources>

@@ -248,8 +248,6 @@ public class HomeFragment extends Fragment{
                     if (!inputValidation.isEditTextOccupied(stationLocation, getString(R.string.error_message_location))) {
                         stationLocation.requestFocus();
                         return;
-                    } else {
-                        alertDialog.dismiss();
                     }
 
                     // check if user is updating values
@@ -257,9 +255,16 @@ public class HomeFragment extends Fragment{
                         // update values by it's position
                         updateValue(stationName.getText().toString().toUpperCase(),
                                 stationLocation.getText().toString().toUpperCase(), position);
+                        Toast.makeText(mContext,getString(R.string.station_update),Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss();
                     } else {
-                        // create new note
-                        insertValue(stationName.getText().toString().toUpperCase(), stationLocation.getText().toString().toUpperCase());
+                        if (databaseHelper.checkStation(stationName.getText().toString().toUpperCase())){
+                            Toast.makeText(mContext,getString(R.string.station_exists),Toast.LENGTH_SHORT).show();
+                        } else {
+                            // create new note
+                            insertValue(stationName.getText().toString().toUpperCase(), stationLocation.getText().toString().toUpperCase());
+                            Toast.makeText(mContext,getString(R.string.station_registered),Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             });
@@ -303,6 +308,7 @@ public class HomeFragment extends Fragment{
             }
         }.execute();
     }
+
 
     @Override
     public void onDestroyView() {

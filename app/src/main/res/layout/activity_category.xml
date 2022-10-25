@@ -18,16 +18,74 @@
         android:id="@+id/category_view"
         layout="@layout/content_category_fragment" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/categoryRegister"
+    <RelativeLayout
+        android:id="@+id/relative"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="67dp"
+        android:orientation="horizontal"
+        android:gravity="center"
         android:layout_gravity="bottom|start"
-        android:onClick="addCategory"
-        android:layout_margin="@dimen/fab_margin"
-        android:backgroundTint="#6AA570"
-        app:srcCompat="@drawable/ic_add_white"
-        android:contentDescription="Click me to add a new category." />
+        android:layout_margin="@dimen/fab_margin">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/categoryRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="addCategory"
+            android:backgroundTint="#006AA570"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            app:maxImageSize="67dp"
+            app:elevation="0dp"
+            app:srcCompat="@drawable/add_category"
+            android:contentDescription="Click me to add a new category." />
+        <TextView
+            android:id="@+id/textViewCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:text="  ADD CATEGORY  "
+            android:layout_marginStart="0dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#000000"
+            android:textSize="8sp"
+            android:textStyle="bold"
+            android:layout_marginTop="0dp"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="67dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_gravity="bottom|end"
+        android:visibility="gone"
+        android:layout_margin="@dimen/fab_margin">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/itemRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:onClick="addItem"
+            android:backgroundTint="#006AA570"
+            app:maxImageSize="67dp"
+            app:srcCompat="@drawable/add_item"
+            app:elevation="0dp"
+            android:contentDescription="Click me to add a new item." />
+        <TextView
+            android:id="@+id/textViewItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:text="  ADD ITEM  "
+            android:layout_marginTop="0dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#000000"
+            android:textSize="9sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/sellCard"
@@ -35,10 +93,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:layout_margin="@dimen/fab_margin"
-        android:backgroundTint="#C38888"
+        android:visibility="gone"
+        android:backgroundTint="#00C38888"
         android:onClick="actionSell"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="5dp">
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -51,7 +110,7 @@
                 android:layout_height="30dp"
                 android:layout_gravity="center"
                 android:gravity="center"
-                app:srcCompat="@drawable/sellicon" />
+                app:srcCompat="@drawable/ic_baseline_shopping_cart_checkout_24" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -60,22 +119,11 @@
                 android:layout_marginStart="5dp"
                 android:fontFamily="sans-serif-black"
                 android:gravity="center"
-                android:text="  SELL  "
+                android:text="  CART  "
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#000000"
                 android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/itemRegister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:onClick="addItem"
-        android:layout_margin="@dimen/fab_margin"
-        android:backgroundTint="#6AA570"
-        app:srcCompat="@drawable/ic_add_white"
-        android:contentDescription="Click me to add a new item." />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

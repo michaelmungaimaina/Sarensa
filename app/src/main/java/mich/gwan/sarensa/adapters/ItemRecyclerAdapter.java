@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -35,43 +37,64 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
     private int index = RecyclerView.NO_POSITION;
     private CartAdapterCallback listener;
     private Context context;
+    private OnItemClickListener onItemClickListener;
     private int count;
 
-    public ItemRecyclerAdapter(List<Item> list) {
+    public ItemRecyclerAdapter( List<Item> list) {
+        //this.context = context;
         this.list = list;
     }
 
+    public void setOnItemClickListener (OnItemClickListener onItemClickListener){
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public interface  OnItemClickListener{
+        void onClick(int position);
+    }
+
+    @NonNull
     @Override
     public ItemRecyclerAdapter.ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // inflating recycler item view
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_recycler, parent, false);
         context = parent.getContext();
-        return new ItemRecyclerAdapter.ItemViewHolder(itemView);
+        return new ItemRecyclerAdapter.ItemViewHolder(itemView,onItemClickListener);
     }
 
     @Override
     public void onBindViewHolder(ItemRecyclerAdapter.ItemViewHolder holder, @SuppressLint("RecyclerView") int position) {
         char firstChar = list.get(position).getItemName().charAt(0);
         holder.itemName.setText(list.get(position).getItemName());
-        holder.quantity.setText(String.valueOf(list.get(position).getItemQnty()));
         holder.buyPrice.setText(String.valueOf(list.get(position).getBuyPrice()));
         holder.sellPrice.setText(String.valueOf(list.get(position).getSellPrice()));
         holder.textInitial.setText(String.valueOf(firstChar));
+        holder.textWarning.setText("");
+        holder.textWarning.setTextColor(Color.TRANSPARENT);
+        holder.textWarning.setBackgroundColor(Color.TRANSPARENT);
         // declare and initialize databashelper object
-        DatabaseHelper databaseHelper = new DatabaseHelper(holder.itemView.getContext());
-        SaleCategoryViewActivity saleCategoryViewActivity = new SaleCategoryViewActivity();
+        //DatabaseHelper databaseHelper = new DatabaseHelper(holder.itemView.getContext());
+        DatabaseHelper databaseHelper = new DatabaseHelper(context);
 
-        holder.itemView.setSelected(index == position);
         //check if the item exists in cart and set its count value
         if (databaseHelper.checkCart(list.get(position).getStationName(),
                 list.get(position).getCategoryName(),list.get(position).getItemName())){
             holder.count.setText(String.valueOf(databaseHelper.getCartQnty(
                     list.get(position).getStationName(),list.get(position).getCategoryName(),
                     list.get(position).getItemName())));
+            holder.quantity.setText(String.valueOf(databaseHelper.getItemQnty(list.get(position).getStationName(),list.get(position).getCategoryName(),
+                    list.get(position).getItemName())));
+            // assign count
+            count = databaseHelper.getItemQnty(list.get(position).getStationName(),list.get(position).getCategoryName(),
+                    list.get(position).getItemName()) + 1 - databaseHelper.getCartQnty(list.get(position).getStationName(),
+                    list.get(position).getCategoryName(), list.get(position).getItemName());
             //holder.count.setText(String.valueOf(counter));
         }else {
             holder.count.setText(String.valueOf(0));
+            holder.quantity.setText(String.valueOf(list.get(position).getItemQnty()));
+            count = databaseHelper.getItemQnty(list.get(position).getStationName(),list.get(position).getCategoryName(),
+                    list.get(position).getItemName()) + 1;
         }
         //change background color if remaining qnty is < 5
         if (databaseHelper.getItemQnty(list.get(position).getStationName(),list.get(position).getCategoryName(),
@@ -85,75 +108,28 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
             holder.itemName.setTextColor(Color.BLACK);
             holder.textInitial.setTextColor(Color.BLACK);
         }
-        List<Cart> cart = new ArrayList<>();
-        count = databaseHelper.getItemQnty(list.get(position).getStationName(),list.get(position).getCategoryName(),
-                list.get(position).getItemName()) + 1;
-        // perform sale
-        holder.cardSell.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // add item to cart
-                count--;
-                if (count >= 1) {
-                    Cart par = new Cart();
-                    par.setStationName(list.get(position).getStationName());
-                    par.setCategoryName(list.get(position).getCategoryName());
-                    par.setItemName(list.get(position).getItemName());
-                    par.setBuyPrice(list.get(position).getBuyPrice());
-                    par.setSellPrice(list.get(position).getSellPrice());
-                    if (!databaseHelper.checkCart(list.get(position).getStationName(), list.get(position).getCategoryName(),
-                            list.get(position).getItemName())) {
-                        //add 1 quantity
-                        par.setItemQnty(1);
-                        databaseHelper.addCart(par);
-                        holder.count.setText(String.valueOf(databaseHelper.getCartQnty(
-                                list.get(position).getStationName(), list.get(position).getCategoryName(),
-                                list.get(position).getItemName())));
-                        //create data
-                        //cart.clear();
-                        //cart.addAll(databaseHelper.getAllCat(list.get(position).getStationName()));
-                        //listener.onMethodCall(cart);
-                        int qnty = databaseHelper.getCartQnty(list.get(position).getStationName(),
-                                list.get(position).getCategoryName(), list.get(position).getItemName()) + 1;
-                        //set new qnty value
-                        par.setItemQnty(qnty);
-                        // update quantity instead
-                        databaseHelper.updateQuantity(par);
-                        //update count
-                        holder.count.setText(String.valueOf(databaseHelper.getCartQnty(
-                                list.get(position).getStationName(), list.get(position).getCategoryName(),
-                                list.get(position).getItemName())));
-                    }
-                    } else {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            holder.textWarning.setText("");
-                            holder.textWarning.setTextColor(Color.TRANSPARENT);
-                            holder.textWarning.setBackgroundColor(Color.TRANSPARENT);
-                        }
-                    }, 3000);
-                    holder.textWarning.setText("Stock is depleted, Kindly add stock!");
-                    holder.textWarning.setTextColor(Color.WHITE);
-                    holder.textWarning.setBackgroundColor(Color.RED);
-                }
-            }
-        });
+
+        holder.itemView.setSelected(index == position);
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public boolean onLongClick(View view) {
                 index = holder.getLayoutPosition();
-                notifyItemChanged(index);
+                //notifyItemChanged(index);
+                notifyDataSetChanged();
                 return true;
             }
         });
         holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View view) {
                 index = holder.getLayoutPosition();
-                notifyItemChanged(index);
+                //notifyItemChanged(index);
+                notifyDataSetChanged();
             }
         });
+
     }
 
     @Override
@@ -166,7 +142,7 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
     /**
      * ViewHolder class
      */
-    public class ItemViewHolder extends RecyclerView.ViewHolder {
+    public class ItemViewHolder extends RecyclerView.ViewHolder{
 
         public TextView itemName;
         public TextView count;
@@ -178,10 +154,9 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
         public CardView inner;
         public CardView outer;
         public CardView cardSell;
-        public AppCompatCheckBox checkBox;
         private final SaleCategoryViewActivity saleActivity;
 
-        public ItemViewHolder(View view) {
+        public ItemViewHolder(View view, OnItemClickListener onItemClickListener) {
             super(view);
             itemName = view.findViewById(R.id.itemName);
             quantity = view.findViewById(R.id.textItemQuantity);
@@ -193,8 +168,11 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
             cardSell = view.findViewById(R.id.cardSell);
             count = view.findViewById(R.id.textCount);
             outer = view.findViewById(R.id.cardInitialOuter);
-            checkBox = view.findViewById(R.id.categoryCheckBox);
             saleActivity = new SaleCategoryViewActivity();
+
+            cardSell.setOnClickListener(v -> onItemClickListener.onClick(getAdapterPosition()));
         }
+
+
     }
 }

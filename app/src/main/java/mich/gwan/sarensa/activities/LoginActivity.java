@@ -1,8 +1,12 @@
 package mich.gwan.sarensa.activities;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.InflateException;
 import android.view.View;
@@ -11,6 +15,7 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -45,7 +50,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextInputEditText textInputEditTextSpinner;
 
     private AppCompatButton appCompatButtonLogin;
-    private AppCompatImageView icon;
 
     private AppCompatTextView textViewLinkRegister;
 
@@ -53,6 +57,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private DatabaseHelper databaseHelper;
     private InformationApi informationApi;
     private AppCompatSpinner spinner;
+
+    public static final String SHARED_PREFS = "shared_prefs";
+    public static final String EMAIL_KEY = "email_key";
+    public static final String PASSWORD_KEY = "password_key";
+    public static final String USER_TYPE_KEY = "user_type_key";
+    SharedPreferences sharedPreferences;
+    String email, userType, password;
 
 
     @Override
@@ -103,7 +114,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         textViewLinkRegister = findViewById(R.id.textViewLinkRegister);
 
         spinner = findViewById(R.id.spinner);
-        icon = findViewById(R.id.icon);
     }
 
     /**
@@ -121,6 +131,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         inputValidation = new InputValidation(activity);
         databaseHelper = new DatabaseHelper(this);
         informationApi = new InformationApi();
+        sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+        email = sharedPreferences.getString(EMAIL_KEY,null);
+        userType = sharedPreferences.getString(USER_TYPE_KEY,null);
+        password = sharedPreferences.getString(PASSWORD_KEY, null);
 
     }
 
@@ -168,18 +182,63 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         @Override
                         public void run() {
                             // your code here
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            Intent intent;
+                            intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                            startActivity(intent);
                         }
                     },
                     1000
             );
             informationApi.snackBar(nestedScrollView, "Session opened Successfully!", Color.MAGENTA);
+            @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPreferences.edit();
+            // put values for password, email and usertype
+            editor.putString(EMAIL_KEY, textInputEditTextEmail.getText().toString());
+            editor.putString(PASSWORD_KEY, textInputEditTextPassword.getText().toString());
+            editor.putString(USER_TYPE_KEY, spinner.getSelectedItem().toString());
+            // save data with key and value
+            editor.apply();
+            // clear fields
             emptyInputEditText();
 
         } else {
             // Snack Bar to show message that record is wrong
             informationApi.snackBar(nestedScrollView, "Invalid Email or Password!", Color.RED);
         }
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        if (email != null && password != null && userType != null){
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        }
+    }
+
+    private Boolean exit = false;
+
+    /**
+     * exit app
+     */
+    @Override
+    public void onBackPressed() {
+        if (exit) {
+            finish(); // finish activity
+        } else {
+            Toast.makeText(this, "Press Back again to Exit.",
+                    Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    exit = false;
+                }
+            }, 3 * 1000);
+
+        }
+
     }
 
     /**

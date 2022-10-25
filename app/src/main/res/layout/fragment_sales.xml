@@ -9,68 +9,18 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.sale.SaleFragment"
     tools:showIn="@layout/activity_sale">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#011B17">
-        <ImageView
-            android:id="@+id/iconBack"
-            android:layout_width="50dp"
-            android:layout_height="20dp"
-            android:gravity="center"
-            app:srcCompat="@drawable/android_icon" />
-    </LinearLayout>
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="#011B17"
+        android:layout_height="20dp"
+        android:background="#00011B17"
         android:gravity="center"
         android:orientation="vertical">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="0dp"
-            android:src="@drawable/serensa_logo" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingStart="0dp"
-            android:paddingLeft="0dp"
-            android:paddingTop="0dp">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="200dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="5dp"
-                android:src="@drawable/serensa_name" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="76dp"
-                android:layout_height="16dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="5dp"
-                android:paddingTop="0dp"
-                android:paddingBottom="2dp"
-                android:src="@drawable/serensa_ltd" />
-
-
-        </LinearLayout>
-
-
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-black"
             android:text="SALES INFORMATION"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/black"
             android:textSize="14sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -80,6 +30,7 @@
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="2dp">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -115,48 +66,40 @@
                 app:layout_constraintStart_toEndOf="@+id/froDatePicker"
                 app:layout_constraintTop_toTopOf="parent" />
 
+
             <EditText
                 android:id="@+id/catEditText"
                 android:layout_width="80dp"
                 android:layout_height="20dp"
-                android:layout_gravity="start"
-                android:background="@color/colorText"
-                android:gravity="start"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
                 android:hint="Category"
-                android:textColor="#020202"
-                android:textSize="10sp"
+                android:inputType="textCapSentences|textMultiLine"
+                android:lines="1"
+                android:textSize="11sp"
+                android:layout_gravity="start"
                 android:layout_marginStart="15dp"
-                app:layout_constraintEnd_toStartOf="@+id/cardRerieve"
+                app:layout_constraintEnd_toStartOf="@+id/itemEditText"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/toDatePicker"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardRerieve"
-                android:layout_width="90dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="10dp"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/catEditText"
-                app:cardBackgroundColor="#0B5902"
-                app:cardCornerRadius="0dp"
-                app:cardElevation="0dp">
+                app:layout_constraintTop_toTopOf="parent"/>
 
                 <EditText
                     android:id="@+id/itemEditText"
-                    android:layout_width="match_parent"
+                    android:layout_width="90dp"
                     android:layout_height="match_parent"
-                    android:layout_gravity="start"
-                    android:background="@color/colorText"
-                    android:gravity="start"
+                    android:background="@android:color/transparent"
+                    android:gravity="center_vertical"
                     android:hint="Item Name"
-                    android:textColor="#020202"
-                    android:textSize="10sp"/>
-            </androidx.cardview.widget.CardView>
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:lines="1"
+                    android:textSize="11sp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="10dp"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/catEditText"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>

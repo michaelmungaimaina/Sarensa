@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_margin"
     android:paddingRight="@dimen/activity_margin"
     android:paddingTop="@dimen/activity_margin">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <TextView android:id="@+id/dialog_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dimen_10"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="sans-serif-black"
         android:lineSpacingExtra="8sp"
         android:text="Update Details"
         android:textStyle="normal" />
@@ -19,61 +25,105 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dimen_10"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="sans-serif-black"
         android:lineSpacingExtra="8sp"
-        android:text="Name"
+        android:text="NAME:"
         android:textSize="15sp"
         android:textStyle="normal" />
     <EditText
-        android:id="@+id/name"
+        android:id="@+id/editTextName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:gravity="top"
-        android:hint="name"
+        android:text="name"
+        android:textColor="#8C8B8B"
         android:inputType="textCapSentences|textMultiLine"
         android:lines="1" />
-
+    <TextView
+        android:id="@+id/user_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dimen_10"
+        android:fontFamily="sans-serif-black"
+        android:lineSpacingExtra="8sp"
+        android:text="USER TYPE:"
+        android:textSize="15sp"
+        android:textStyle="normal" />
+    <EditText
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:gravity="top"
+        android:text="user type"
+        android:textColor="#8C8B8B"
+        android:inputType="textCapSentences|textMultiLine"
+        android:lines="1" />
 
     <TextView
         android:id="@+id/bp_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dimen_10"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="sans-serif-black"
         android:lineSpacingExtra="8sp"
-        android:text="Email"
+        android:text="EMAIL:"
         android:textSize="15sp"
         android:textStyle="normal" />
 
     <EditText
-        android:id="@+id/note"
+        android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:gravity="top"
-        android:hint="email"
+        android:text="email"
+        android:textColor="#8C8B8B"
         android:inputType="textCapSentences|textMultiLine"
+        android:lines="1" />
+    <TextView
+        android:id="@+id/phne"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dimen_10"
+        android:fontFamily="sans-serif-black"
+        android:lineSpacingExtra="8sp"
+        android:text="PHONE NO:"
+        android:textSize="15sp"
+        android:textStyle="normal" />
+
+    <EditText
+        android:id="@+id/editTextPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:gravity="top"
+        android:text="phone"
+        android:textColor="#8C8B8B"
+        android:inputType="numberDecimal"
         android:lines="1" />
 <TextView
         android:id="@+id/sp_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dimen_10"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="sans-serif-black"
         android:lineSpacingExtra="8sp"
-        android:text="Password"
+        android:text="PASSWORD: "
         android:textSize="15sp"
         android:textStyle="normal" />
 
     <EditText
-        android:id="@+id/sell_p"
+        android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:gravity="top"
-        android:hint="password"
-        android:inputType="textCapSentences|textMultiLine"
+        android:text="password"
+        android:textColor="#8C8B8B"
+        android:inputType="textCapSentences"
         android:lines="1" />
 
 </LinearLayout>
+</ScrollView>

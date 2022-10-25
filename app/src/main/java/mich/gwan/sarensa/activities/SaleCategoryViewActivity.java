@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
 import android.text.InputType;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -14,7 +13,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +31,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import mich.gwan.sarensa.R;
@@ -40,7 +42,6 @@ import mich.gwan.sarensa.adapters.ItemRecyclerAdapter;
 import mich.gwan.sarensa.databinding.ActivityCategoryBinding;
 import mich.gwan.sarensa.helpers.InputValidation;
 import mich.gwan.sarensa.helpers.RecyclerTouchListener;
-import mich.gwan.sarensa.interfaces.CartAdapterCallback;
 import mich.gwan.sarensa.model.Cart;
 import mich.gwan.sarensa.model.Category;
 import mich.gwan.sarensa.model.Item;
@@ -48,31 +49,32 @@ import mich.gwan.sarensa.model.Sales;
 import mich.gwan.sarensa.model.TempCart;
 import mich.gwan.sarensa.sql.DatabaseHelper;
 
-public class SaleCategoryViewActivity extends AppCompatActivity implements AdapterCallback {
+public class SaleCategoryViewActivity extends AppCompatActivity {
     private RecyclerView recyclerViewCat;
     private RecyclerView recyclerViewItem;
     private final AppCompatActivity activity = SaleCategoryViewActivity.this;
     private List<Category> listCat;
     private List<Item> listItem;
     public List<Sales> salesList;
-    public List<TempCart> cartList;
     public List<Cart> catList;
     private DatabaseHelper databaseHelper;
     private CategoryRecyclerAdapter categoryRecyclerAdapter;
     private CartRecyclerAdapter cartRecyclerAdapter;
     private ItemRecyclerAdapter itemRecyclerAdapter;
+    //private ItemListAdapter itemLIstAdapter;
     private InputValidation inputValidation;
     private ActivityCategoryBinding binding;
-    private AppCompatImageView iconBack;
     private AppCompatTextView stationName;
     private AppCompatTextView emptyCategory;
     private AppCompatTextView emptyItem;
     private FloatingActionButton catRegister;
     private FloatingActionButton itemRegister;
+    private RelativeLayout relativeLayout;
     private CardView sellCard;
     private Intent intent;
     public  String myStation;
     public  String myCategory;
+    HashMap<String,Integer> cartPosition;
 
     protected void onCreate(Bundle savedInstanceState){
         try{
@@ -82,7 +84,6 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
         //getSupportActionBar().setTitle("Gas Transactions");
         initViews();
         initobjects();
-        actionEvents();
         //setListItem(listItem);
         Window window = this.getWindow();
         window.setStatusBarColor(this.getResources().getColor(R.color.window));
@@ -92,11 +93,6 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
             // generic exception handling
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onMethodCallback(String id) {
-        this.myCategory = id;
     }
     /**
     @Override
@@ -109,13 +105,13 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
     private  void initViews(){
         recyclerViewCat = binding.categoryView.recyclerCategory;
         recyclerViewItem = binding.categoryView.recyclerItem;
-        iconBack = binding.categoryView.iconBack;
         stationName = binding.categoryView.textViewStationName;
         catRegister = binding.categoryRegister;
         itemRegister = binding.itemRegister;
         emptyCategory = binding.categoryView.noCatTextView;
         emptyItem = binding.categoryView.noItemTextView;
         sellCard = binding.sellCard;
+        relativeLayout = binding.relativeLayout;
     }
 
     /**
@@ -128,11 +124,13 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
         listCat = new ArrayList<>();
         listItem = new ArrayList<>();
         salesList = new ArrayList<>();
-        cartList = new ArrayList<>();
         catList = new ArrayList<>();
-        itemRecyclerAdapter = new ItemRecyclerAdapter(listItem);
+        // maintain cart with position
+        cartPosition = new HashMap<String,Integer>();
+        itemRecyclerAdapter = new ItemRecyclerAdapter( listItem);
+        //itemLIstAdapter = new ItemListAdapter(this,R.layout.item_recycler,listItem);
         cartRecyclerAdapter = new CartRecyclerAdapter(catList);
-        categoryRecyclerAdapter = new CategoryRecyclerAdapter(listCat, this);
+        categoryRecyclerAdapter = new CategoryRecyclerAdapter(listCat);
         inputValidation = new InputValidation(activity);
 
         RecyclerView.LayoutManager catLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -141,12 +139,19 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
         recyclerViewCat.setHasFixedSize(true);
         recyclerViewCat.setAdapter(categoryRecyclerAdapter);
 
-        RecyclerView.LayoutManager itemLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerViewItem.setLayoutManager(itemLayoutManager);
-        recyclerViewItem.setItemAnimator(new DefaultItemAnimator());
-        recyclerViewItem.setHasFixedSize(true);
-        recyclerViewItem.setAdapter(itemRecyclerAdapter);
 
+        RecyclerView.LayoutManager itemLayoutManager = new LinearLayoutManager(getApplicationContext());
+         recyclerViewItem.setLayoutManager(itemLayoutManager);
+         recyclerViewItem.setItemAnimator(new DefaultItemAnimator());
+         recyclerViewItem.setHasFixedSize(true);
+         recyclerViewItem.setAdapter(itemRecyclerAdapter);
+
+         /* *
+         * Attach adapter to listview
+         */
+        //recyclerViewItem.setAdapter(itemLIstAdapter);
+        itemRecyclerAdapter.setOnItemClickListener(position -> addToCart(position));
+        cartRecyclerAdapter.setOnItemClickListener(position -> removeFromCart(position));
         /**
          * On long press on RecyclerView item, open alert dialog
          * with options to choose
@@ -157,8 +162,9 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
                 recyclerViewCat, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, final int position) {
-                //myCategory = listCat.get((int) recyclerViewCat.getChildViewHolder(view).getItemId()).getCategoryName();
+                myCategory = listCat.get(position).getCategoryName();
                 listItem.clear();
+                showAddFAB();
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     public void run() {
@@ -173,15 +179,15 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
                 showActionsDialog(position);
             }
         }));
-        // action for item model recycler
+        /**
+         * action for item model recycler
+        **/
+
         recyclerViewItem.addOnItemTouchListener(new RecyclerTouchListener(activity,
                 recyclerViewItem, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 toggleSellCardView();
-                // add data to cart
-
-
             }
 
             @Override
@@ -198,6 +204,122 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
+    private void removeFromCart(int position) {
+            int count = databaseHelper.getCartQnty(catList.get(position).getStationName(),
+                    catList.get(position).getCategoryName(), catList.get(position).getItemName());
+        // create new item parameter
+        Item parr = new Item();
+        parr.setStationName(catList.get(position).getStationName());
+        parr.setCategoryName(catList.get(position).getCategoryName());
+        parr.setItemName(catList.get(position).getItemName());
+        parr.setBuyPrice(catList.get(position).getBuyPrice());
+        parr.setSellPrice(catList.get(position).getSellPrice());
+            count--;
+            if (count >= 1) {
+                Cart par = new Cart();
+                par.setStationName(catList.get(position).getStationName());
+                par.setCategoryName(catList.get(position).getCategoryName());
+                par.setItemName(catList.get(position).getItemName());
+                par.setBuyPrice(catList.get(position).getBuyPrice());
+                par.setSellPrice(catList.get(position).getSellPrice());
+                par.setItemQnty(count);
+                // update new cart quantity
+                databaseHelper.updateQuantity(par);
+                // get existing item quantity
+                int itemQnty = databaseHelper.getItemQnty(catList.get(position).getStationName(),
+                        catList.get(position).getCategoryName(), catList.get(position).getItemName());
+                // add 1 to the new item quantity parameter
+                parr.setItemQnty(itemQnty + 1);
+                // update the item par on the database
+                databaseHelper.updateItemQnty(parr);
+                // Notify adapter
+                cartRecyclerAdapter.notifyDataSetChanged();
+                // update the arrayList
+                catList.set(position, par);
+                // show toast
+                Toast.makeText(this, "Quantity Reduced!", Toast.LENGTH_SHORT).show();
+            } else {
+                // get existing item quantity
+                int itemQnty = databaseHelper.getItemQnty(catList.get(position).getStationName(),
+                        catList.get(position).getCategoryName(), catList.get(position).getItemName());
+                // add 1 to the new item quantity parameter
+                parr.setItemQnty(itemQnty + 1);
+                // update the item par on the database
+                databaseHelper.updateItemQnty(parr);
+                  // delete cart entry from database
+                  databaseHelper.deleteCart(catList.get(position).getStationName(),
+                          catList.get(position).getCategoryName(), catList.get(position).getItemName());
+                  // remove cart entry from list
+                  catList.remove(position);
+                  cartRecyclerAdapter.notifyItemChanged(position);
+                  Toast.makeText(this, "Item Removed!", Toast.LENGTH_SHORT).show();
+                  //notifyDataSetChanged();
+            }
+
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void addToCart(int position) {
+        //int position = holder.getLayoutPosition();
+        // add item to cart
+        int count = databaseHelper.getItemQnty(listItem.get(position).getStationName(),
+                listItem.get(position).getCategoryName(), listItem.get(position).getItemName());
+        count--;
+        if (count >= 0) {
+            Item parr = new Item();
+            parr.setStationName(listItem.get(position).getStationName());
+            parr.setCategoryName(listItem.get(position).getCategoryName());
+            parr.setItemName(listItem.get(position).getItemName());
+            parr.setBuyPrice(listItem.get(position).getBuyPrice());
+            parr.setSellPrice(listItem.get(position).getSellPrice());
+            Cart par = new Cart();
+            par.setStationName(listItem.get(position).getStationName());
+            par.setCategoryName(listItem.get(position).getCategoryName());
+            par.setItemName(listItem.get(position).getItemName());
+            par.setBuyPrice(listItem.get(position).getBuyPrice());
+            par.setSellPrice(listItem.get(position).getSellPrice());
+            if (!databaseHelper.checkCart(listItem.get(position).getStationName(), listItem.get(position).getCategoryName(),
+                    listItem.get(position).getItemName())) {
+                //add 1 quantity
+                par.setItemQnty(1);
+                databaseHelper.addCart(par);
+                int qnty = databaseHelper.getItemQnty(listItem.get(position).getStationName(),
+                        listItem.get(position).getCategoryName(), listItem.get(position).getItemName());
+                // less 1 quantity from items
+                parr.setItemQnty(qnty-1);
+                // update values
+                databaseHelper.updateItemQnty(parr);
+                // notify adapter
+                itemRecyclerAdapter.notifyItemChanged(position);
+
+            } else {
+                // get existing cart quantity
+                int qnty = databaseHelper.getCartQnty(listItem.get(position).getStationName(),
+                        listItem.get(position).getCategoryName(), listItem.get(position).getItemName());
+                //set new qnty value
+                par.setItemQnty(qnty + 1);
+                // update quantity instead
+                databaseHelper.updateQuantity(par);
+                int quanty = databaseHelper.getItemQnty(listItem.get(position).getStationName(),
+                        listItem.get(position).getCategoryName(), listItem.get(position).getItemName());
+                // less 1 quantity from items
+                parr.setItemQnty(quanty-1);
+                // update values
+                databaseHelper.updateItemQnty(parr);
+                itemRecyclerAdapter.notifyDataSetChanged();
+                //itemRecyclerAdapter.notifyItemChanged(position);
+            }
+        } else {
+            Toast.makeText(this, "Stock is Depleted, Kindly update Stock", Toast.LENGTH_SHORT).show();
+            System.out.println("OUT OF STOCK. PLEASE UPDATE STOCK");
+            //itemRecyclerAdapter.notifyItemChanged(position);
+            itemRecyclerAdapter.notifyDataSetChanged();
+        }
+        toggleSellCardView();
+    }
+
+
     /**
      * handle events
      */
@@ -210,15 +332,20 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
 
     }
 
+    /**
+     * onClick event to show add category dialog
+     * @param view floating action button that is clicked
+     */
     public void addCategory(View view) {
-        showNoteDialog(false, null, -1);
+        showCategoryDialog(false, null, -1);
     }
+
+    /**
+     * onClick event to navigate back to main view
+     * @param view backbutton to be clicked
+     */
     public void navigateBack(View view) {
         activity.finish();
-    }
-    private void actionEvents(){
-        //itemRegister.setVisibility(View.GONE);
-
     }
     /**
      * Inserting new value in db
@@ -232,9 +359,6 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
         par.setCategoryName(catName);
         par.setStationName(station);
         databaseHelper.addCategory(par);
-        //long id = db.insertNote(station, location);
-        // get the newly inserted note from db
-        //Station n = db.getNote(id);
 
         // adding new values to array list at 0 position
         listCat.add(0, par);
@@ -254,9 +378,6 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
         par.setBuyPrice(Integer.parseInt(buyPrice));
         par.setSellPrice(Integer.parseInt(sellPrice));
         databaseHelper.addItem(par);
-        //long id = db.insertNote(station, location);
-        // get the newly inserted note from db
-        //Station n = db.getNote(id);
 
         // adding new values to array list at 0 position
         listItem.add(0, par);
@@ -295,6 +416,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
         databaseHelper.updateItem(par);
         // refreshing the list
         listItem.set(position, par);
+        //itemLIstAdapter.notifyDataSetChanged();
         itemRecyclerAdapter.notifyItemChanged(position);
 
         toggleItemViews();
@@ -318,6 +440,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
         databaseHelper.deleteItem(listItem.get(position));
         // removing value from the list
         listItem.remove(position);
+        //itemLIstAdapter.notifyDataSetChanged();
         itemRecyclerAdapter.notifyItemRemoved(position);
 
         toggleItemViews();
@@ -337,7 +460,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) {
-                    showNoteDialog(true, listCat.get(position), position);
+                    showCategoryDialog(true, listCat.get(position), position);
                 } else {
                     deleteValue(position);
                 }
@@ -370,7 +493,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
      * when shouldUpdate=true, it automatically displays old value and changes the
      * button text to UPDATE
      */
-    private void showNoteDialog(final boolean shouldUpdate, final Category category, final int position) {
+    private void showCategoryDialog(final boolean shouldUpdate, final Category category, final int position) {
         try {
             LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getApplicationContext());
             View view = layoutInflaterAndroid.inflate(R.layout.category_dialog, null);
@@ -412,8 +535,6 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
                     if (!inputValidation.isEditTextOccupied(categoryName, getString(R.string.error_message_category))) {
                         categoryName.requestFocus();
                         return;
-                    } else {
-                        alertDialog.dismiss();
                     }
 
                     // check if user is updating values
@@ -421,9 +542,21 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
                         // update values by it's position
                         updateValue(stationName.getText().toString().toUpperCase(),
                                 categoryName.getText().toString().toUpperCase(), position);
+                        // toast succesful update
+                        Toast.makeText(activity,getString(R.string.category_update),Toast.LENGTH_SHORT).show();
+                        //dismiss dialog
+                        alertDialog.dismiss();
                     } else {
-                        // create new note
-                        insertValue(categoryName.getText().toString().toUpperCase(), myStation);
+                        if (databaseHelper.checkCategory(myStation,categoryName.getText().toString().toUpperCase())){
+                            Toast.makeText(activity,getString(R.string.category_exists),Toast.LENGTH_SHORT).show();
+                        } else {
+                            // create new note
+                            insertValue(categoryName.getText().toString().toUpperCase(), myStation);
+                            // notify successful registration
+                            Toast.makeText(activity,getString(R.string.category_registered),Toast.LENGTH_SHORT).show();
+                            // clear fields
+                            categoryName.setText("");
+                        }
                     }
                 }
             });
@@ -464,7 +597,9 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
             categoryName.setText(item.getCategoryName());
             categoryName.setInputType(InputType.TYPE_NULL);
             itemName.setText(item.getItemName());
-            currentQuantityText.setText(String.valueOf(item.getItemQnty()));
+            currentQuantityText.setText(String.valueOf(databaseHelper.getItemQnty(
+                    listItem.get(position).getStationName(),listItem.get(position).getCategoryName(),
+                    listItem.get(position).getItemName())));
             buyPrice.setText(String.valueOf(item.getBuyPrice()));
             sellPrice.setText(String.valueOf(item.getSellPrice()));
             stationName.setText(item.getStationName());
@@ -490,10 +625,6 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
             @Override
             public void onClick(View v) {
                 // Show error message when no text is entered
-                //if(!inputValidation.isEditTextOccupied(categoryName,getString(R.string.error_message_category))){
-                //    categoryName.requestFocus();
-                //    return;
-                //}
                 if(!inputValidation.isEditTextOccupied(itemName,getString(R.string.error_message_item_name))){
                     itemName.requestFocus();
                     return;
@@ -510,9 +641,6 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
                     sellPrice.requestFocus();
                     return;
                 }
-                else {
-                    alertDialog.dismiss();
-                }
 
                 // check if user is updating values
                 if (shouldUpdate && item != null) {
@@ -521,12 +649,25 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
                     updateItem(stationName.getText().toString().toUpperCase(), categoryName.getText().toString().toUpperCase(),
                             itemName.getText().toString().toUpperCase(), String.valueOf(quantity),
                             buyPrice.getText().toString().toUpperCase(), sellPrice.getText().toString().toUpperCase(), position);
+                    //toast to notify successful update
+                    Toast.makeText(activity,getString(R.string.item_updated),Toast.LENGTH_SHORT).show();
+                    //dismiss dialog
+                    alertDialog.dismiss();
                 } else {
-                    currentQuantity.setHeight(0);
-                    currentQuantityText.setHeight(0);
-                    // create new note
-                    insertItem(itemName.getText().toString().toUpperCase(), newQuantity.getText().toString().toUpperCase(),
-                            buyPrice.getText().toString().toUpperCase(), sellPrice.getText().toString().toUpperCase());
+                    //check whether the item already exists
+                    if (databaseHelper.checkItem(myStation,myCategory,itemName.getText().toString().toUpperCase())){
+                        Toast.makeText(activity,getString(R.string.item_exists),Toast.LENGTH_SHORT).show();
+                    } else {
+                        // create new note
+                        insertItem(itemName.getText().toString().toUpperCase(), newQuantity.getText().toString().toUpperCase(),
+                                buyPrice.getText().toString().toUpperCase(), sellPrice.getText().toString().toUpperCase());
+                        // clear fields
+                        categoryName.setText("");
+                        itemName.setText("");
+                        newQuantity.setText("");
+                        buyPrice.setText("");
+                        sellPrice.setText("");
+                    }
                 }
             }
         });
@@ -565,7 +706,11 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
                         }
                     })
                     .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @SuppressLint("NotifyDataSetChanged")
                         public void onClick(DialogInterface dialogBox, int id) {
+                            //itemLIstAdapter.notifyDataSetChanged();
+                            itemRecyclerAdapter.notifyDataSetChanged();
+                            toggleSellCardView();
                             dialogBox.cancel();
                         }
                     });
@@ -593,39 +738,27 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
                         par.setItemName(catList.get(i).getItemName());
                         par.setItemQnty(catList.get(i).getItemQnty());
                         par.setSellPrice(catList.get(i).getSellPrice());
-                        par.setTotal(catList.get(i).getSellPrice());
+                        par.setTotal(total);
                         par.setProfit(profit);
                         // complete transactions
                         databaseHelper.addSale(par);
                         System.out.println("Sales completed!!!!!!!");
-
-                        //update affected quantities
-                        // arithmetically subtract
-                        int newQnty = databaseHelper.getItemQnty(myStation, catList.get(i).getCategoryName(),
-                                catList.get(i).getItemName()) - catList.get(i).getItemQnty();
-                        // set the values to the item object
-                        item.setItemQnty(newQnty);
-                        item.setItemName(catList.get(i).getItemName());
-                        item.setCategoryName(catList.get(i).getCategoryName());
-                        item.setStationName(myStation);
-                        // update database
-                        databaseHelper.updateItemQnty(item);
+                        Toast.makeText(activity, "Transaction Completed Successfully!", Toast.LENGTH_SHORT).show();
                         System.out.println("Data updated");
                     }
                     System.out.println("End of loop");
                     // delete cart table items
-                    databaseHelper.deleteCart();
+                    databaseHelper.deleteCart(myStation);
                     System.out.println("Table Cart cleared");
                     //clear list
                     catList.clear();
                     System.out.println("List cleared");
                     cartRecyclerAdapter.notifyDataSetChanged();
                     // remove button sell
-                    toggleSellCardView();
                     itemRecyclerAdapter.notifyDataSetChanged();
+                    toggleSellCardView();
                     dialog.cancel();
-                    System.out.println("Dialog dismissed");
-                    getItemsFromSQlite();
+                    //getItemsFromSQlite();
                 }
             });
         } catch (InflateException e){
@@ -634,27 +767,6 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
             e.printStackTrace();
         }
 
-    }
-
-    /**
-     * create a new cart list with updated category name and quantity
-     * @return cart list
-     *
-    public List<Cart> cart(){
-        Cart par = new Cart();
-        List<Cart> cart = new ArrayList<>();
-        for (int i = 0; i <cartList.size(); i++){
-            String category = databaseHelper.getCartCategory(myStation,cartList.get(i).getItemName());
-            int quantity = databaseHelper.getCartCount(myStation,category,cartList.get(i).getItemName());
-            par.setStationName(myStation);
-            par.setCategoryName(category);
-            par.setItemName(cartList.get(i).getItemName());
-            par.setItemQnty(quantity);
-            par.setBuyPrice(cartList.get(i).getBuyPrice());
-            par.setSellPrice(cartList.get(i).getSellPrice());
-            cart.add(par);
-        }
-        return cart;
     }
 
     /**
@@ -683,7 +795,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
      * Display sellcard if Cart has items
      */
     public void toggleSellCardView(){
-        if (databaseHelper.checkIfEmptyCart()) {
+        if (databaseHelper.checkIfEmptyCart(myStation)) {
             sellCard.setVisibility(View.GONE);
         }
         else {
@@ -695,8 +807,8 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
      * method to display item fab
      */
     public void showAddFAB(){
-        itemRegister.setVisibility(View.VISIBLE);
-        new Handler().postDelayed(() ->  itemRegister.setVisibility(View.GONE), 180000);
+        relativeLayout.setVisibility(View.VISIBLE);
+        new Handler().postDelayed(() -> relativeLayout.setVisibility(View.GONE), 5000);
     }
 
     /**
@@ -736,6 +848,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
+                //itemLIstAdapter.notifyDataSetChanged();
                 itemRecyclerAdapter.notifyDataSetChanged();
 
             }
@@ -756,7 +869,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Adapt
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                itemRecyclerAdapter.notifyDataSetChanged();
+                cartRecyclerAdapter.notifyDataSetChanged();
 
             }
         }.execute();

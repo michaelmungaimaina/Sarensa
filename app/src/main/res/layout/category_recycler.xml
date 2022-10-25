@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parentLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@drawable/selector_recyclerview">
     <androidx.cardview.widget.CardView
         android:id="@+id/cardCatInitialOuter"
         android:layout_height="35dp"
         android:layout_width="35dp"
-        app:cardBackgroundColor="#45FA05"
+        app:cardBackgroundColor="#5D75B1"
         android:layout_marginEnd="1dp"
         android:layout_marginStart="2dp"
         android:layout_marginBottom="1dp"
@@ -88,7 +88,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="AVAILABLE QUANTITY: "
+                        android:text="AVAILABLE VARIETY: "
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:textColor="#807B7B"
                         android:textSize="10sp" />

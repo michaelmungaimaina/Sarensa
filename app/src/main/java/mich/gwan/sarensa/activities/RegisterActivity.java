@@ -138,27 +138,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-
-    /**
-     * This implemented method is to listen the click on view
-     *
-     * @param
-     *
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-
-            case R.id.appCompatButtonRegister:
-                postDataToSQLite();
-                break;
-
-            case R.id.appCompatTextViewLoginLink:
-                finish();
-                break;
-        }
-    }/
-
     /**
      * This method is to validate the input text fields and post data to SQLite
      */
@@ -210,7 +189,7 @@ public class RegisterActivity extends AppCompatActivity {
             user.setUserPhone(textInputEditTextPhone.getText().toString().trim().toUpperCase());
             user.setUserEmail(textInputEditTextEmail.getText().toString().trim());
             user.setUserPassword(textInputEditTextPassword.getText().toString().trim());
-            user.setUserType(spinner.getSelectedItem().toString().toLowerCase());
+            user.setUserType(spinner.getSelectedItem().toString().toUpperCase());
             // insert to database
             databaseHelper.addUser(user);
             // display success message

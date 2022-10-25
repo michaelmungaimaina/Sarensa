@@ -51,6 +51,7 @@ import mich.gwan.sarensa.model.Item;
 import mich.gwan.sarensa.model.Sales;
 import mich.gwan.sarensa.pdf.PDFUtility;
 import mich.gwan.sarensa.sql.DatabaseHelper;
+import mich.gwan.sarensa.ui.home.HomeFragment;
 
 public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose {
     private RecyclerView recyclerView;
@@ -82,6 +83,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
         mContext=context;
     }
 
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -90,8 +92,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
 
         initViews();
         initobjects();
-       // buttonEvents();
-
+        buttonEvents();
         return root;
     }
 
@@ -122,18 +123,19 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        if (dayOfMonth < 10) {
-                            String strDate = year + "-" + (month + 1) + "-" + "0" + dayOfMonth;
+                        if (dayOfMonth < 10 && month < 9 ){
+                            String strDate = year + "-0" + (month + 1) + "-0" + dayOfMonth;
                             froDatePicker.setText(strDate);
                         }
-                        if (month < 9) {
+                        if (dayOfMonth < 10 && month >= 9){
+                            String strDate = year + "-" + (month + 1) + "-0" + dayOfMonth;
+                            froDatePicker.setText(strDate);
+                        }
+                        if (dayOfMonth >= 10 && month < 9){
                             String strDate = year + "-0" + (month + 1) + "-" + dayOfMonth;
                             froDatePicker.setText(strDate);
                         }
-                        if (month < 9 && dayOfMonth < 10) {
-                            String strDate = year + "-0" + (month + 1) + "-" + "0" + dayOfMonth;
-                            froDatePicker.setText(strDate);
-                        } else {
+                        if (dayOfMonth >= 10 && month >= 9){
                             String strDate = year + "-" + (month + 1) + "-" + dayOfMonth;
                             froDatePicker.setText(strDate);
                         }
@@ -172,18 +174,19 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        if (dayOfMonth < 10) {
-                            String strDate = year + "-" + (month + 1) + "-" + "0" + dayOfMonth;
+                        if (dayOfMonth < 10 && month < 9 ){
+                            String strDate = year + "-0" + (month + 1) + "-0" + dayOfMonth;
                             toDatePicker.setText(strDate);
                         }
-                        if (month < 9) {
+                        if (dayOfMonth < 10 && month >= 9){
+                            String strDate = year + "-" + (month + 1) + "-0" + dayOfMonth;
+                            toDatePicker.setText(strDate);
+                        }
+                        if (dayOfMonth >= 10 && month < 9){
                             String strDate = year + "-0" + (month + 1) + "-" + dayOfMonth;
                             toDatePicker.setText(strDate);
                         }
-                        if (month < 9 && dayOfMonth < 10) {
-                            String strDate = year + "-0" + (month + 1) + "-" + "0" + dayOfMonth;
-                            toDatePicker.setText(strDate);
-                        } else {
+                        if (dayOfMonth >= 10 && month >= 9){
                             String strDate = year + "-" + (month + 1) + "-" + dayOfMonth;
                             toDatePicker.setText(strDate);
                         }
@@ -362,16 +365,10 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
 
     @SuppressLint("StaticFieldLeak")
     private void buttonEvents(){
-        //search.setOnClickListener(new View.OnClickListener() {
-            //@SuppressLint("StaticFieldLeak")
-           // @Override
-           // public void onClick(View v) {}
-       // });
             if(Objects.equals(categoryEditText.getText().toString(), "") &&
                     Objects.equals(itemEditText.getText().toString(), "") &&
                     Objects.equals(spinner.getSelectedItem().toString(), "Select Station")) {
                 if (froDatePicker.getText() == "" && toDatePicker.getText() == ""){
-                    //textNetProfit.setText("mommy");
                     new AsyncTask<Void, Void, Void>() {
                         @SuppressLint("StaticFieldLeak")
                         @Override
@@ -432,31 +429,10 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
                 }
 
             }
-            else if (Objects.equals(categoryEditText.getText().toString(), "") &&
+            if (Objects.equals(categoryEditText.getText().toString(), "") &&
                     Objects.equals(itemEditText.getText().toString(), "") &&
                     !Objects.equals(spinner.getSelectedItem().toString(), "Select Station")) {
-                if(froDatePicker.getText() != "" && toDatePicker.getText() != "" ) {
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(@SuppressLint("StaticFieldLeak") Void... params) {
-                            list.clear();
-                            list.addAll(databaseHelper.getAllSalesBetween((String) froDatePicker.getText(),
-                                    (String) toDatePicker.getText(), spinner.getSelectedItem().toString().toUpperCase()));
-                            toDatePicker.setText("");
-                            return null;
-                        }
-
-                        @SuppressLint("NotifyDataSetChanged")
-                        @Override
-                        protected void onPostExecute(Void aVoid) {
-                            super.onPostExecute(aVoid);
-                            recyclerAdapter.notifyDataSetChanged();
-                            textNetProfit.setText(String.valueOf(prof()));
-                            textNetTotal.setText(String.valueOf(tot()));
-                        }
-                    }.execute();
-                }
-                else if(froDatePicker.getText() != "" && toDatePicker.getText() == "" ) {
+                if(froDatePicker.getText() != "" && toDatePicker.getText() == "" ) {
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(@SuppressLint("StaticFieldLeak") Void... params) {
@@ -477,9 +453,48 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
                         }
                     }.execute();
                 }
+                else if(froDatePicker.getText() != "" && toDatePicker.getText() != "" ) {
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(@SuppressLint("StaticFieldLeak") Void... params) {
+                            list.clear();
+                            list.addAll(databaseHelper.getAllSalesBetween((String) froDatePicker.getText(),
+                                    (String) toDatePicker.getText(), spinner.getSelectedItem().toString().toUpperCase()));
+                            toDatePicker.setText("");
+                            return null;
+                        }
 
+                        @SuppressLint("NotifyDataSetChanged")
+                        @Override
+                        protected void onPostExecute(Void aVoid) {
+                            super.onPostExecute(aVoid);
+                            recyclerAdapter.notifyDataSetChanged();
+                            textNetProfit.setText(String.valueOf(prof()));
+                            textNetTotal.setText(String.valueOf(tot()));
+                        }
+                    }.execute();
+                }
+                else if(froDatePicker.getText() == "" && toDatePicker.getText() == "" ) {
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(@SuppressLint("StaticFieldLeak") Void... params) {
+                            list.clear();
+                            list.addAll(databaseHelper.getAllStationSales((spinner.getSelectedItem().toString())));
+                            return null;
+                        }
+
+                        @SuppressLint("NotifyDataSetChanged")
+                        @Override
+                        protected void onPostExecute(Void aVoid) {
+                            super.onPostExecute(aVoid);
+                            recyclerAdapter.notifyDataSetChanged();
+                            textNetProfit.setText(String.valueOf(prof()));
+                            textNetTotal.setText(String.valueOf(tot()));
+                        }
+                    }.execute();
+                }
             }
-            else if (!Objects.equals(categoryEditText.getText().toString(), "") &&
+            if (!Objects.equals(categoryEditText.getText().toString(), "") &&
                     Objects.equals(itemEditText.getText().toString(), "") &&
                     !Objects.equals(spinner.getSelectedItem().toString(), "Select Station")){
                 if(froDatePicker.getText() != "" && toDatePicker.getText() != "" ) {
@@ -528,7 +543,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
                 }
 
             }
-            else if(Objects.equals(categoryEditText.getText().toString(), "") &&
+            if(Objects.equals(categoryEditText.getText().toString(), "") &&
                     !Objects.equals(itemEditText.getText().toString(), "") &&
                     !Objects.equals(spinner.getSelectedItem().toString(), "Select Station")){
                 if(froDatePicker.getText() != "" && toDatePicker.getText() != "" ) {
@@ -577,7 +592,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
                 }
 
             }
-            else if (!Objects.equals(categoryEditText.getText().toString(), "") &&
+           if (!Objects.equals(categoryEditText.getText().toString(), "") &&
                     !Objects.equals(itemEditText.getText().toString(), "") &&
                     !Objects.equals(spinner.getSelectedItem().toString(), "Select Station")){
                 if(froDatePicker.getText() != "" && toDatePicker.getText() != "" ) {
@@ -627,7 +642,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
 
 
             }
-            else if (!Objects.equals(categoryEditText.getText().toString(), "") &&
+            if (!Objects.equals(categoryEditText.getText().toString(), "") &&
                     Objects.equals(itemEditText.getText().toString(), "") &&
                     Objects.equals(spinner.getSelectedItem().toString(), "Select Station")){
                 if(froDatePicker.getText() != "" && toDatePicker.getText() != "" ) {
@@ -698,9 +713,6 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
         }.execute();
     }
 
-    public void actionSearch(View view) {
-        buttonEvents();
-    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();

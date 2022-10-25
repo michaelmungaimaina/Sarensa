@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/selector_recyclerview"
@@ -244,60 +244,27 @@
                     android:id="@+id/cardSell"
                     android:layout_height="match_parent"
                     android:layout_width="match_parent"
+                    android:focusable="false"
+                    android:layout_marginEnd="2dp"
                     app:cardBackgroundColor="#181918"
                     app:cardCornerRadius="0sp"
                     app:cardElevation="0dp">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:text="SELL"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="#FFFFFF"
-                        android:textSize="10sp" />
-                </androidx.cardview.widget.CardView>
-            </androidx.cardview.widget.CardView>
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardCheck"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginEnd="5dp"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/cardOilsView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:cardBackgroundColor="#00FAFAFA"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="15dp">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    app:cardBackgroundColor="#0093AC8B"
-                    app:cardCornerRadius="0dp"
-                    app:cardElevation="0dp">
-                    <androidx.appcompat.widget.AppCompatCheckBox
-                        android:id="@+id/itemCheckBox"
-                        android:layout_width="20dp"
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iconBack"
+                        android:layout_width="wrap_content"
                         android:layout_height="20dp"
-                        android:layout_gravity="center"
-                        android:visibility="gone"/>
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/add_to_cart" />
                 </androidx.cardview.widget.CardView>
             </androidx.cardview.widget.CardView>
-
         </LinearLayout>
-        <androidx.cardview.widget.CardView
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            app:cardBackgroundColor="#4E4D4D"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="15dp"/>
+            android:layout_height="1dp"
+            android:layout_marginBottom="2dp"
+            android:background="#B2C1F6"/>
     </LinearLayout>
     </LinearLayout>
     <TextView
@@ -322,5 +289,6 @@
         android:fontFamily="sans-serif-light"
         android:text="Kindly add Stock!"
         android:textColor="#00000000"
+        android:maxLines="1"
         android:textSize="10sp" />
 </RelativeLayout>

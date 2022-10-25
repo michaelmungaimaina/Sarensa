@@ -25,7 +25,7 @@
         android:id="@+id/cardInitialInner"
         android:layout_height="24dp"
         android:layout_width="24dp"
-        app:cardBackgroundColor="#78A16B"
+        app:cardBackgroundColor="#7F9877"
         android:layout_gravity="center"
         app:cardCornerRadius="17dp"
         app:cardElevation="0dp">
@@ -245,15 +245,13 @@
                     app:cardBackgroundColor="#181918"
                     app:cardCornerRadius="0sp"
                     app:cardElevation="0dp">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:text="REMOVE"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="#FFFFFF"
-                        android:textSize="10sp" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/remove_from_cart" />
                 </androidx.cardview.widget.CardView>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
@@ -288,17 +286,17 @@
         </LinearLayout>
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="2dp"
+            android:layout_height="1dp"
             android:layout_gravity="center"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
-            app:cardBackgroundColor="#4E4D4D"
+            app:cardBackgroundColor="#807E7E"
             app:cardCornerRadius="12dp"
             app:cardElevation="15dp"/>
     </LinearLayout>
     </LinearLayout>
-    <androidx.cardview.widget.CardView
+    <!--androidx.cardview.widget.CardView
         android:id="@+id/cardCount"
         android:layout_height="15dp"
         android:layout_width="15dp"
@@ -318,5 +316,5 @@
         android:text="00"
         android:textColor="#FFFFFF"
         android:textSize="10sp" />
-    </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView-->
 </RelativeLayout>

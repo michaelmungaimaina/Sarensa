@@ -41,7 +41,7 @@ public class PDFUtility {
     private static final Font FONT_LOGO_TEXT = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLDITALIC);
     private static final Font FONT_SIGN = new Font(Font.FontFamily.TIMES_ROMAN, 13, Font.BOLD);
     private static final Font FONT_DESIGN = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.ITALIC);
-    private static final Font FONT_MID_TEXT = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD, BaseColor.BLUE);
+    private static final Font FONT_MID_TEXT = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD, BaseColor.BLUE.darker());
 
     private static final Font FONT_CELL     = new Font(Font.FontFamily.TIMES_ROMAN,  12, Font.NORMAL);
     private static final Font FONT_LAST_ROW     = new Font(Font.FontFamily.TIMES_ROMAN,  12, Font.BOLD, BaseColor.BLUE.darker());
@@ -83,12 +83,12 @@ public class PDFUtility {
         }
 
         Document document = new Document();
-        document.setMargins(24f,24f,32f,32f);
+        document.setMargins(24f,24f,32f,52f);
         document.setPageSize(isPortrait? PageSize.A4:PageSize.A4.rotate());
 
         PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(filePath));
         pdfWriter.setFullCompression();
-        pdfWriter.setPageEvent(new PageNumeration());
+        pdfWriter.setPageEvent(new PageNumeration(mContext));
 
         document.open();
 
@@ -153,6 +153,13 @@ public class PDFUtility {
      */
     private static void addHeader(Context mContext, Document document) throws Exception
     {
+        PdfPTable headerTable = new PdfPTable(1);
+        headerTable.setWidthPercentage(100);
+        headerTable.setWidths(new float[]{1});
+        headerTable.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+        headerTable.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
+        headerTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+
         PdfPTable table = new PdfPTable(3);
         table.setWidthPercentage(100);
         table.setWidths(new float[]{2,7,2});
@@ -161,7 +168,11 @@ public class PDFUtility {
         table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
 
         PdfPCell cell;
+        Drawable d;
+        ByteArrayOutputStream stream;
+        Bitmap bmp;
         {
+
             //create a PdfTable with one column
             PdfPTable logoTable=new PdfPTable(1);
             logoTable.setWidthPercentage(100);
@@ -170,32 +181,32 @@ public class PDFUtility {
             logoTable.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
 
             /*LEFT TOP LOGO*/
-            Drawable d= ContextCompat.getDrawable(mContext, R.mipmap.serensa_logo);
+            /**d = ContextCompat.getDrawable(mContext, R.mipmap.serensa_logo);
             assert d != null;
-            Bitmap bmp=((BitmapDrawable) d).getBitmap();
-            ByteArrayOutputStream stream=new ByteArrayOutputStream();
+            bmp = ((BitmapDrawable) d).getBitmap();
+            stream = new ByteArrayOutputStream();
             bmp.compress(Bitmap.CompressFormat.PNG,100,stream);
 
             Image logo=Image.getInstance(stream.toByteArray());
             logo.setWidthPercentage(80);
-            logo.scaleToFit(105,65);
+            logo.scaleToFit(105,65);**/
 
             //create the first cell inside your table
-            PdfPCell cel = new PdfPCell(logo);
-            cel.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cel.setUseAscender(true);
-            cel.setBorder(PdfPCell.NO_BORDER);
-            cel.setPadding(2f);
-            logoTable.addCell(cel);
+            cell = new PdfPCell();
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setUseAscender(true);
+            cell.setBorder(PdfPCell.NO_BORDER);
+            cell.setPadding(2f);
+            logoTable.addCell(cell);
 
             //create the second cell
-            cel = new PdfPCell(new Phrase("Sarensa",FONT_LOGO_TEXT));
-            cel.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cel.setBorder(PdfPCell.NO_BORDER);
-            cel.setPadding(4f);
-            logoTable.addCell(cel);
+            /**cell = new PdfPCell(new Phrase("Sarensa",FONT_LOGO_TEXT));
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBorder(PdfPCell.NO_BORDER);
+            cell.setPadding(4f);
+            logoTable.addCell(cell);**/
 
             //Add the created table as a cell in your outer table
             cell = new PdfPCell(logoTable);
@@ -211,21 +222,32 @@ public class PDFUtility {
             /*MIDDLE TEXT
             * Create the cell with some paragraphs
             * */
-            cell = new PdfPCell();
+            d = ContextCompat.getDrawable(mContext, R.drawable.header);
+            assert d != null;
+            bmp = ((BitmapDrawable) d).getBitmap();
+            stream = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.PNG,100,stream);
+
+            Image logo=Image.getInstance(stream.toByteArray());
+            logo.setWidthPercentage(100);
+            logo.scaleToFit(314,131);
+
+            cell = new PdfPCell(logo);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(PdfPCell.NO_BORDER);
-            cell.setPadding(8f);
+            cell.setPadding(1f);
             cell.setUseAscender(true);
 
-            Paragraph temp = new Paragraph("SARENSA ENTERPRISES LIMITED" ,FONT_TITLE);
+            table.addCell(cell);
+
+            /**Paragraph temp = new Paragraph("SARENSA ENTERPRISES LIMITED" ,FONT_TITLE);
             temp.setAlignment(Element.ALIGN_CENTER);
             cell.addElement(temp);
 
             temp = new Paragraph("P. O. BOX 157 - 10301,\nKIANYAGA.\nE-Mail: nyagadavy@gmail.com" ,FONT_SUBTITLE);
             temp.setAlignment(Element.ALIGN_CENTER);
-            cell.addElement(temp);
+            cell.addElement(temp);**/
 
-            table.addCell(cell);
         }
         /* RIGHT TOP LOGO*/
         {
@@ -236,30 +258,30 @@ public class PDFUtility {
             logoTable.setHorizontalAlignment(Element.ALIGN_CENTER);
             logoTable.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
             //Initialize the logo drawable
-            Drawable drawable=ContextCompat.getDrawable(mContext, R.mipmap.serensa_logo);
+            /**Drawable drawable=ContextCompat.getDrawable(mContext, R.mipmap.serensa_logo);
             assert drawable != null;
-            Bitmap bmp =((BitmapDrawable)drawable).getBitmap();
+            bmp =((BitmapDrawable)drawable).getBitmap();
 
-            ByteArrayOutputStream stream=new ByteArrayOutputStream();
+            stream=new ByteArrayOutputStream();
             bmp.compress(Bitmap.CompressFormat.PNG,100,stream);
             Image logo=Image.getInstance(stream.toByteArray());
             logo.setWidthPercentage(80);
-            logo.scaleToFit(105,65);
+            logo.scaleToFit(105,65);**/
 
             //Add the logo into the cell
-            PdfPCell logoCell = new PdfPCell(logo);
+            PdfPCell logoCell = new PdfPCell();
             logoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
             logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             logoCell.setBorder(PdfPCell.NO_BORDER);
             logoTable.addCell(logoCell);
 
             //create a second cell
-            logoCell = new PdfPCell(new Phrase("Sarensa",FONT_LOGO_TEXT));
+            /**logoCell = new PdfPCell(new Phrase("Sarensa",FONT_LOGO_TEXT));
             logoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
             logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             logoCell.setBorder(PdfPCell.NO_BORDER);
             logoCell.setPadding(4f);
-            logoTable.addCell(logoCell);
+            logoTable.addCell(logoCell);**/
 
             //add the table into a cell
             cell = new PdfPCell(logoTable);
@@ -270,7 +292,35 @@ public class PDFUtility {
             cell.setPadding(2f);
             table.addCell(cell);
         }
-        document.add(table);
+        //image for the cell
+        /*TOP LOGO*/
+        d = ContextCompat.getDrawable(mContext, R.drawable.sarensa_top);
+        assert d != null;
+        bmp = ((BitmapDrawable) d).getBitmap();
+        stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.PNG,100,stream);
+
+        Image top_logo=Image.getInstance(stream.toByteArray());
+        top_logo.setWidthPercentage(100);
+        top_logo.scaleToFit(548,48);
+        //create header cell with an image
+        cell = new PdfPCell(top_logo);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setUseAscender(true);
+        cell.setBorder(PdfPCell.NO_BORDER);
+        cell.setPadding(0f);
+        headerTable.addCell(cell);
+
+        cell = new PdfPCell(table);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setUseAscender(true);
+        cell.setBorder(PdfPCell.NO_BORDER);
+        cell.setPadding(2f);
+        headerTable.addCell(cell);
+
+        document.add(headerTable);
     }
 
     /**
@@ -289,7 +339,7 @@ public class PDFUtility {
 
         PdfPCell cell;
         {
-            cell = new PdfPCell(new Phrase("   Cell: 0721213676\n", FONT_SIDE_TEXT));
+            cell = new PdfPCell(new Phrase("   \n", FONT_SIDE_TEXT));
             cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setUseBorderPadding(true);

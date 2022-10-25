@@ -1,28 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/home_layout"
+    android:id="@+id/user_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
+    tools:context=".ui.user.UserFragment">
 
     <include
-        android:id="@+id/home_view"
-        layout="@layout/content_home"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:id="@+id/user_view"
+        layout="@layout/fragment_user" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/register"
+        android:id="@+id/userRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
+        android:onClick="addItem"
         android:layout_margin="@dimen/fab_margin"
-        android:backgroundTint="#FFFFFF"
-        app:maxImageSize="50dp"
-        app:srcCompat="@drawable/add_station"
-        app:elevation="0dp"
-        android:contentDescription="@string/click_me_to_add_new_stations" />
+        android:backgroundTint="@color/blue"
+        app:srcCompat="@drawable/ic_add_white"
+        android:contentDescription="Click me to add a new User." />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

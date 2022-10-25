@@ -11,7 +11,7 @@
     android:orientation="vertical">
 <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_margin"
     android:paddingRight="@dimen/activity_margin"
@@ -22,26 +22,47 @@
         android:layout_marginBottom="@dimen/dimen_10"
         android:fontFamily="sans-serif-medium"
         android:lineSpacingExtra="8sp"
-        android:text="Complete the Following Sales:"
-        android:textColor="@color/window"
+        android:text="COMPLETE THE FOLLOWING TRANSACTIONS"
+        android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dimen_10"
+        android:fontFamily="sans-serif-medium"
+        android:lineSpacingExtra="8sp"
+        android:text="Customer Name:"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+    <EditText
+        android:id="@+id/editTextCustomerName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:gravity="top"
+        android:hint="Input Customer Name"
+        android:inputType="textCapSentences|textMultiLine"
+        android:lines="1" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerCart"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="15dp"
-        android:layout_alignParentBottom="true"
+        android:layout_marginTop="4dp"
         android:background="#7C7C7C"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:text="  SARENSA ENTERPRISES LIMITED  "
         android:textColor="#133481"
         android:textSize="16sp" />
+
+</LinearLayout>
 </RelativeLayout>
 </androidx.cardview.widget.CardView>

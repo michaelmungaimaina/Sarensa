@@ -17,18 +17,17 @@ import java.util.List;
 
 import mich.gwan.sarensa.R;
 import mich.gwan.sarensa.activities.SaleCategoryViewActivity;
-import mich.gwan.sarensa.interfaces.AdapterCallback;
 import mich.gwan.sarensa.model.Category;
+import mich.gwan.sarensa.sql.DatabaseHelper;
 
 public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecyclerAdapter.CategoryViewHolder> {
     private final List<Category> list;
     private int index = RecyclerView.NO_POSITION;
-    private AdapterCallback listener;
+    Context context;
 
 
-    public CategoryRecyclerAdapter(List<Category> list, AdapterCallback listener) {
+    public CategoryRecyclerAdapter(List<Category> list) {
         this.list = list;
-        this.listener = listener;
     }
 
 
@@ -37,6 +36,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
         // inflating recycler item view
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.category_recycler, parent, false);
+        context = parent.getContext();
 
         return new CategoryViewHolder(itemView);
     }
@@ -46,27 +46,28 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
         char firstChar = list.get(position).getCategoryName().charAt(0);
         holder.catName.setText(list.get(position).getCategoryName());
         holder.textInitial.setText(String.valueOf(firstChar));
+        DatabaseHelper databaseHelper = new DatabaseHelper(context);
+        holder.count.setText(String.valueOf(databaseHelper.getItemTypesCount(list.get(position).getStationName(),
+                list.get(position).getCategoryName())));
+
+
 
         holder.itemView.setSelected(index == position);
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public boolean onLongClick(View view) {
                 index = holder.getLayoutPosition();
-                notifyItemChanged(index);
+                notifyDataSetChanged();
                 return true;
             }
         });
         holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View view) {
-                String catName = list.get(position).getCategoryName();
-                System.out.println("PRESSED!");
-                listener.onMethodCallback(catName);
-
-                holder.saleActivity.myCategory = list.get(position).getCategoryName();
-                System.out.println(holder.saleActivity.myCategory);
                 index = holder.getLayoutPosition();
-                notifyItemChanged(index);
+                notifyDataSetChanged();
             }
         });
     }
@@ -86,6 +87,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
         public TextView catName;
         public TextView count;
         public TextView textInitial;
+        public TextView textView;
         public CardView inner;
         public CardView outer;
         public AppCompatCheckBox checkBox;

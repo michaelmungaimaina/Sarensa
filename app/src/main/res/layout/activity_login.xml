@@ -40,15 +40,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="40dp"
-                    android:src="@drawable/serensa_logo" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="25dp"
@@ -83,16 +74,6 @@
                     app:cardBackgroundColor="#85AC4B"
                     app:cardElevation="0dp">
 
-                    <!--TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:background="#00FFFFFF"
-                        android:fontFamily="@font/chonburi"
-                        android:gravity="center"
-                        android:text=" WELCOME "
-                        android:textColor="#030D25"
-                        android:textSize="16sp" /-->
                 </androidx.cardview.widget.CardView>
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
@@ -106,8 +87,9 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:background="#00FFFFFF"
+                        android:fontFamily="sans-serif-black"
                         android:gravity="center"
-                        android:text="SIGNUP"
+                        android:text="SIGNIN"
                         android:textColor="#56658A"
                         android:textSize="16sp" />
                 </androidx.cardview.widget.CardView>
@@ -135,7 +117,8 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textInputLayoutSpinner"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:textColorHint="@color/clorText">
                         <androidx.appcompat.widget.AppCompatSpinner
                             android:id="@+id/spinner"
                             android:layout_width="match_parent"
@@ -168,7 +151,7 @@
                             android:id="@+id/textInputLayoutEmail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            >
+                            android:textColorHint="@color/clorText">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/textInputEditTextEmail"
@@ -208,7 +191,8 @@
                             android:id="@+id/textInputLayoutPassword"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:passwordToggleEnabled="true">
+                            app:passwordToggleEnabled="true"
+                            android:textColorHint="@color/clorText">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/textInputEditTextPassword"
@@ -275,7 +259,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text=" Signin "
+                        android:text=" SignUp "
                         android:textColor="#0A1FA6"
                         android:textSize="16dp" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -283,50 +267,5 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.cardview.widget.CardView>
     </androidx.cardview.widget.CardView>
-        <androidx.cardview.widget.CardView
-            android:id="@+id/_two"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-20dp"
-            app:layout_anchor="@id/cardOne"
-            app:layout_anchorGravity="center_horizontal"
-            app:cardBackgroundColor="#00FFFFFF"
-            app:cardCornerRadius="0dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:orientation="horizontal">
-            <androidx.cardview.widget.CardView
-                android:layout_width="2dp"
-                android:layout_height="30dp"
-                app:cardCornerRadius="0dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="#FFFFFF"/>
-                <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginBottom="0dp"
-                android:layout_marginTop="2dp"
-                app:cardBackgroundColor="#85AC4B">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="#85AC4B"
-                    android:gravity="center"
-                    android:text="  SARENSA ENTERPRISES LIMITED  "
-                    android:textColor="#133481"
-                    android:textSize="16sp"/>
-            </androidx.cardview.widget.CardView>
-                <androidx.cardview.widget.CardView
-                    android:layout_width="2dp"
-                    android:layout_height="30dp"
-                    app:cardCornerRadius="0dp"
-                    app:cardBackgroundColor="#FFFFFF"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.core.widget.NestedScrollView>
