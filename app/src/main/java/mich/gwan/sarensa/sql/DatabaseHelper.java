@@ -14,14 +14,14 @@ import java.util.List;
 import mich.gwan.sarensa.model.Cart;
 import mich.gwan.sarensa.model.Category;
 import mich.gwan.sarensa.model.Item;
+import mich.gwan.sarensa.model.Receipt;
 import mich.gwan.sarensa.model.Sales;
 import mich.gwan.sarensa.model.Station;
-import mich.gwan.sarensa.model.TempCart;
 import mich.gwan.sarensa.model.User;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     // Database Version
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     // Database Name
     private static final String DATABASE_NAME = "sarensalimited.db";
@@ -33,6 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_ITEM = "items";
     private static final String TABLE_SALES = "sales";
     private static final String TABLE_CART = "cart";
+    private static final String TABLE_RECEIPT = "receipt";
 
     // Station Table column names
     private static final String COLUMN_STATION_ID = "id";
@@ -73,6 +74,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_SALE_UNITPRICE = "sellprice";
     private static final String COLUMN_SALE_TOTAL = "total";
     private static final String COLUMN_SALE_PROFIT = "profit";
+
+    // Receipts Table Column
+    private static final String COLUMN_RECEIPT_ID = "receipt_id";
+    private static final String COLUMN_RECEIPT_DATE = "receipt_date";
+    private static final String COLUMN_RECEIPT_TIME = "receipt_time";
+    private static final String COLUMN_RECEIPT_TYPE = "receipt_type";
+    private static final String COLUMN_RECEIPT_STATION = "receipt_station";
+    private static final String COLUMN_RECEIPT_CATEGORY = "receipt_category";
+    private static final String COLUMN_RECEIPT_ITEM = "receipt_item";
+    private static final String COLUMN_RECEIPT_CUSTOMER = "receipt_customer";
+    private static final String COLUMN_RECEIPT_QUANTITY = "receipt_quantity";
+    private static final String COLUMN_RECEIPT_PRICE = "receipt_price";
+    private static final String COLUMN_RECEIPT_TOTAL = "receipt_total";
 
     // Cart Table Column names
     private static final String COLUMN_CART_ID = "id";
@@ -120,6 +134,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_SALE_PROFIT + " INTEGER" + ")";
 
     // create table sales sql query
+    private final String CREATE_RECEIPT_TABLE = "CREATE TABLE " + TABLE_RECEIPT + "("
+            + COLUMN_RECEIPT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,"
+            + COLUMN_RECEIPT_DATE + " DATE,"
+            + COLUMN_RECEIPT_TIME + " TIME,"
+            + COLUMN_RECEIPT_TYPE + " VARCHAR(10) DEFAULT 'CASH',"
+            + COLUMN_RECEIPT_CUSTOMER + " VARCHAR(20),"
+            + COLUMN_RECEIPT_STATION + " INTEGER,"
+            + COLUMN_RECEIPT_CATEGORY + " INTEGER,"
+            + COLUMN_RECEIPT_ITEM + " INTEGER,"
+            + COLUMN_RECEIPT_QUANTITY + " INTEGER,"
+            + COLUMN_RECEIPT_PRICE + " INTEGER,"
+            + COLUMN_RECEIPT_TOTAL + " INTEGER" + ")";
+
+    // create table sales sql query
     private final String CREATE_CART_TABLE = "CREATE TABLE " + TABLE_CART + "("
             + COLUMN_CART_ID + " INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,"
             + COLUMN_CART_STATION + " TEXT,"
@@ -157,6 +185,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private final String DROP_CART_TABLE = "DROP TABLE IF EXISTS " + TABLE_CART;
     private final String DROP_ITEM_TABLE = "DROP TABLE IF EXISTS " + TABLE_ITEM;
     private final String DROP_CATEGORY_TABLE = "DROP TABLE IF EXISTS " + TABLE_CATEGORY;
+    private final String DROP_RECEIPT_TABLE = "DROP TABLE IF EXISTS " + TABLE_RECEIPT;
 
 
     /**8
@@ -185,6 +214,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_ITEM_TABLE);
         db.execSQL(CREATE_CATEGORY_TABLE);
         db.execSQL(CREATE_STATION_TABLE);
+        db.execSQL(CREATE_RECEIPT_TABLE);
     }
 
     /**
@@ -208,8 +238,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(DROP_CART_TABLE);
         db.execSQL(CREATE_CART_TABLE);
         db.execSQL(CREATE_SALES_TABLE);
-         */
-
+        */
+        db.execSQL(CREATE_RECEIPT_TABLE);
     }
 
     /**
@@ -237,7 +267,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COLUMN_SALE_DAY, sales.getDate());
         values.put(COLUMN_SALE_TIME, sales.getTime());
-        //values.put(COLUMN_SALE_TYPE, sales.getSaleType());
+        values.put(COLUMN_SALE_TYPE, sales.getSaleType());
         values.put(COLUMN_SALE_STATION, sales.getStationName());
         values.put(COLUMN_SALE_CATEGORY, sales.getItemCategory());
         values.put(COLUMN_SALE_ITEM, sales.getItemName());
@@ -248,6 +278,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //Insert Row
         db.insert(TABLE_SALES, null, values);
+        db.close();
+    }
+    /**
+     * Method to create receipt record
+     * @param par Receipt model
+     * ---------------------------------------------------------------------------------------------
+     */
+    public void addReceipt(Receipt par) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_RECEIPT_DATE, par.getReceiptDate());
+        values.put(COLUMN_RECEIPT_TIME, par.getReceiptTime());
+        values.put(COLUMN_RECEIPT_TYPE, par.getReceiptTransType());
+        values.put(COLUMN_RECEIPT_STATION, par.getStationName());
+        values.put(COLUMN_RECEIPT_CATEGORY, par.getItemCategory());
+        values.put(COLUMN_RECEIPT_ITEM, par.getItemName());
+        values.put(COLUMN_RECEIPT_QUANTITY, par.getItemQuantity());
+        values.put(COLUMN_RECEIPT_PRICE, par.getSellingPrice());
+        values.put(COLUMN_RECEIPT_TOTAL, par.getTotal());
+        values.put(COLUMN_RECEIPT_CUSTOMER, par.getCustomerName());
+
+        //Insert Row
+        db.insert(TABLE_RECEIPT, null, values);
         db.close();
     }
     /**
@@ -563,6 +616,258 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 sale.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_SALE_TOTAL))));
                 sale.setProfit(cursor.getInt(cursor.getColumnIndex(COLUMN_SALE_PROFIT)));
                 list.add(sale);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    /**
+     * This method is to fetch all receipts and return the list of the receipt records
+     * This is the deafault method as it returns allreceipts as at today's date
+     * @return list
+     * ---------------------------------------------------------------------------------------------
+     */
+
+    @SuppressLint("Range")
+    public List<Receipt> getAllReceipts(){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_RECEIPT_DATE,
+                COLUMN_RECEIPT_TIME,
+                COLUMN_RECEIPT_CUSTOMER,
+                COLUMN_RECEIPT_TYPE,
+                COLUMN_RECEIPT_STATION,
+                COLUMN_RECEIPT_CATEGORY,
+                COLUMN_RECEIPT_ITEM,
+                COLUMN_RECEIPT_PRICE,
+                COLUMN_RECEIPT_QUANTITY,
+                COLUMN_RECEIPT_TOTAL
+        };
+        //Sorting order
+        String sortOder = COLUMN_RECEIPT_ID + " ASC";
+        List<Receipt> list = new ArrayList<Receipt>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_RECEIPT, //table to query
+                columns,  //columns to return
+                null,  //columns for the where clause
+                null,  //the values for the where clause
+                null,   //group the rows
+                null,   //filter by row groups
+                sortOder);  //the sortorder
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Receipt par = new Receipt();
+                par.setReceiptDate(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_DATE)));
+                par.setReceiptTime(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TIME)));
+                par.setReceiptTransType(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TYPE)));
+                par.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_STATION)));
+                par.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_CATEGORY)));
+                par.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_ITEM)));
+                par.setItemQuantity(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_QUANTITY))));
+                par.setSellingPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_PRICE))));
+                par.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TOTAL))));
+                par.setCustomerName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_CUSTOMER)));
+                list.add(par);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    /**
+     * Tfetch all receipts as at the given date
+     * @param date the date
+     * @return list
+     * ---------------------------------------------------------------------------------------------
+     */
+
+    @SuppressLint("Range")
+    public List<Receipt> getAllReceipts(String date){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_RECEIPT_DATE, COLUMN_RECEIPT_TIME,
+                COLUMN_RECEIPT_CUSTOMER, COLUMN_RECEIPT_TYPE,
+                COLUMN_RECEIPT_STATION, COLUMN_RECEIPT_CATEGORY,
+                COLUMN_RECEIPT_ITEM, COLUMN_RECEIPT_PRICE,
+                COLUMN_RECEIPT_QUANTITY, COLUMN_RECEIPT_TOTAL
+        };
+        //Sorting order
+        String sortOder = COLUMN_RECEIPT_ID + " ASC";
+        //values for the selection arguments
+        String[] selectionArgs = {date};
+        //selection criteria
+        String selection = COLUMN_RECEIPT_DATE + " = ?";
+        List<Receipt> list = new ArrayList<Receipt>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_RECEIPT, //table to query
+                columns,  //columns to return
+                selection,  //columns for the where clause
+                selectionArgs,  //the values for the where clause
+                null,   //group the rows
+                null,   //filter by row groups
+                sortOder);  //the sortorder
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Receipt par = new Receipt();
+                par.setReceiptDate(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_DATE)));
+                par.setReceiptTime(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TIME)));
+                par.setReceiptTransType(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TYPE)));
+                par.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_STATION)));
+                par.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_CATEGORY)));
+                par.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_ITEM)));
+                par.setItemQuantity(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_QUANTITY))));
+                par.setSellingPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_PRICE))));
+                par.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TOTAL))));
+                par.setCustomerName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_CUSTOMER)));
+                list.add(par);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    /**
+     * Tfetch all receipts as at the given date value and station
+     * @param date the date when the receipt was generated
+     * @param station station where to fetch the receipt from
+     * @return list
+     * ---------------------------------------------------------------------------------------------
+     */
+
+    @SuppressLint("Range")
+    public List<Receipt> getAllReceipts(String date,String station){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_RECEIPT_DATE, COLUMN_RECEIPT_TIME, COLUMN_RECEIPT_CUSTOMER, COLUMN_RECEIPT_TYPE,
+                COLUMN_RECEIPT_STATION, COLUMN_RECEIPT_CATEGORY, COLUMN_RECEIPT_ITEM, COLUMN_RECEIPT_PRICE,
+                COLUMN_RECEIPT_QUANTITY, COLUMN_RECEIPT_TOTAL
+        };
+        //Sorting order
+        String sortOder = COLUMN_RECEIPT_ID + " ASC";
+        //selection criteria
+        String selection = COLUMN_RECEIPT_DATE + " = ? AND " + COLUMN_RECEIPT_STATION + " = ?";
+        //values for the selection argument
+        String[] selectionArgs = {date,station};
+        List<Receipt> list = new ArrayList<Receipt>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_RECEIPT,columns,selection,selectionArgs, null, null,sortOder);
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Receipt par = new Receipt();
+                par.setReceiptDate(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_DATE)));
+                par.setReceiptTime(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TIME)));
+                par.setReceiptTransType(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TYPE)));
+                par.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_STATION)));
+                par.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_CATEGORY)));
+                par.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_ITEM)));
+                par.setItemQuantity(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_QUANTITY))));
+                par.setSellingPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_PRICE))));
+                par.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TOTAL))));
+                par.setCustomerName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_CUSTOMER)));
+                list.add(par);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    /**
+     * Tfetch all receipts as at the given date value and station
+     * @param date the date when the receipt was generated
+     * @param station station where to fetch the receipt from
+     * @param customer customer to which the the receipt was issued
+     * @return list
+     * ---------------------------------------------------------------------------------------------
+     */
+
+    @SuppressLint("Range")
+    public List<Receipt> getAllReceipts(String date,String station, String customer){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_RECEIPT_DATE, COLUMN_RECEIPT_TIME, COLUMN_RECEIPT_CUSTOMER, COLUMN_RECEIPT_TYPE,
+                COLUMN_RECEIPT_STATION, COLUMN_RECEIPT_CATEGORY, COLUMN_RECEIPT_ITEM, COLUMN_RECEIPT_PRICE,
+                COLUMN_RECEIPT_QUANTITY, COLUMN_RECEIPT_TOTAL
+        };
+        //Sorting order
+        String sortOder = COLUMN_RECEIPT_ID + " ASC";
+        //selection criteria
+        String selection = COLUMN_RECEIPT_DATE + " = ? AND " + COLUMN_RECEIPT_STATION + " = ? AND "
+                + COLUMN_RECEIPT_CUSTOMER + " = ?";
+        //values for the selection argument
+        String[] selectionArgs = {date,station,customer};
+        List<Receipt> list = new ArrayList<Receipt>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_RECEIPT,columns,selection,selectionArgs, null, null,sortOder);
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Receipt par = new Receipt();
+                par.setReceiptDate(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_DATE)));
+                par.setReceiptTime(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TIME)));
+                par.setReceiptTransType(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TYPE)));
+                par.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_STATION)));
+                par.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_CATEGORY)));
+                par.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_ITEM)));
+                par.setItemQuantity(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_QUANTITY))));
+                par.setSellingPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_PRICE))));
+                par.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TOTAL))));
+                par.setCustomerName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_CUSTOMER)));
+                list.add(par);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+    /**
+     * Tfetch all receipts as at the given date value and customer name
+     * @param date the date when the receipt was generated
+     * @param customer customer to which the receipt was issued
+     * @return list
+     * ---------------------------------------------------------------------------------------------
+     */
+
+    @SuppressLint("Range")
+    public List<Receipt> getReceipts(String date,String customer){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_RECEIPT_DATE, COLUMN_RECEIPT_TIME, COLUMN_RECEIPT_CUSTOMER, COLUMN_RECEIPT_TYPE,
+                COLUMN_RECEIPT_STATION, COLUMN_RECEIPT_CATEGORY, COLUMN_RECEIPT_ITEM, COLUMN_RECEIPT_PRICE,
+                COLUMN_RECEIPT_QUANTITY, COLUMN_RECEIPT_TOTAL
+        };
+        //Sorting order
+        String sortOder = COLUMN_RECEIPT_ID + " ASC";
+        //selection criteria
+        String selection = COLUMN_RECEIPT_DATE + " = ? AND " + COLUMN_RECEIPT_CUSTOMER + " = ?";
+        //values for the selection argument
+        String[] selectionArgs = {date,customer};
+        List<Receipt> list = new ArrayList<Receipt>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_RECEIPT,columns,selection,selectionArgs, null, null,sortOder);
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Receipt par = new Receipt();
+                par.setReceiptDate(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_DATE)));
+                par.setReceiptTime(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TIME)));
+                par.setReceiptTransType(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TYPE)));
+                par.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_STATION)));
+                par.setItemCategory(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_CATEGORY)));
+                par.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_ITEM)));
+                par.setItemQuantity(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_QUANTITY))));
+                par.setSellingPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_PRICE))));
+                par.setTotal(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_TOTAL))));
+                par.setCustomerName(cursor.getString(cursor.getColumnIndex(COLUMN_RECEIPT_CUSTOMER)));
+                list.add(par);
             }
             while (cursor.moveToNext());
         }
@@ -1678,6 +1983,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return list;
     }
+
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * This method is to fetch all all items from the given station
+     * @return a list of all items from the given station
+     * ---------------------------------------------------------------------------------------------
+     */
+
+    @SuppressLint("Range")
+    public List<Item> getAllItems(String station){
+        //Columns to fetch
+        String[] columns = {
+                COLUMN_ITEM_STATION,
+                COLUMN_ITEM_CATEGORY,
+                COLUMN_ITEM_NAME,
+                COLUMN_ITEM_QUANTITY,
+                COLUMN_ITEM_BUYPRICE,
+                COLUMN_ITEM_SELLPRICE
+        };
+        //Sorting order
+        String sortOder = COLUMN_ITEM_ID + " ASC";
+        //selection criteria
+        String selection = COLUMN_ITEM_STATION + " = ?";
+        //selection argument
+        String[] selectionArgs = {station};
+        List<Item> list = new ArrayList<Item>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(
+                TABLE_ITEM, //table to query
+                columns,  //columns to return
+                selection,  //columns for the where clause
+                selectionArgs,  //the values for the where clause
+                null,   //group the rows
+                null,   //filter by row groups
+                sortOder);  //the sortorder
+        //Traversing through all rows and adding to list
+        if (cursor.moveToFirst()){
+            do{
+                Item par = new Item();
+                par.setCategoryName(cursor.getString(cursor.getColumnIndex(COLUMN_ITEM_CATEGORY)));
+                par.setStationName(cursor.getString(cursor.getColumnIndex(COLUMN_ITEM_STATION)));
+                par.setItemName(cursor.getString(cursor.getColumnIndex(COLUMN_ITEM_NAME)));
+                par.setItemQnty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_ITEM_QUANTITY))));
+                par.setBuyPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_ITEM_BUYPRICE))));
+                par.setSellPrice(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_ITEM_SELLPRICE))));
+                list.add(par);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
     /**
      * ---------------------------------------------------------------------------------------------
      * This method is to fetch all all category and return the list of the category records
@@ -2051,6 +2408,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
     /**
+     *
+     * This method is to delete receipt record
+     * @param par attributes of the receipt model
+     * ---------------------------------------------------------------------------------------------
+     */
+    public void deleteReceipt(Receipt par) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // delete record by id
+        db.delete(TABLE_RECEIPT, COLUMN_RECEIPT_STATION + " = ? AND " + COLUMN_RECEIPT_DATE + " = ? AND "
+                + COLUMN_RECEIPT_TIME + " = ?",
+                new String[]{par.getStationName(), par.getReceiptDate(),par.getReceiptTime()});
+        db.close();
+    }
+    /**
      * ---------------------------------------------------------------------------------------------
      * This method is to delete item record
      * @param par attributes of the item model
@@ -2073,8 +2444,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteSale(Sales par) {
         SQLiteDatabase db = this.getWritableDatabase();
         // delete record by id
-        db.delete(TABLE_SALES, COLUMN_SALE_ID + " = ?",
-                new String[]{String.valueOf(par.getSaleId())});
+        db.delete(TABLE_SALES, COLUMN_SALE_DAY + " = ? AND " + COLUMN_SALE_TIME + " = ?",
+                new String[]{String.valueOf(par.getDate()),par.getTime()});
         db.close();
     }
     /**

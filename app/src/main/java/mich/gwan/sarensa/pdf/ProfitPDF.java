@@ -32,9 +32,9 @@ import java.util.List;
 
 import mich.gwan.sarensa.R;
 
-public class PDFUtility {
+public class ProfitPDF {
 
-    private static final String TAG   = PDFUtility.class.getSimpleName();
+    private static final String TAG   = ProfitPDF.class.getSimpleName();
     private static final Font FONT_TITLE    = new Font(Font.FontFamily.TIMES_ROMAN, 20, Font.BOLD, BaseColor.BLUE.darker());
     private static final Font FONT_SUBTITLE = new Font(Font.FontFamily.TIMES_ROMAN, 13, Font.NORMAL);
     private static final Font FONT_SIDE_TEXT = new Font(Font.FontFamily.TIMES_ROMAN, 8, Font.NORMAL);
@@ -47,9 +47,9 @@ public class PDFUtility {
     private static final Font FONT_LAST_ROW     = new Font(Font.FontFamily.TIMES_ROMAN,  12, Font.BOLD, BaseColor.BLUE.darker());
     private static final Font FONT_COLUMN   = new Font(Font.FontFamily.TIMES_ROMAN,  13, Font.NORMAL, BaseColor.WHITE);
 
-    public interface OnDocumentClose
+    public interface OnDocClose
     {
-        void onPDFDocumentClose(File file);
+        void onPDFClose(File file);
     }
 
     /**
@@ -61,7 +61,7 @@ public class PDFUtility {
      * @param isPortrait a boolean for page orientation
      * @throws Exception if document is not created
      */
-    public static void createPdf(@NonNull Context mContext, OnDocumentClose mCallback, String station, List<String[]> items, @NonNull String filePath, boolean isPortrait) throws Exception
+    public static void createPdf(@NonNull Context mContext, OnDocClose mCallback, String station, List<String[]> items, @NonNull String filePath, boolean isPortrait) throws Exception
     {
         if(filePath.equals(""))
         {
@@ -114,7 +114,7 @@ public class PDFUtility {
 
         if(mCallback!=null)
         {
-            mCallback.onPDFDocumentClose(file);
+            mCallback.onPDFClose(file);
         }
     }
 
@@ -181,16 +181,6 @@ public class PDFUtility {
             logoTable.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
 
             /*LEFT TOP LOGO*/
-            /**d = ContextCompat.getDrawable(mContext, R.mipmap.serensa_logo);
-            assert d != null;
-            bmp = ((BitmapDrawable) d).getBitmap();
-            stream = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.PNG,100,stream);
-
-            Image logo=Image.getInstance(stream.toByteArray());
-            logo.setWidthPercentage(80);
-            logo.scaleToFit(105,65);**/
-
             //create the first cell inside your table
             cell = new PdfPCell();
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -201,12 +191,6 @@ public class PDFUtility {
             logoTable.addCell(cell);
 
             //create the second cell
-            /**cell = new PdfPCell(new Phrase("Sarensa",FONT_LOGO_TEXT));
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBorder(PdfPCell.NO_BORDER);
-            cell.setPadding(4f);
-            logoTable.addCell(cell);**/
 
             //Add the created table as a cell in your outer table
             cell = new PdfPCell(logoTable);
@@ -239,15 +223,6 @@ public class PDFUtility {
             cell.setUseAscender(true);
 
             table.addCell(cell);
-
-            /**Paragraph temp = new Paragraph("SARENSA ENTERPRISES LIMITED" ,FONT_TITLE);
-            temp.setAlignment(Element.ALIGN_CENTER);
-            cell.addElement(temp);
-
-            temp = new Paragraph("P. O. BOX 157 - 10301,\nKIANYAGA.\nE-Mail: nyagadavy@gmail.com" ,FONT_SUBTITLE);
-            temp.setAlignment(Element.ALIGN_CENTER);
-            cell.addElement(temp);**/
-
         }
         /* RIGHT TOP LOGO*/
         {
@@ -258,15 +233,6 @@ public class PDFUtility {
             logoTable.setHorizontalAlignment(Element.ALIGN_CENTER);
             logoTable.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
             //Initialize the logo drawable
-            /**Drawable drawable=ContextCompat.getDrawable(mContext, R.mipmap.serensa_logo);
-            assert drawable != null;
-            bmp =((BitmapDrawable)drawable).getBitmap();
-
-            stream=new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.PNG,100,stream);
-            Image logo=Image.getInstance(stream.toByteArray());
-            logo.setWidthPercentage(80);
-            logo.scaleToFit(105,65);**/
 
             //Add the logo into the cell
             PdfPCell logoCell = new PdfPCell();
@@ -276,12 +242,6 @@ public class PDFUtility {
             logoTable.addCell(logoCell);
 
             //create a second cell
-            /**logoCell = new PdfPCell(new Phrase("Sarensa",FONT_LOGO_TEXT));
-            logoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            logoCell.setBorder(PdfPCell.NO_BORDER);
-            logoCell.setPadding(4f);
-            logoTable.addCell(logoCell);**/
 
             //add the table into a cell
             cell = new PdfPCell(logoTable);
@@ -352,7 +312,7 @@ public class PDFUtility {
             cell.setPadding(3f);
             table1.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(station + " TRANSACTIONS", FONT_MID_TEXT));
+            cell = new PdfPCell(new Phrase(station + " PROFIT REPORT", FONT_MID_TEXT));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setUseBorderPadding(true);
@@ -365,7 +325,7 @@ public class PDFUtility {
             cell.setPadding(3f);
             table1.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("Print Date: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")), FONT_SIDE_TEXT));
+            cell = new PdfPCell(new Phrase("Print On: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")), FONT_SIDE_TEXT));
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setUseBorderPadding(true);
@@ -483,9 +443,9 @@ public class PDFUtility {
      */
     private static PdfPTable createDataTable(List<String[]> dataTable) throws DocumentException
     {
-        PdfPTable table1 = new PdfPTable(5);
+        PdfPTable table1 = new PdfPTable(2);
         table1.setWidthPercentage(100);
-        table1.setWidths(new float[]{1.5f,2.4f,1.2f,1.3f,1.75f});
+        table1.setWidths(new float[]{1.5f,1f});
         table1.setHeaderRows(1);
         table1.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
         table1.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -493,7 +453,7 @@ public class PDFUtility {
         //create the header columns
         PdfPCell cell;
         {
-            cell = new PdfPCell(new Phrase("DATE", FONT_COLUMN));
+            cell = new PdfPCell(new Phrase("ITEM NAME", FONT_COLUMN));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.NO_BORDER);
@@ -501,32 +461,8 @@ public class PDFUtility {
             cell.setPadding(3f);
             table1.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("CATEGORY", FONT_COLUMN));
+            cell = new PdfPCell(new Phrase("PROFIT", FONT_COLUMN));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBorder(Rectangle.NO_BORDER);
-            cell.setBackgroundColor(BaseColor.BLUE.darker());
-            cell.setPadding(3f);
-            table1.addCell(cell);
-
-            cell = new PdfPCell(new Phrase("QNTY", FONT_COLUMN));
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBorder(Rectangle.NO_BORDER);
-            cell.setBackgroundColor(BaseColor.BLUE.darker());
-            cell.setPadding(3f);
-            table1.addCell(cell);
-
-            cell = new PdfPCell(new Phrase("PRICE", FONT_COLUMN));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBorder(Rectangle.NO_BORDER);
-            cell.setBackgroundColor(BaseColor.BLUE.darker());
-            cell.setPadding(3f);
-            table1.addCell(cell);
-
-            cell = new PdfPCell(new Phrase("TOTAL", FONT_COLUMN));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.NO_BORDER);
             cell.setBackgroundColor(BaseColor.BLUE.darker());
@@ -554,94 +490,39 @@ public class PDFUtility {
             temp = dataTable.get(i);
 
             cell = new PdfPCell(new Phrase(temp[0], FONT_CELL));
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBorder(Rectangle.NO_BORDER);
-            cell.setPaddingLeft(left_right_Padding);
-            cell.setPaddingRight(left_right_Padding);
-            cell.setPaddingTop(top_bottom_Padding);
-            cell.setPaddingBottom(top_bottom_Padding);
-            cell.setBackgroundColor(cell_color);
-            table1.addCell(cell);
-
-            cell = new PdfPCell(new Phrase(temp[1], FONT_CELL));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.NO_BORDER);
-            cell.setPaddingLeft(left_right_Padding);
+            cell.setPaddingLeft(90f);
             cell.setPaddingRight(left_right_Padding);
             cell.setPaddingTop(top_bottom_Padding);
             cell.setPaddingBottom(top_bottom_Padding);
             cell.setBackgroundColor(cell_color);
             table1.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(temp[2], FONT_CELL));
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBorder(Rectangle.NO_BORDER);
-            cell.setPaddingLeft(left_right_Padding);
-            cell.setPaddingRight(left_right_Padding);
-            cell.setPaddingTop(top_bottom_Padding);
-            cell.setPaddingBottom(top_bottom_Padding);
-            cell.setBackgroundColor(cell_color);
-            table1.addCell(cell);
-
-            cell = new PdfPCell(new Phrase(temp[3], FONT_CELL));
+            cell = new PdfPCell(new Phrase(temp[1]+"0", FONT_CELL));
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.NO_BORDER);
             cell.setPaddingLeft(left_right_Padding);
-            cell.setPaddingRight(left_right_Padding);
+            cell.setPaddingRight(90f);
             cell.setPaddingTop(top_bottom_Padding);
             cell.setPaddingBottom(top_bottom_Padding);
             cell.setBackgroundColor(cell_color);
             table1.addCell(cell);
-
-            cell = new PdfPCell(new Phrase(temp[4], FONT_CELL));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBorder(Rectangle.NO_BORDER);
-            cell.setPaddingLeft(left_right_Padding);
-            cell.setPaddingRight(left_right_Padding);
-            cell.setPaddingTop(top_bottom_Padding);
-            cell.setPaddingBottom(top_bottom_Padding);
-            cell.setBackgroundColor(cell_color);
-            table1.addCell(cell);
-
-            /**cell = new PdfPCell(new Phrase(temp[5], FONT_CELL));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBorder(Rectangle.NO_BORDER);
-            cell.setPaddingLeft(left_right_Padding);
-            cell.setPaddingRight(left_right_Padding);
-            cell.setPaddingTop(top_bottom_Padding);
-            cell.setPaddingBottom(top_bottom_Padding);
-            cell.setBackgroundColor(cell_color);
-            table1.addCell(cell);
-
-            /**cell = new PdfPCell(new Phrase(temp[6], FONT_CELL));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBorder(Rectangle.NO_BORDER);
-            cell.setPaddingLeft(left_right_Padding);
-            cell.setPaddingRight(left_right_Padding);
-            cell.setPaddingTop(top_bottom_Padding);
-            cell.setPaddingBottom(top_bottom_Padding);
-            cell.setBackgroundColor(cell_color);
-            table1.addCell(cell);**/
 
             alternate = !alternate;
         }
 
         String [] m = dataTable.get(size-1);
         cell = new PdfPCell(new Phrase(m[0], FONT_LAST_ROW));
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setUseBorderPadding(true);
         cell.setBorder(Rectangle.TOP);
         cell.setBorderWidthTop(2f);
         cell.setBorderColorTop(BaseColor.BLUE.darker());
-        cell.setPaddingLeft(left_right_Padding);
+        cell.setPaddingLeft(90f);
         cell.setPaddingRight(left_right_Padding);
         cell.setPaddingTop(top_bottom_Padding);
         cell.setPaddingBottom(top_bottom_Padding);
@@ -649,48 +530,6 @@ public class PDFUtility {
         table1.addCell(cell);
 
         cell = new PdfPCell(new Phrase(m[1], FONT_LAST_ROW));
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setUseBorderPadding(true);
-        cell.setBorder(Rectangle.TOP);
-        cell.setBorderWidthTop(2f);
-        cell.setBorderColorTop(BaseColor.BLUE.darker());
-        cell.setPaddingLeft(left_right_Padding);
-        cell.setPaddingRight(left_right_Padding);
-        cell.setPaddingTop(top_bottom_Padding);
-        cell.setPaddingBottom(top_bottom_Padding);
-        cell.setBackgroundColor(BaseColor.WHITE);
-        table1.addCell(cell);
-
-        cell = new PdfPCell(new Phrase(m[2], FONT_LAST_ROW));
-        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setUseBorderPadding(true);
-        cell.setBorder(Rectangle.TOP);
-        cell.setBorderWidthTop(2f);
-        cell.setBorderColorTop(BaseColor.BLUE.darker());
-        cell.setPaddingLeft(left_right_Padding);
-        cell.setPaddingRight(left_right_Padding);
-        cell.setPaddingTop(top_bottom_Padding);
-        cell.setPaddingBottom(top_bottom_Padding);
-        cell.setBackgroundColor(BaseColor.WHITE);
-        table1.addCell(cell);
-
-        cell = new PdfPCell(new Phrase(m[3], FONT_LAST_ROW));
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setUseBorderPadding(true);
-        cell.setBorder(Rectangle.TOP);
-        cell.setBorderWidthTop(2f);
-        cell.setBorderColorTop(BaseColor.BLUE.darker());
-        cell.setPaddingLeft(left_right_Padding);
-        cell.setPaddingRight(left_right_Padding);
-        cell.setPaddingTop(top_bottom_Padding);
-        cell.setPaddingBottom(top_bottom_Padding);
-        cell.setBackgroundColor(BaseColor.WHITE);
-        table1.addCell(cell);
-
-        cell = new PdfPCell(new Phrase(m[4], FONT_LAST_ROW));
         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setUseBorderPadding(true);
@@ -700,43 +539,11 @@ public class PDFUtility {
         cell.setBorderColorTop(BaseColor.BLUE.darker());
         cell.setBorderColorBottom(BaseColor.BLUE.darker());
         cell.setPaddingLeft(left_right_Padding);
-        cell.setPaddingRight(left_right_Padding);
+        cell.setPaddingRight(90f);
         cell.setPaddingTop(top_bottom_Padding);
         cell.setPaddingBottom(top_bottom_Padding);
         cell.setBackgroundColor(BaseColor.WHITE);
         table1.addCell(cell);
-
-        /**cell = new PdfPCell(new Phrase(m[5], FONT_LAST_ROW));
-        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setUseBorderPadding(true);
-        cell.setBorder(Rectangle.TOP);
-        cell.setBorder(Rectangle.BOTTOM);
-        cell.setBorderWidthTop(2f);
-        cell.setBorderColorTop(BaseColor.BLUE.darker());
-        cell.setBorderColorBottom(BaseColor.BLUE.darker());
-        cell.setPaddingLeft(left_right_Padding);
-        cell.setPaddingRight(left_right_Padding);
-        cell.setPaddingTop(top_bottom_Padding);
-        cell.setPaddingBottom(top_bottom_Padding);
-        cell.setBackgroundColor(BaseColor.WHITE);
-        table1.addCell(cell);
-
-        /**cell = new PdfPCell(new Phrase(m[6], FONT_LAST_ROW));
-        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setUseBorderPadding(true);
-        cell.setBorder(Rectangle.TOP);
-        cell.setBorder(Rectangle.BOTTOM);
-        cell.setBorderWidthTop(2f);
-        cell.setBorderColorTop(BaseColor.BLUE.darker());
-        cell.setBorderColorBottom(BaseColor.BLUE.darker());
-        cell.setPaddingLeft(left_right_Padding);
-        cell.setPaddingRight(left_right_Padding);
-        cell.setPaddingTop(top_bottom_Padding);
-        cell.setPaddingBottom(top_bottom_Padding);
-        cell.setBackgroundColor(BaseColor.WHITE);
-        table1.addCell(cell);**/
 
         return table1;
     }

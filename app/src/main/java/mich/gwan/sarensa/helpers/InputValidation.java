@@ -111,6 +111,24 @@ public class InputValidation {
             }
         return true;
     }
+    /**
+     * check transaction type.
+     * @param textInputEditText
+     * @param message
+     * @return
+     * ---------------------------------------------------------------------------------------------
+     * */
+    public boolean isCredit(EditText textInputEditText, String message) {
+        String value = textInputEditText.getText().toString().toUpperCase().trim();
+        String [] options =  {"CASH","CREDIT"};
+            if(!Arrays.asList(options).contains(value))
+            {
+                textInputEditText.setError(message);
+                hideKeyboardFrom(textInputEditText);
+                return false;
+            }
+        return true;
+    }
 
 
     /**

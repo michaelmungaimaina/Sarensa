@@ -47,8 +47,8 @@
                 android:layout_marginStart="5dp"
                 app:cardBackgroundColor="#03334DF1"
                 app:cardCornerRadius="0dp"
-                app:cardElevation="10dp"
-                app:layout_constraintEnd_toStartOf="@+id/cardSaleType"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/cardCustomer"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/cardDate"
                 app:layout_constraintTop_toTopOf="parent">
@@ -65,7 +65,7 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardSaleType"
+                android:id="@+id/cardCustomer"
                 android:layout_width="0dp"
                 android:layout_height="12dp"
                 android:layout_gravity="center"
@@ -73,9 +73,33 @@
                 app:cardBackgroundColor="#00334DF1"
                 app:cardCornerRadius="0dp"
                 app:cardElevation="10dp"
-                app:layout_constraintEnd_toStartOf="@+id/cardCategory"
+                app:layout_constraintEnd_toStartOf="@+id/cardSaleType"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/cardTime"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/txtCustomer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="CUSTOMER"
+                    android:textAlignment="textStart"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="#290707"
+                    android:textSize="8sp" />
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardSaleType"
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                app:cardBackgroundColor="#00334DF1"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/cardCategory"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/cardCustomer"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
@@ -97,7 +121,7 @@
                 android:layout_marginStart="5dp"
                 app:cardBackgroundColor="#05334DF1"
                 app:cardCornerRadius="0dp"
-                app:cardElevation="10dp"
+                app:cardElevation="0dp"
                 app:layout_constraintEnd_toStartOf="@+id/cardItemName"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/cardSaleType"
@@ -122,7 +146,7 @@
                 android:layout_marginStart="5dp"
                 app:cardBackgroundColor="#00334DF1"
                 app:cardCornerRadius="0dp"
-                app:cardElevation="0dp"
+                app:cardElevation="10dp"
                 app:layout_constraintEnd_toStartOf="@+id/cardQuantity"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/cardCategory"
@@ -194,8 +218,8 @@
                 android:layout_marginStart="5dp"
                 app:cardBackgroundColor="#00334DF1"
                 app:cardCornerRadius="0dp"
-                app:cardElevation="0dp"
-                app:layout_constraintEnd_toStartOf="@+id/cardProfit"
+                app:cardElevation="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/cardUnitPrice"
                 app:layout_constraintTop_toTopOf="parent">
@@ -204,33 +228,9 @@
                     android:id="@+id/textTotal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:paddingEnd="10dp"
                     android:textAlignment="textEnd"
                     android:text="TOTAL"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="#290707"
-                    android:textSize="8sp" />
-            </androidx.cardview.widget.CardView>
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardProfit"
-                android:layout_width="0dp"
-                android:layout_height="12dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="5dp"
-                app:cardBackgroundColor="#00334DF1"
-                app:cardCornerRadius="0dp"
-                app:cardElevation="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/cardTotal"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/textProfit"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textAlignment="textEnd"
-                    android:paddingEnd="10dp"
-                    android:text="PROFIT"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textColor="#290707"
                     android:textSize="8sp" />

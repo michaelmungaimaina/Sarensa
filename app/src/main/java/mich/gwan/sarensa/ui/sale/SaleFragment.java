@@ -1,5 +1,9 @@
 package mich.gwan.sarensa.ui.sale;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summingDouble;
+import static java.util.stream.Collectors.summingInt;
+
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.ActivityNotFoundException;
@@ -38,9 +42,12 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 import mich.gwan.sarensa.adapters.SalesRecyclerAdapter;
 import mich.gwan.sarensa.databinding.ActivitySaleBinding;
@@ -48,12 +55,14 @@ import mich.gwan.sarensa.helpers.InputValidation;
 import mich.gwan.sarensa.helpers.RecyclerTouchListener;
 import mich.gwan.sarensa.info.InformationApi;
 import mich.gwan.sarensa.model.Item;
+import mich.gwan.sarensa.model.Receipt;
 import mich.gwan.sarensa.model.Sales;
 import mich.gwan.sarensa.pdf.PDFUtility;
+import mich.gwan.sarensa.pdf.ProfitPDF;
 import mich.gwan.sarensa.sql.DatabaseHelper;
 import mich.gwan.sarensa.ui.home.HomeFragment;
 
-public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose {
+public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose, ProfitPDF.OnDocClose {
     private RecyclerView recyclerView;
     private List<Sales> list;
     private DatabaseHelper databaseHelper;
@@ -72,6 +81,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
     private EditText itemEditText;
     private CardView search;
     private CardView pdf;
+    private CardView cardProfit;
     private ActivitySaleBinding binding;
     private Context mContext;
     private LinearLayout lap;
@@ -92,7 +102,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
 
         initViews();
         initobjects();
-        buttonEvents();
+        //buttonEvents();
         return root;
     }
 
@@ -101,7 +111,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
         recyclerView = binding.saleFragment.recyclerViewSales;
         toDatePicker = binding.saleFragment.toDatePicker;
         froDatePicker = binding.saleFragment.froDatePicker;
-        categoryEditText = binding.saleFragment.catEditText;
+        categoryEditText = binding.saleFragment.editTextCustomer;
         itemEditText = binding.saleFragment.itemEditText;
         pdf = binding.sellCard;
         search = binding.cardSearch;
@@ -199,16 +209,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
         pdf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                filePath = path();
-                // Make sure the path directory exists.
-                try {
-                    PDFUtility.createPdf(v.getContext(), SaleFragment.this, station(),
-                            getSampleData(), path(), true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    //Log.e(TAG,"Error Creating Pdf");
-                    Toast.makeText(mContext, "Error Creating Pdf", Toast.LENGTH_SHORT).show();
-                }
+                ChooseRepoertDialog();
             }
         });
 
@@ -220,10 +221,71 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
         });
     }
 
+    private void ChooseRepoertDialog() {
+        CharSequence colors[] = new CharSequence[]{"POS","PROFIT"};
+
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getView().getContext());
+        builder.setTitle("Choose Action");
+        builder.setItems(colors, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    filePath = path();
+                    // Make sure the path directory exists.
+                    try {
+                        PDFUtility.createPdf(mContext, SaleFragment.this, station(),
+                                getSampleData(), path(), true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        //Log.e(TAG,"Error Creating Pdf");
+                        Toast.makeText(mContext, "Error Creating Pdf", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    filePath = profitPath();
+                    // Make sure the path directory exists.
+                    try {
+                        ProfitPDF.createPdf(mContext, SaleFragment.this, station(),
+                                profitData(), filePath, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        //Log.e(TAG,"Error Creating Pdf");
+                        Toast.makeText(mContext, "Error Creating Pdf", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+        builder.show();
+    }
+
     @Override
     public void onPDFDocumentClose(File file)
     {
         Toast.makeText(mContext,"Data processed successfully",Toast.LENGTH_SHORT).show();
+        // Get the File location and file name.
+        Log.d("pdfFIle", "" + filePath);
+
+        // Get the URI Path of file.
+        Uri uriPdfPath = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", new File(filePath));
+        Log.d("pdfPath", "" + uriPdfPath);
+
+        // Start Intent to View PDF from the Installed Applications.
+        Intent pdfOpenIntent = new Intent(Intent.ACTION_VIEW);
+        pdfOpenIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        pdfOpenIntent.setClipData(ClipData.newRawUri("", uriPdfPath));
+        pdfOpenIntent.setDataAndType(uriPdfPath, "application/pdf");
+        pdfOpenIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |  Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+        try {
+            startActivity(pdfOpenIntent);
+        } catch (ActivityNotFoundException activityNotFoundException) {
+            Toast.makeText(mContext,"There is no app to load corresponding PDF",Toast.LENGTH_LONG).show();
+
+        }
+    }
+    @Override
+    public void onPDFClose(File file)
+    {
+        Toast.makeText(mContext,"Profit report processed successfully",Toast.LENGTH_SHORT).show();
         // Get the File location and file name.
         Log.d("pdfFIle", "" + filePath);
 
@@ -259,12 +321,26 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
         {
             path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) +
-                    "/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))+"_Sales.pdf";
+                    "/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))+" POS.pdf";
         }
         else
         {
             path = Environment.getExternalStorageDirectory() + "/Sarensa/"
-                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"))+"_Sales.pdf";
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"))+" POS.pdf";
+        }
+        return path;
+    }
+    private String profitPath(){
+        String path = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+        {
+            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) +
+                    "/000" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddHHmmss"))+" profit report.pdf";
+        }
+        else
+        {
+            path = Environment.getExternalStorageDirectory() + "/Sarensa/Profit/"
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddHHmmss"))+" profit report.pdf";
         }
         return path;
     }
@@ -278,9 +354,9 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
                 Sales sales = list.get(i);
                 temp.add(new String[] {sales.getDate(), sales.getItemName(),
                         String.valueOf(sales.getItemQnty()), String.valueOf(sales.getSellPrice()) + ".00",
-                        String.valueOf(sales.getTotal()) + ".00", String.valueOf(sales.getProfit()) + ".00"});
+                        String.valueOf(sales.getTotal()) + ".00"});
             }
-            temp.add(new String[] {"TOTAL", "", "", "", String.valueOf(tot() + ".00"), String.valueOf(prof() + ".00")});
+            temp.add(new String[] {"TOTAL", "", "", "", String.valueOf(tot() + ".00")});
             return  temp;
         }
 
@@ -309,14 +385,28 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
      * it from the list
      **/
     private void deleteItem(int position) {
-    // deleting the note from db
-    databaseHelper.deleteSale(list.get(position));
+
     Item par = new Item();
     par.setCategoryName(list.get(position).getItemCategory());
     par.setItemName(list.get(position).getItemName());
     par.setStationName(list.get(position).getStationName());
-    par.setItemQnty(list.get(position).getItemQnty());
 
+    Receipt receipt = new Receipt();
+    receipt.setReceiptDate(list.get(position).getDate());
+    receipt.setReceiptTime(list.get(position).getTime());
+    receipt.setStationName(list.get(position).getStationName());
+    Sales sales = new Sales();
+    sales.setDate(list.get(position).getDate());
+    sales.setTime(list.get(position).getTime());
+
+    // deleting the note from db
+    int currentQnty = databaseHelper.getItemQnty(list.get(position).getStationName(),list.get(position).getItemCategory(),
+                list.get(position).getItemName());
+    int newQuantity = list.get(position).getItemQnty() + currentQnty;
+    //set new Quantity
+        par.setItemQnty(newQuantity);
+        databaseHelper.deleteSale(sales);
+        databaseHelper.deleteReceipt(receipt);
     databaseHelper.updateItemQnty(par);
 
     // removing the note from the list
@@ -338,7 +428,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
             public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) {
                     deleteItem(position);
-                    informationApi.snackBar(coordinatorLayout, "Transaction Deleted Successfully!", Color.WHITE);
+                    informationApi.snackBar(coordinatorLayout, "Transaction Cancelled Successfully!", Color.GREEN);
 
                 }
             }
@@ -361,6 +451,29 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
             profit += list.get(i).getProfit();
         }
         return profit;
+    }
+
+    /**
+     * Hashmap for grouping similar items and sum them.
+     * @return an arrylist of item name and the total profit
+     */
+    public List<String[]> profitData(){
+        List<String[]> temp = new ArrayList<>();
+        Map<String, Double> result = list.stream()
+                .collect(groupingBy(Sales::getItemName, TreeMap::new, summingDouble(Sales::getProfit)));
+
+        result.forEach((k, v) -> temp.add(new String[]{k,String.valueOf(v)}));
+        temp.add(new String[]{"TOTAL",String.valueOf(prof()+".00")});
+        return temp;
+    }
+    public int totalProfit(){
+        int total = 0;
+        String[] arr = new String[1];
+        for (int i = 0;i<profitData().size();i++){
+            arr = profitData().get(i);
+            total += Integer.parseInt(arr[1]);
+        }
+        return total;
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -718,6 +831,4 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
         super.onDestroyView();
         binding = null;
     }
-
-
 }

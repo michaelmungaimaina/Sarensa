@@ -1,11 +1,17 @@
 package mich.gwan.sarensa.activities;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.InputType;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.os.Handler;
@@ -19,37 +25,44 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import mich.gwan.sarensa.R;
 import mich.gwan.sarensa.adapters.CartRecyclerAdapter;
-import mich.gwan.sarensa.interfaces.AdapterCallback;
 import mich.gwan.sarensa.adapters.CategoryRecyclerAdapter;
 import mich.gwan.sarensa.adapters.ItemRecyclerAdapter;
 import mich.gwan.sarensa.databinding.ActivityCategoryBinding;
 import mich.gwan.sarensa.helpers.InputValidation;
 import mich.gwan.sarensa.helpers.RecyclerTouchListener;
+import mich.gwan.sarensa.info.InformationApi;
 import mich.gwan.sarensa.model.Cart;
 import mich.gwan.sarensa.model.Category;
 import mich.gwan.sarensa.model.Item;
+import mich.gwan.sarensa.model.Receipt;
 import mich.gwan.sarensa.model.Sales;
-import mich.gwan.sarensa.model.TempCart;
+import mich.gwan.sarensa.pdf.PDFUtility;
+import mich.gwan.sarensa.pdf.ReceiptPDF;
 import mich.gwan.sarensa.sql.DatabaseHelper;
+import mich.gwan.sarensa.ui.sale.SaleFragment;
 
-public class SaleCategoryViewActivity extends AppCompatActivity {
+public class SaleCategoryViewActivity extends AppCompatActivity implements ReceiptPDF.OnDocumentClose {
     private RecyclerView recyclerViewCat;
     private RecyclerView recyclerViewItem;
     private final AppCompatActivity activity = SaleCategoryViewActivity.this;
@@ -74,6 +87,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
     private Intent intent;
     public  String myStation;
     public  String myCategory;
+    private String filePath;
     HashMap<String,Integer> cartPosition;
 
     protected void onCreate(Bundle savedInstanceState){
@@ -176,7 +190,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
 
             @Override
             public void onLongClick(View view, int position) {
-                showActionsDialog(position);
+                showCategoryActionsDialog(position);
             }
         }));
         /**
@@ -252,7 +266,12 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
                           catList.get(position).getCategoryName(), catList.get(position).getItemName());
                   // remove cart entry from list
                   catList.remove(position);
-                  cartRecyclerAdapter.notifyItemChanged(position);
+                  int currentSize = catList.size();
+                //tell the recycler view that all the old items are gone
+                cartRecyclerAdapter.notifyItemChanged(position);
+                cartRecyclerAdapter.notifyItemRangeRemoved(0, currentSize);
+                //tell the recycler view how many new items we added
+                //notifyItemRangeInserted(0, newArticles.size());
                   Toast.makeText(this, "Item Removed!", Toast.LENGTH_SHORT).show();
                   //notifyDataSetChanged();
             }
@@ -352,7 +371,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
      * and refreshing the list
      */
     @SuppressLint("NotifyDataSetChanged")
-    private void insertValue(String catName, String station) {
+    private void insertNewCategory(String catName, String station) {
         // inserting value in db and getting
         // newly inserted value id
         Category par = new Category();
@@ -367,7 +386,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
         toggleCatViews();
     }
     @SuppressLint("NotifyDataSetChanged")
-    private void insertItem(String itemName,String quantity, String buyPrice, String sellPrice) {
+    private void insertNewItem(String itemName, String quantity, String buyPrice, String sellPrice) {
         // inserting value in db and getting
         // newly inserted value id
         Item par = new Item();
@@ -390,7 +409,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
      * Updating values in db and updating
      * item in the list by its position
      */
-    private void updateValue(String station, String catName, int position) {
+    private void updateCategoryValue(String station, String catName, int position) {
         Category par = listCat.get(position);
         // updating values
         par.setStationName(station);
@@ -403,7 +422,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
 
         toggleCatViews();
     }
-    private void updateItem(String station,String category,String itemName,String quantity, String buyPrice, String sellPrice, int position) {
+    private void updateItemValue(String station, String category, String itemName, String quantity, String buyPrice, String sellPrice, int position) {
         Item par = listItem.get(position);
         // updating values
         par.setStationName(station);
@@ -426,7 +445,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
      * Deleting values from SQLite and removing the
      * item from the list by its position
      */
-    private void deleteValue(int position) {
+    private void deleteCategoryValue(int position) {
         // deleting the value from db
         databaseHelper.deleteCategory(listCat.get(position));
         // removing value from the list
@@ -435,7 +454,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
 
         toggleCatViews();
     }
-    private void deleteItem(int position) {
+    private void deleteItemValue(int position) {
         // deleting the value from db
         databaseHelper.deleteItem(listItem.get(position));
         // removing value from the list
@@ -451,7 +470,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
      * Edit - 0
      * Delete - 0
      */
-    private void showActionsDialog(final int position) {
+    private void showCategoryActionsDialog(final int position) {
         CharSequence[] action = new CharSequence[]{"Edit", "Delete"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -462,7 +481,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
                 if (which == 0) {
                     showCategoryDialog(true, listCat.get(position), position);
                 } else {
-                    deleteValue(position);
+                    deleteCategoryValue(position);
                 }
             }
         });
@@ -479,7 +498,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
                 if (which == 0) {
                     showItemDialog(true, listItem.get(position), position);
                 } else {
-                    deleteItem(position);
+                    deleteItemValue(position);
                 }
             }
         });
@@ -540,7 +559,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
                     // check if user is updating values
                     if (shouldUpdate && category != null) {
                         // update values by it's position
-                        updateValue(stationName.getText().toString().toUpperCase(),
+                        updateCategoryValue(stationName.getText().toString().toUpperCase(),
                                 categoryName.getText().toString().toUpperCase(), position);
                         // toast succesful update
                         Toast.makeText(activity,getString(R.string.category_update),Toast.LENGTH_SHORT).show();
@@ -551,7 +570,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
                             Toast.makeText(activity,getString(R.string.category_exists),Toast.LENGTH_SHORT).show();
                         } else {
                             // create new note
-                            insertValue(categoryName.getText().toString().toUpperCase(), myStation);
+                            insertNewCategory(categoryName.getText().toString().toUpperCase(), myStation);
                             // notify successful registration
                             Toast.makeText(activity,getString(R.string.category_registered),Toast.LENGTH_SHORT).show();
                             // clear fields
@@ -646,7 +665,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
                 if (shouldUpdate && item != null) {
                     int quantity = Integer.parseInt(currentQuantityText.getText().toString()) + Integer.parseInt(newQuantity.getText().toString());
                     // update values by it's position
-                    updateItem(stationName.getText().toString().toUpperCase(), categoryName.getText().toString().toUpperCase(),
+                    updateItemValue(stationName.getText().toString().toUpperCase(), categoryName.getText().toString().toUpperCase(),
                             itemName.getText().toString().toUpperCase(), String.valueOf(quantity),
                             buyPrice.getText().toString().toUpperCase(), sellPrice.getText().toString().toUpperCase(), position);
                     //toast to notify successful update
@@ -659,7 +678,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
                         Toast.makeText(activity,getString(R.string.item_exists),Toast.LENGTH_SHORT).show();
                     } else {
                         // create new note
-                        insertItem(itemName.getText().toString().toUpperCase(), newQuantity.getText().toString().toUpperCase(),
+                        insertNewItem(itemName.getText().toString().toUpperCase(), newQuantity.getText().toString().toUpperCase(),
                                 buyPrice.getText().toString().toUpperCase(), sellPrice.getText().toString().toUpperCase());
                         // clear fields
                         categoryName.setText("");
@@ -688,6 +707,9 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
             View view = layoutInflaterAndroid.inflate(R.layout.cart_dialog, null);
 
             final AlertDialog.Builder cartBuilder = new AlertDialog.Builder(activity);
+
+            final EditText customerName = view.findViewById(R.id.editTextCustomerName);
+            final EditText transType = view.findViewById(R.id.editTextTransactionType);
             // declare and initialize recyclerview
             RecyclerView cartRecycler = view.findViewById(R.id.recyclerCart);
             cartRecycler.setAdapter(cartRecyclerAdapter);
@@ -722,9 +744,31 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
                 @SuppressLint("NotifyDataSetChanged")
                 @Override
                 public void onClick(View v) {
+                    String customer = "";
+                    String transaction = "";
+                    /*
+                    validate inputs
+                     */
+                    if (Objects.equals(customerName.getText().toString(), "")){
+                        customerName.setError(getString(R.string.error_message_customer_name));
+                        customer = "NULL";
+                    } else {
+                        customer = customerName.getText().toString().toUpperCase();
+                    }
+                    if(Objects.equals(transType.getText().toString(), "")){
+                        transType.setError(getString(R.string.error_message_cash_name));
+                        transaction = "CASH";
+                    } else{
+                        if(!inputValidation.isCredit(transType,getString(R.string.error_message_credit_name))) {
+                            transType.requestFocus();
+                            return;
+                        } else {
+                            transaction = transType.getText().toString().toUpperCase();
+                        }
+                    }
+
                     //perform sale transaction
                     Sales par = new Sales();
-                    Item item = new Item();
                     System.out.println("Beginning loop");
                     for (int i = 0; i < catList.size(); i++) {
                         int sellPrice = databaseHelper.getSellingPrice(myStation, catList.get(i).getCategoryName(), catList.get(i).getItemName());
@@ -734,6 +778,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
                         par.setTime(String.valueOf(LocalTime.now()));
                         par.setDate(String.valueOf(LocalDate.now()));
                         par.setStationName(myStation);
+                        par.setSaleType(transaction);
                         par.setItemCategory(catList.get(i).getCategoryName());
                         par.setItemName(catList.get(i).getItemName());
                         par.setItemQnty(catList.get(i).getItemQnty());
@@ -742,11 +787,25 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
                         par.setProfit(profit);
                         // complete transactions
                         databaseHelper.addSale(par);
-                        System.out.println("Sales completed!!!!!!!");
-                        Toast.makeText(activity, "Transaction Completed Successfully!", Toast.LENGTH_SHORT).show();
+                        databaseHelper.addReceipt(new Receipt(String.valueOf(LocalDate.now()),String.valueOf(LocalTime.now()),
+                                transaction,customer, myStation,catList.get(i).getCategoryName(),catList.get(i).getItemName(),
+                                catList.get(i).getItemQnty(), catList.get(i).getSellPrice(),total));
                         System.out.println("Data updated");
                     }
+                    int receiptNO = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddHHmm")));
                     System.out.println("End of loop");
+                    System.out.println("Sales completed!!!!!!!");
+                    Toast.makeText(activity, "Transaction Completed Successfully!", Toast.LENGTH_SHORT).show();
+                    filePath = path();
+                    // Make sure the path directory exists.
+                    try {
+                        ReceiptPDF.createPdf(v.getContext(), SaleCategoryViewActivity.this,myStation,receiptNO,
+                                getSampleData(), path(), true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        //Log.e(TAG,"Error Creating Pdf");
+                        Toast.makeText(getApplicationContext(), "Error Creating Pdf", Toast.LENGTH_SHORT).show();
+                    }
                     // delete cart table items
                     databaseHelper.deleteCart(myStation);
                     System.out.println("Table Cart cleared");
@@ -873,5 +932,70 @@ public class SaleCategoryViewActivity extends AppCompatActivity {
 
             }
         }.execute();
+    }
+
+    @Override
+    public void onPDFDocumentClose(File file) {
+        Toast.makeText(this, "Receipt processed successfully", Toast.LENGTH_SHORT).show();
+        // Get the File location and file name.
+        Log.d("pdfFIle", "" + filePath);
+
+        // Get the URI Path of file.
+        Uri uriPdfPath = FileProvider.getUriForFile(this, this.getPackageName() + ".provider", new File(filePath));
+        Log.d("pdfPath", "" + uriPdfPath);
+
+        // Start Intent to View PDF from the Installed Applications.
+        Intent pdfOpenIntent = new Intent(Intent.ACTION_VIEW);
+        pdfOpenIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        pdfOpenIntent.setClipData(ClipData.newRawUri("", uriPdfPath));
+        pdfOpenIntent.setDataAndType(uriPdfPath, "application/pdf");
+        pdfOpenIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+        try {
+            startActivity(pdfOpenIntent);
+        } catch (ActivityNotFoundException activityNotFoundException) {
+            Toast.makeText(this, "There is no app to load corresponding PDF", Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+        private String path(){
+            String path = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            {
+                path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) +
+                        "/000" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddHHmm"))+".pdf";
+            }
+            else
+            {
+                path = Environment.getExternalStorageDirectory() + "/Sarensa/Receipts/"
+                        + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"))+"_Sales.pdf";
+            }
+            return path;
+        }
+
+        private List<String[]> getSampleData(){
+            int count = catList.size();
+
+            List<String[]> temp = new ArrayList<>();
+            for (int i = 0; i < count; i++)
+            {
+                int total = catList.get(i).getSellPrice() * catList.get(i).getItemQnty();
+                Cart sales = catList.get(i);
+                temp.add(new String[] {sales.getItemName(),
+                        String.valueOf(sales.getItemQnty()), String.valueOf(sales.getSellPrice()) + ".00",
+                        String.valueOf(total) + ".00"});
+            }
+            temp.add(new String[] {"TOTAL", "", "", String.valueOf(tot() + ".00")});
+            return  temp;
+        }
+    public int tot() {
+        int total = 0;
+        int netTotal = 0;
+        for(int i = 0; i <catList.size(); i++) {
+            netTotal = catList.get(i).getSellPrice() * catList.get(i).getItemQnty();
+            total += netTotal;
+        }
+        return total;
     }
 }

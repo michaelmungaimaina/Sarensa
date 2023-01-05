@@ -16,6 +16,16 @@
         android:name="mich.gwan.sarensa.ui.sale.SaleFragment"
         android:label="Sales"
         tools:layout="@layout/activity_sale" />
+    <fragment
+        android:id="@+id/nav_stock"
+        android:name="mich.gwan.sarensa.ui.stock.StockFragment"
+        android:label="Stock Level"
+        tools:layout="@layout/activity_stock" />
+    <fragment
+        android:id="@+id/nav_receipt"
+        android:name="mich.gwan.sarensa.ui.receipt.ReceiptFragment"
+        android:label="Receipts"
+        tools:layout="@layout/activity_receipt" />
 
     <fragment
         android:id="@+id/nav_users"

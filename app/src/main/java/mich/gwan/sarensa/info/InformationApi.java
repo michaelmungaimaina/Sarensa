@@ -31,7 +31,7 @@ public class InformationApi {
         Snackbar snackbar = Snackbar.make(layout, message, Snackbar.LENGTH_LONG);
         View view = snackbar.getView();
         view.setBackgroundColor(color);
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)  view.getLayoutParams();
         params.gravity = Gravity.TOP | Gravity.CENTER;
         params.setMargins(0, 0, 0, 0);
         view.setLayoutParams(params);

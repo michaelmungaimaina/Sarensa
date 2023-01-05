@@ -61,14 +61,14 @@
                 android:background="#71F1D3"
                 android:textColor="@color/black"
                 android:hint="'to' Date"
-                app:layout_constraintEnd_toStartOf="@+id/catEditText"
+                app:layout_constraintEnd_toStartOf="@+id/editTextCustomer"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/froDatePicker"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
             <EditText
-                android:id="@+id/catEditText"
+                android:id="@+id/editTextCustomer"
                 android:layout_width="80dp"
                 android:layout_height="20dp"
                 android:background="@android:color/transparent"
@@ -99,7 +99,7 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/catEditText"/>
+                    app:layout_constraintStart_toEndOf="@+id/editTextCustomer"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>

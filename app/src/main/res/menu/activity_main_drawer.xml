@@ -14,6 +14,14 @@
             android:icon="@drawable/total_sale"
             android:title="Sales" />
         <item
+            android:id="@+id/nav_stock"
+            android:icon="@drawable/stock"
+            android:title="Stock" />
+        <item
+            android:id="@+id/nav_receipt"
+            android:icon="@drawable/receipt_long"
+            android:title="Receipt" />
+        <item
             android:id="@+id/nav_users"
             android:icon="@drawable/user"
             android:title="Users" />
