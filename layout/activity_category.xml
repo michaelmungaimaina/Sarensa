@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/home_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.SaleCategoryViewActivity">
+
+    <!--com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        tools:ignore="MissingClass">
+    </com.google.android.material.appbar.AppBarLayout-->
+
+    <include
+        android:id="@+id/category_view"
+        layout="@layout/content_category_fragment" />
+
+    <RelativeLayout
+        android:id="@+id/relative"
+        android:layout_width="wrap_content"
+        android:layout_height="67dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="@dimen/fab_margin">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/categoryRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="addCategory"
+            android:backgroundTint="#006AA570"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            app:maxImageSize="67dp"
+            app:elevation="0dp"
+            app:srcCompat="@drawable/add_category"
+            android:contentDescription="Click me to add a new category." />
+        <TextView
+            android:id="@+id/textViewCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:text="  ADD CATEGORY  "
+            android:layout_marginStart="0dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#000000"
+            android:textSize="8sp"
+            android:textStyle="bold"
+            android:layout_marginTop="0dp"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="67dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_gravity="bottom|end"
+        android:visibility="gone"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_marginEnd="25dp">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/itemRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:onClick="addItem"
+            android:backgroundTint="#006AA570"
+            app:maxImageSize="67dp"
+            app:srcCompat="@drawable/add_item"
+            app:elevation="0dp"
+            android:contentDescription="Click me to add a new item." />
+        <TextView
+            android:id="@+id/textViewItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:text="  ADD ITEM  "
+            android:layout_marginTop="0dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#000000"
+            android:textSize="9sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/sellCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="@dimen/fab_margin"
+        android:visibility="gone"
+        android:backgroundTint="#AB0037FF"
+        android:onClick="actionSell"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                app:srcCompat="@drawable/ic_baseline_shopping_cart_checkout_24" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="start"
+                android:layout_marginStart="5dp"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:text="  CART  "
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

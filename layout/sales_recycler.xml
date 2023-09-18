@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/selector_recyclerview"
+        android:orientation="horizontal"
+        android:paddingTop="0dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardDate"
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="1dp"
+                app:cardBackgroundColor="#02334DF1"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="10dp"
+                app:layout_constraintEnd_toStartOf="@+id/cardTime"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:id="@+id/txtDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingStart="5dp"
+                    android:text="DATE"
+                    android:textAlignment="textStart"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="#290707"
+                    android:textSize="8sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardTime"
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                app:cardBackgroundColor="#03334DF1"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="10dp"
+                app:layout_constraintEnd_toStartOf="@+id/cardSaleType"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/cardDate"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/txtTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="TIME"
+                    android:textAlignment="textStart"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="#290707"
+                    android:textSize="8sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardSaleType"
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                app:cardBackgroundColor="#00334DF1"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="10dp"
+                app:layout_constraintEnd_toStartOf="@+id/cardCategory"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/cardTime"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/txtSaleType"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="TYPE"
+                    android:textAlignment="textStart"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="#290707"
+                    android:textSize="8sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardCategory"
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                app:cardBackgroundColor="#05334DF1"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="10dp"
+                app:layout_constraintEnd_toStartOf="@+id/cardItemName"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/cardSaleType"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/txtCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="textStart"
+                    android:text="CATEGORY"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="#290707"
+                    android:textSize="8sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardItemName"
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                app:cardBackgroundColor="#00334DF1"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/cardQuantity"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/cardCategory"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/txtItemName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="textStart"
+                    android:text="ITEM"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="#290707"
+                    android:textSize="8sp" />
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardQuantity"
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                app:cardBackgroundColor="#00334DF1"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/cardUnitPrice"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/cardItemName"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/txtQuantity"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="textEnd"
+                    android:text="QNTY"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="#290707"
+                    android:textSize="8sp" />
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardUnitPrice"
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                app:cardBackgroundColor="#00334DF1"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/cardTotal"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/cardQuantity"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/textUnitPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="textEnd"
+                    android:text="PRICE"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="#290707"
+                    android:textSize="8sp" />
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardTotal"
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                app:cardBackgroundColor="#00334DF1"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/cardProfit"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/cardUnitPrice"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/textTotal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="textEnd"
+                    android:text="TOTAL"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="#290707"
+                    android:textSize="8sp" />
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardProfit"
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                app:cardBackgroundColor="#00334DF1"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/cardTotal"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/textProfit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="textEnd"
+                    android:paddingEnd="10dp"
+                    android:text="PROFIT"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="#290707"
+                    android:textSize="8sp" />
+            </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>

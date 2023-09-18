@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="5dp"
+    app:cardCornerRadius="10dp"
+    android:layout_marginBottom="4dp"
+    app:cardBackgroundColor="#DCDCDC">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:layout_margin="2dp"
+        app:cardCornerRadius="10dp">
+<LinearLayout
+    android:id="@+id/parentLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/selector_recyclerview">
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardCatInitialOuter"
+        android:layout_height="35dp"
+        android:layout_width="35dp"
+        app:cardBackgroundColor="#0049FF"
+        android:layout_marginEnd="1dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_gravity="center"
+        app:cardCornerRadius="17dp"
+        app:cardElevation="0dp">
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardCatInitialInner"
+        android:layout_height="33dp"
+        android:layout_width="33dp"
+        app:cardBackgroundColor="#FFFFFF"
+        android:layout_gravity="center"
+        app:cardCornerRadius="17dp"
+        app:cardElevation="0dp">
+        <TextView
+            android:id="@+id/textInitial"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="B"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#1E0404"
+            android:textSize="15sp" />
+    </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:background="#00D58715"
+        android:backgroundTintMode="src_atop"
+        android:backgroundTint="#B7131313">
+
+        <TextView
+            android:id="@+id/catName"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="start"
+            android:layout_marginStart="16dp"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:text="BOLTS"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardOilsAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                app:cardBackgroundColor="#00EAEFE6"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp">
+                <androidx.cardview.widget.CardView
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    app:cardBackgroundColor="#00397012"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp">
+                    <TextView
+                        android:id="@+id/oilsAdd"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="AVAILABLE TYPE: "
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textColor="#555555"
+                        android:textSize="10sp" />
+                </androidx.cardview.widget.CardView>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardOilsView"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="#03FAFAFA"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    app:cardBackgroundColor="#00D1DFCD"
+                    app:cardCornerRadius="0sp"
+                    app:cardElevation="0dp">
+                    <TextView
+                        android:id="@+id/textCount"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center|left"
+                        android:text="VIEW"
+                        android:maxLines="1"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textColor="#555555"
+                        android:textSize="10sp" />
+                </androidx.cardview.widget.CardView>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.cardview.widget.CardView>

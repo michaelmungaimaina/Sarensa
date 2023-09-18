@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.receipt.ReceiptFragment"
+    tools:showIn="@layout/activity_receipt">
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="#00011B17"
+        android:gravity="center"
+        android:orientation="vertical">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:text=""
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="2dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/froDatePicker"
+                android:layout_width="100dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="25dp"
+                android:background="#9CC2E4"
+                android:textColor="@color/black"
+                android:hint="'fro' Date"
+                android:gravity="center_horizontal"
+                app:layout_constraintEnd_toStartOf="@+id/toDatePicker"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/toDatePicker"
+                android:layout_width="100dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="15dp"
+                android:gravity="center_horizontal"
+                android:background="#9CC2E4"
+                android:textColor="@color/black"
+                android:hint="'to' Date"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/editTextCustomer"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/froDatePicker"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <EditText
+                android:id="@+id/editTextCustomer"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:hint="Customer Name"
+                android:inputType="textCapSentences|textMultiLine"
+                android:lines="1"
+                android:textSize="11sp"
+                android:layout_gravity="start"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/toDatePicker"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="0dp"
+        android:background="#DAA3A3A3"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="0dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardDate"
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="1dp"
+            app:cardBackgroundColor="#02334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardTime"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/txtDate"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="DATE"
+                android:textAlignment="textStart"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="8sp" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardTime"
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            app:cardBackgroundColor="#03334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardSaleCustomer"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardDate"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/txtTime"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="TIME"
+                android:textAlignment="textStart"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="8sp" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardSaleCustomer"
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            app:cardBackgroundColor="#00334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardSaleType"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardTime"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="CUSTOMER"
+                android:textAlignment="textStart"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="8sp" />
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardSaleType"
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            app:cardBackgroundColor="#00334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardCategory"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardSaleCustomer"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/txtSaleType"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="TYPE"
+                android:textAlignment="textStart"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="8sp" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardCategory"
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            app:cardBackgroundColor="#05334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardItemName"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardSaleType"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/txtCategory"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="textStart"
+                android:text="CATEGORY"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="8sp" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardItemName"
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            app:cardBackgroundColor="#00334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardQuantity"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardCategory"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/txtItemName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="textStart"
+                android:text="ITEM"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="8sp" />
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardQuantity"
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            app:cardBackgroundColor="#00334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardUnitPrice"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardItemName"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/txtQuantity"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="textEnd"
+                android:text="QNTY"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="8sp" />
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardUnitPrice"
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            app:cardBackgroundColor="#00334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardTotal"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardQuantity"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textUnitPrice"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="textEnd"
+                android:text="PRICE"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="8sp" />
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardTotal"
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            app:cardBackgroundColor="#00334DF1"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardUnitPrice"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textTotal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="textEnd"
+                android:text="TOTAL"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#290707"
+                android:textSize="8sp" />
+        </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="5dp"
+        android:id="@+id/recyclerViewReceipts"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+
+
+    </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
