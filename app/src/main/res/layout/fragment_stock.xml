@@ -11,21 +11,6 @@
     tools:showIn="@layout/activity_stock">
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="#00011B17"
-        android:gravity="center"
-        android:orientation="vertical">
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-black"
-            android:text="STOCK STATISTICS"
-            android:textColor="@color/black"
-            android:textSize="14sp" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
@@ -110,7 +95,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginTop="0dp"
-        android:background="#ECE8AA"
+        android:background="#D6D6D6"
         android:gravity="center"
         android:orientation="horizontal"
         android:paddingTop="0dp">

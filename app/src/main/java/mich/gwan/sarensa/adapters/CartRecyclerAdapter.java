@@ -56,7 +56,6 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
         holder.itemName.setText(list.get(position).getItemName());
         holder.totalPrice.setText(String.valueOf(total));
         holder.sellPrice.setText(String.valueOf(list.get(position).getSellPrice()));
-        holder.textInitial.setText(String.valueOf(firstChar));
         // declare and initialize databasehelper object
         DatabaseHelper databaseHelper = new DatabaseHelper(holder.itemView.getContext());
 
@@ -104,12 +103,7 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
         public TextView quantity;
         public TextView sellPrice;
         public TextView totalPrice;
-        public TextView textInitial;
-        public CardView inner;
-        public CardView outer;
         public CardView cardRemove;
-        public AppCompatCheckBox checkBox;
-        private final SaleCategoryViewActivity saleActivity;
 
         public ViewHolder(View view, OnItemClickListener onItemClickListener) {
             super(view);
@@ -117,13 +111,8 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
             quantity = view.findViewById(R.id.textItemQuantity);
             totalPrice = view.findViewById(R.id.textTotalPrice);
             sellPrice = view.findViewById(R.id.textUnitPrice);
-            textInitial = view.findViewById(R.id.textInitial);
-            inner = view.findViewById(R.id.cardInitialInner);
             cardRemove = view.findViewById(R.id.cardRemove);
             //count = view.findViewById(R.id.textCount);
-            outer = view.findViewById(R.id.cardInitialOuter);
-            checkBox = view.findViewById(R.id.categoryCheckBox);
-            saleActivity = new SaleCategoryViewActivity();
 
             cardRemove.setOnClickListener(v -> onItemClickListener.onClick(getAdapterPosition()));
         }

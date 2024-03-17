@@ -129,6 +129,7 @@ public class HomeFragment extends Fragment{
         Station par = new Station();
         par.setName(station);
         par.setLocation(location);
+        par.setStationIdentifier(station);
         databaseHelper.addStation(par);
 
         // adding new values to array list at 0 position

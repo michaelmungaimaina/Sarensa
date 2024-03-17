@@ -10,15 +10,16 @@
     <color name="window">#F50041FF</color>
     <color name="blue">#003BFF</color>
     <color name="colorText">#000000</color>
-    <color name="clorText">#FFFFFF</color>
+    <color name="clorText">#000000</color>
     <color name="loginButton">#72DDC4</color>
-    <color name="selected">#9E9E9E</color>
+    <color name="selected">#B2C1F6</color>
     <color name="less_item">#AE5A5A</color>
     <color name="less_item_out">#F60000</color>
     <color name="dialog_text">#F5101525</color>
-    <color name="colorPrimary">#455399</color>
+    <color name="colorPrimary">#F50041FF</color>
     <color name="text_View">#023A34</color>
-    <color name="colorPrimaryDark">#455399</color>
+    <color name="colorPrimaryDark">#F50041FF</color>
+    <color name="loginWindow">#97003FFF</color>
     <color name="colorAccent">#00c6ae</color>
     <color name="colorBackground">#222121</color>
 </resources>

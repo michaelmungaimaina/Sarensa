@@ -11,26 +11,11 @@
     tools:showIn="@layout/activity_sale">
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="#00011B17"
-        android:gravity="center"
-        android:orientation="vertical">
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-black"
-            android:text="SALES INFORMATION"
-            android:textColor="@color/black"
-            android:textSize="14sp" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="2dp">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -38,34 +23,47 @@
             android:layout_gravity="center"
             android:gravity="center">
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/froDatePickerCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/toDatePickerCard"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
             <TextView
                 android:id="@+id/froDatePicker"
                 android:layout_width="70dp"
                 android:layout_height="20dp"
-                android:layout_marginStart="25dp"
-                android:background="#71F1D3"
+                android:background="#E6B3BEF6"
                 android:textColor="@color/black"
                 android:hint="'fro' Date"
-                android:gravity="center_horizontal"
-                app:layout_constraintEnd_toStartOf="@+id/toDatePicker"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:gravity="center_horizontal"/>
+            </androidx.cardview.widget.CardView>
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/toDatePickerCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/editTextCustomer"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/froDatePickerCard"
+                app:layout_constraintTop_toTopOf="parent">
             <TextView
                 android:id="@+id/toDatePicker"
                 android:layout_width="70dp"
                 android:layout_height="20dp"
-                android:layout_marginStart="15dp"
                 android:gravity="center_horizontal"
-                android:background="#71F1D3"
+                android:background="#E6B3BEF6"
                 android:textColor="@color/black"
-                android:hint="'to' Date"
-                app:layout_constraintEnd_toStartOf="@+id/editTextCustomer"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/froDatePicker"
-                app:layout_constraintTop_toTopOf="parent" />
-
+                android:hint="'to' Date" />
+            </androidx.cardview.widget.CardView>
 
             <EditText
                 android:id="@+id/editTextCustomer"
@@ -79,9 +77,11 @@
                 android:textSize="11sp"
                 android:layout_gravity="start"
                 android:layout_marginStart="15dp"
+                android:textColorHint="#979797"
+                android:textCursorDrawable="@drawable/color_cursor"
                 app:layout_constraintEnd_toStartOf="@+id/itemEditText"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/toDatePicker"
+                app:layout_constraintStart_toEndOf="@+id/toDatePickerCard"
                 app:layout_constraintTop_toTopOf="parent"/>
 
                 <EditText
@@ -96,6 +96,8 @@
                     android:textSize="11sp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="10dp"
+                    android:textColorHint="#979797"
+                    android:textCursorDrawable="@drawable/color_cursor"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -109,7 +111,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginTop="0dp"
-        android:background="#ECE8AA"
+        android:background="#D6D6D6"
         android:gravity="center"
         android:orientation="horizontal"
         android:paddingTop="0dp">
@@ -141,7 +143,8 @@
                 android:textAlignment="textStart"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#290707"
-                android:textSize="8sp" />
+                android:textSize="8sp"
+                android:textStyle="bold"/>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -163,6 +166,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="TIME"
+                android:textStyle="bold"
                 android:textAlignment="textStart"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#290707"
@@ -188,6 +192,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="TYPE"
+                android:textStyle="bold"
                 android:textAlignment="textStart"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#290707"
@@ -214,6 +219,7 @@
                 android:layout_height="match_parent"
                 android:textAlignment="textStart"
                 android:text="CATEGORY"
+                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#290707"
                 android:textSize="8sp" />
@@ -239,6 +245,7 @@
                 android:layout_height="match_parent"
                 android:textAlignment="textStart"
                 android:text="ITEM"
+                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#290707"
                 android:textSize="8sp" />
@@ -263,6 +270,7 @@
                 android:layout_height="match_parent"
                 android:textAlignment="textEnd"
                 android:text="QNTY"
+                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#290707"
                 android:textSize="8sp" />
@@ -287,6 +295,7 @@
                 android:layout_height="match_parent"
                 android:textAlignment="textEnd"
                 android:text="PRICE"
+                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#290707"
                 android:textSize="8sp" />
@@ -311,6 +320,7 @@
                 android:layout_height="match_parent"
                 android:textAlignment="textEnd"
                 android:text="TOTAL"
+                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#290707"
                 android:textSize="8sp" />
@@ -335,6 +345,7 @@
                 android:layout_height="match_parent"
                 android:textAlignment="textEnd"
                 android:text="PROFIT"
+                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#290707"
                 android:textSize="8sp" />

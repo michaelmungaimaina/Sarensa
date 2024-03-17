@@ -5,7 +5,7 @@
     android:id="@+id/nestedScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#85AC4B"
+    android:background="@drawable/login_background"
     android:paddingLeft="20dp"
     android:paddingTop="20dp"
     android:paddingRight="20dp"
@@ -22,14 +22,14 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
-        app:cardBackgroundColor="#FAFAFA"
+        app:cardBackgroundColor="#003FFF"
         app:cardCornerRadius="12dp"
         app:cardElevation="1dp">
 
         <androidx.cardview.widget.CardView
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            app:cardBackgroundColor="#85AC4B"
+            app:cardBackgroundColor="#BDBFBA"
             android:layout_marginEnd="2dp"
             android:layout_marginStart="2dp"
             android:layout_marginBottom="2dp"
@@ -71,7 +71,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    app:cardBackgroundColor="#85AC4B"
+                    app:cardBackgroundColor="#FAFAFA"
                     app:cardElevation="0dp">
 
                 </androidx.cardview.widget.CardView>
@@ -79,7 +79,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    app:cardBackgroundColor="#85AC4B"
+                    app:cardBackgroundColor="#BDBFBA"
                     app:cardElevation="0dp">
 
                     <TextView
@@ -90,7 +90,7 @@
                         android:fontFamily="sans-serif-black"
                         android:gravity="center"
                         android:text="SIGNIN"
-                        android:textColor="#56658A"
+                        android:textColor="#0E328A"
                         android:textSize="16sp" />
                 </androidx.cardview.widget.CardView>
 
@@ -101,13 +101,13 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="40dp"
                     android:layout_marginEnd="10dp"
-                    app:cardBackgroundColor="#85AC4B"
+                    app:cardBackgroundColor="#BDBFBA"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp">
                 <androidx.cardview.widget.CardView
                     android:layout_height="match_parent"
                     android:layout_width="match_parent"
-                    app:cardBackgroundColor="#85AC4B"
+                    app:cardBackgroundColor="#BDBFBA"
                     android:layout_marginEnd="1dp"
                     android:layout_marginStart="1dp"
                     android:layout_marginBottom="1dp"
@@ -122,7 +122,8 @@
                         <androidx.appcompat.widget.AppCompatSpinner
                             android:id="@+id/spinner"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"/>
+                            android:layout_height="45dp"
+                            android:theme="@style/mySpinnerItemStyle"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </androidx.cardview.widget.CardView>
                 </androidx.cardview.widget.CardView>
@@ -133,14 +134,14 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="40dp"
                     android:layout_marginEnd="10dp"
-                    app:cardBackgroundColor="#85AC4B"
+                    app:cardBackgroundColor="#BDBFBA"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp">
 
                         <androidx.cardview.widget.CardView
                         android:layout_height="match_parent"
                         android:layout_width="match_parent"
-                        app:cardBackgroundColor="#85AC4B"
+                        app:cardBackgroundColor="#BDBFBA"
                         android:layout_marginEnd="1dp"
                         android:layout_marginStart="1dp"
                         android:layout_marginBottom="1dp"
@@ -173,14 +174,14 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    app:cardBackgroundColor="#85AC4B"
+                    app:cardBackgroundColor="#BDBFBA"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp">
 
                     <androidx.cardview.widget.CardView
                         android:layout_height="match_parent"
                         android:layout_width="match_parent"
-                        app:cardBackgroundColor="#85AC4B"
+                        app:cardBackgroundColor="#BDBFBA"
                         android:layout_marginEnd="1dp"
                         android:layout_marginStart="1dp"
                         android:layout_marginBottom="1dp"

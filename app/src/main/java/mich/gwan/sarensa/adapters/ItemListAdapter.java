@@ -69,11 +69,8 @@ public class ItemListAdapter extends ArrayAdapter<Item>{
             holder.sellPrice = view.findViewById(R.id.textSellPrice);
             holder.textInitial = view.findViewById(R.id.textInitial);
             holder.textWarning = view.findViewById(R.id.textWarning);
-            holder.inner = view.findViewById(R.id.cardInitialInner);
             holder.cardSell = view.findViewById(R.id.cardSell);
             holder.count = view.findViewById(R.id.textCount);
-            holder.outer = view.findViewById(R.id.cardInitialOuter);
-            holder.checkBox = view.findViewById(R.id.categoryCheckBox);
             holder.position = String.valueOf(position);
 
             holder.cardSell.setTag(position);

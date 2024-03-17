@@ -5,7 +5,7 @@
     android:id="@+id/nestedScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2E0AF1"
+    android:background="#FFFFFF"
     android:paddingLeft="20dp"
     android:paddingTop="20dp"
     android:paddingRight="20dp"
@@ -59,29 +59,33 @@
                 android:fontFamily="sans-serif-black"
                 android:gravity="center"
                 android:text="REGISTRATION FORM"
-                android:textColor="#FFFFFF"
+                android:textColor="#0041FF"
                 android:textSize="16sp" />
         </androidx.cardview.widget.CardView>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayoutSpinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginTop="40dp"
             android:textColorHint="@color/clorText"
-            android:hint="Select User Type">
+            android:hint="Select User Type"
+            android:backgroundTint="@color/clorText">
 
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/spinner"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:theme="@style/mySpinnerItemStyle"/>
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayoutName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
-            android:textColorHint="@color/clorText">
+            app:boxStrokeColor="#4C4B4B"
+            app:hintTextColor="@color/blue"
+            android:textColorHint="@android:color/darker_gray">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/textInputEditTextName"
@@ -90,7 +94,8 @@
                 android:hint="Name"
                 android:inputType="text"
                 android:maxLines="1"
-                android:textColor="@color/clorText" />
+                android:textColor="@color/clorText"
+                android:textCursorDrawable="@drawable/color_cursor"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -98,7 +103,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColorHint="@color/clorText">
+            app:boxStrokeColor="#4C4B4B"
+            app:hintTextColor="@color/blue"
+            android:textColorHint="@android:color/darker_gray">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/textInputEditTextEmail"
@@ -107,14 +114,17 @@
                 android:hint="E-mail"
                 android:inputType="text"
                 android:maxLines="1"
-                android:textColor="@color/clorText" />
+                android:textColor="@color/clorText"
+                android:textCursorDrawable="@drawable/color_cursor"/>
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayoutPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColorHint="@color/clorText">
+            app:boxStrokeColor="#4C4B4B"
+            app:hintTextColor="@color/blue"
+            android:textColorHint="@android:color/darker_gray">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/textPhone"
@@ -123,7 +133,8 @@
                 android:hint="07XXXXXXXX"
                 android:inputType="numberDecimal"
                 android:maxLines="1"
-                android:textColor="@color/clorText" />
+                android:textColor="@color/clorText"
+                android:textCursorDrawable="@drawable/color_cursor"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -131,7 +142,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColorHint="@color/clorText">
+            app:boxStrokeColor="#4C4B4B"
+            app:hintTextColor="@color/blue"
+            android:textColorHint="@android:color/darker_gray">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/textPassword"
@@ -140,7 +153,8 @@
                 android:hint="Password"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:textColor="@color/clorText" />
+                android:textColor="@color/clorText"
+                android:textCursorDrawable="@drawable/color_cursor"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -148,7 +162,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColorHint="@color/clorText">
+            app:boxStrokeColor="#4C4B4B"
+            app:hintTextColor="@color/blue"
+            android:textColorHint="@android:color/darker_gray">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/textConfirmPassword"
@@ -157,7 +173,8 @@
                 android:hint="Confirm Password"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:textColor="@color/clorText" />
+                android:textColor="@color/clorText"
+                android:textCursorDrawable="@drawable/color_cursor"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -182,7 +199,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text=" Already a Member?  "
-                android:textColor="#ffffff"
+                android:textColor="#000000"
                 android:textSize="16dp" />
 
             <androidx.appcompat.widget.AppCompatTextView

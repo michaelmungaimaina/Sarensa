@@ -32,42 +32,26 @@ import mich.gwan.sarensa.R;
 import mich.gwan.sarensa.ui.sale.SaleFragment;
 
 final class PageNumeration extends PdfPageEventHelper {
-    private Context context;
-    private static String TAG        = PageNumeration.class.getSimpleName();
-    private static Font FONT_FOOTER  = new Font(Font.FontFamily.TIMES_ROMAN,  10, Font.NORMAL, BaseColor.DARK_GRAY);
-    private static Font FONT_MID_FOOTER  = new Font(Font.FontFamily.TIMES_ROMAN,  8, Font.NORMAL, BaseColor.BLUE.darker());
 
-    PageNumeration(Context context){
+    private Context context;
+    private static String TAG = PageNumeration.class.getSimpleName();
+    private static Font FONT_FOOTER = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, new BaseColor(0,0,0,200));
+    private static Font FONT_FOOTER1 = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, new BaseColor(0,0,0,0));
+
+    PageNumeration(Context context) {
         this.context = context;
     }
 
     @Override
-    public void onEndPage(PdfWriter writer, Document document){
-
-        /*TOP FOOTER LOGO*/
-        Drawable d= ContextCompat.getDrawable(context, R.drawable.footer_sub_logo);
-        assert d != null;
-        Bitmap bmp=((BitmapDrawable) d).getBitmap();
-        ByteArrayOutputStream stream=new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.PNG,100,stream);
-        Image logo= null;
-        try {
-            logo = Image.getInstance(stream.toByteArray());
-        } catch (BadElementException | IOException e) {
-            e.printStackTrace();
-        }
-        assert logo != null;
-        logo.setWidthPercentage(100);
-        logo.scaleToFit(547,25);
-
+    public void onEndPage(PdfWriter writer, Document document) {
 
         /* Background image */
-        Drawable drawable= ContextCompat.getDrawable(context, R.drawable.footer_note_logo);
+        Drawable drawable = ContextCompat.getDrawable(context, R.drawable.footer);
         assert drawable != null;
-        Bitmap bm=((BitmapDrawable) drawable).getBitmap();
-        ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.PNG,100,byteArrayOutputStream);
-        Image bgImage= null;
+        Bitmap bm = ((BitmapDrawable) drawable).getBitmap();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        Image bgImage = null;
         try {
             bgImage = Image.getInstance(byteArrayOutputStream.toByteArray());
         } catch (BadElementException | IOException e) {
@@ -75,88 +59,84 @@ final class PageNumeration extends PdfPageEventHelper {
         }
         assert bgImage != null;
         bgImage.setWidthPercentage(100);
-        bgImage.scaleToFit(549,25);
-        /* middle text  */
-        Drawable drawabl= ContextCompat.getDrawable(context, R.drawable.midd_text);
-        assert drawabl != null;
-        Bitmap bitMap=((BitmapDrawable) drawabl).getBitmap();
-        ByteArrayOutputStream byteArray=new ByteArrayOutputStream();
-        bitMap.compress(Bitmap.CompressFormat.PNG,100,byteArray);
-        Image middleImage= null;
-        try {
-            middleImage = Image.getInstance(byteArray.toByteArray());
-        } catch (BadElementException | IOException e) {
-            e.printStackTrace();
-        }
-        assert middleImage != null;
-        middleImage.setWidthPercentage(100);
-        middleImage.scaleToFit(549,25);
+        bgImage.scaleToFit(549, 25);
 
         try {
-            //create a PdfTable with one column
-            PdfPTable logoTable=new PdfPTable(1);
-            logoTable.setWidthPercentage(100);
-            logoTable.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-            logoTable.setHorizontalAlignment(Element.ALIGN_CENTER);
-            logoTable.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
+            PdfPTable table = new PdfPTable(1);
+            table.setWidthPercentage(100);
+            table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+            table.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
 
             PdfPCell cell;
-            // top footer logo
-            cell = new PdfPCell(logo);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setUseAscender(true);
-            cell.setBorder(PdfPCell.NO_BORDER);
-            cell.setPadding(0f);
-            logoTable.addCell(cell);
-            // footer data
-            PdfPTable table = new PdfPTable(3);
-            table.setWidthPercentage(100);
-            table.setWidths(new float[]{1,2,1});
 
-            //1st Column
-            Anchor anchor = new Anchor(new Phrase("Sarensa", FONT_FOOTER));
-            anchor.setReference( "http://link_to_playstore/");
-            cell = new PdfPCell(anchor);
+            // Anchor Texts
+            PdfPTable innerTable = new PdfPTable(2);
+            innerTable.setWidthPercentage(100);
+            innerTable.setWidths(new float[]{1, 1});
 
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBorder(0);
-            cell.setPadding(4f);
-            table.addCell(cell);
-            table.setTotalWidth(document.getPageSize().getWidth()-document.leftMargin()-document.rightMargin());
-            table.writeSelectedRows(0,-1,document.leftMargin(),document.bottomMargin()-5,writer.getDirectContent());
+            // Left Anchor Text top
+            Anchor anchorLeft = new Anchor(new Phrase("qwerty", FONT_FOOTER1));
+            anchorLeft.setReference("http://link_to_left_text/");
+            PdfPCell leftCell = new PdfPCell(anchorLeft);
+            leftCell.setBorder(Rectangle.NO_BORDER);
+            leftCell.setPadding(4f);
+            innerTable.addCell(leftCell);
 
-            //2nd Column
-            cell = new PdfPCell(middleImage);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            // Right Anchor Text top
+            Anchor anchorRight = new Anchor(new Phrase("qwerty", FONT_FOOTER1));
+            anchorRight.setReference("http://link_to_right_text/");
+            PdfPCell rightCell = new PdfPCell(anchorRight);
+            rightCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            rightCell.setBorder(Rectangle.NO_BORDER);
+            rightCell.setPadding(4f);
+            innerTable.addCell(rightCell);
+
+            // Left Anchor Text middle
+            Anchor anchorLef = new Anchor(new Phrase("Sarensa", FONT_FOOTER));
+            anchorLeft.setReference("http://link_to_left_text/");
+            PdfPCell leftCel = new PdfPCell(anchorLef);
+            leftCel.setBorder(Rectangle.NO_BORDER);
+            leftCel.setPadding(4f);
+            innerTable.addCell(leftCel);
+
+            // Right Anchor Text middle
+            Anchor anchorRigh = new Anchor(new Phrase("Page - ".concat(String.valueOf(writer.getPageNumber())), FONT_FOOTER));
+            anchorRigh.setReference("http://link_to_right_text/");
+            PdfPCell rightCel = new PdfPCell(anchorRigh);
+            rightCel.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            rightCel.setBorder(Rectangle.NO_BORDER);
+            rightCel.setPadding(4f);
+            innerTable.addCell(rightCel);
+
+            // Left Anchor Text bottom
+            Anchor anchorLe = new Anchor(new Phrase("qwerty", FONT_FOOTER1));
+            anchorLef.setReference("http://link_to_left_text/");
+            PdfPCell leftCe = new PdfPCell(anchorLe);
+            leftCe.setBorder(Rectangle.NO_BORDER);
+            leftCe.setPadding(4f);
+            innerTable.addCell(leftCe);
+
+            // Right Anchor Text bottom
+            Anchor anchorRig = new Anchor(new Phrase("qwerty", FONT_FOOTER1));
+            anchorRig.setReference("http://link_to_right_text/");
+            PdfPCell rightCe = new PdfPCell(anchorRig);
+            rightCe.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            rightCe.setBorder(Rectangle.NO_BORDER);
+            rightCe.setPadding(4f);
+            innerTable.addCell(rightCe);
+
+            cell = new PdfPCell(innerTable);
             cell.setBorder(Rectangle.NO_BORDER);
-            cell.setBackgroundColor(BaseColor.WHITE);
             cell.setPadding(0f);
+            cell.setCellEvent(new ImageBackgroundEvent(bgImage));
             table.addCell(cell);
 
-            //3rd column
-            cell = new PdfPCell(new Phrase("Page - ".concat(String.valueOf(writer.getPageNumber())), FONT_FOOTER));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBorder(0);
-            cell.setPadding(4f);
-            table.addCell(cell);
-
-            PdfPCell cel = new PdfPCell(table);
-            cel.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cel.setUseAscender(true);
-            cel.setCellEvent(new ImageBackgroundEvent(bgImage));
-            cel.setBorder(PdfPCell.NO_BORDER);
-            cel.setPadding(0f);
-            logoTable.addCell(cel);
-            logoTable.setTotalWidth(document.getPageSize().getWidth()-document.leftMargin()-document.rightMargin());
-            logoTable.writeSelectedRows(0,-1,document.leftMargin(),document.bottomMargin()-5,writer.getDirectContent());
-        }
-        catch (Exception ex)
-        {
+            table.setTotalWidth(document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin());
+            table.writeSelectedRows(0, -1, document.leftMargin(), document.bottomMargin() - -5, writer.getDirectContent());
+        } catch (Exception ex) {
             ex.printStackTrace();
-            Log.e(TAG,ex.toString());
+            Log.e(TAG, ex.toString());
         }
     }
 }

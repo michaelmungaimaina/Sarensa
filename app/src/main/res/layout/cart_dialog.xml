@@ -2,8 +2,10 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/selector_recyclerview"
-    android:orientation="horizontal">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/alert_dialog_background"
+    android:orientation="horizontal"
+    app:cardCornerRadius="20dp">
 
 <RelativeLayout
     android:layout_width="match_parent"
@@ -35,7 +37,8 @@
         android:text="Customer Name:"
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="gone"/>
     <EditText
         android:id="@+id/editTextCustomerName"
         android:layout_width="match_parent"
@@ -44,7 +47,8 @@
         android:gravity="top"
         android:hint="Input Customer Name"
         android:inputType="textCapSentences|textMultiLine"
-        android:lines="1" />
+        android:lines="1"
+        android:visibility="gone"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -54,7 +58,8 @@
         android:text="Type of Transaction:"
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="gone"/>
     <EditText
         android:id="@+id/editTextTransactionType"
         android:layout_width="match_parent"
@@ -63,7 +68,8 @@
         android:gravity="top"
         android:hint="Cash or Credit"
         android:inputType="textCapSentences|textMultiLine"
-        android:lines="1" />
+        android:lines="1"
+        android:visibility="gone"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerCart"
         android:layout_width="match_parent"
@@ -75,11 +81,11 @@
         android:layout_gravity="center"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="4dp"
-        android:background="#7C7C7C"
+        android:background="#C47C7C7C"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:text="  SARENSA ENTERPRISES LIMITED  "
-        android:textColor="#133481"
+        android:textColor="#0232A1"
         android:textSize="16sp" />
 
 </LinearLayout>

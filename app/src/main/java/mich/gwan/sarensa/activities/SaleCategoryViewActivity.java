@@ -1,6 +1,8 @@
 package mich.gwan.sarensa.activities;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.DialogInterface;
@@ -10,7 +12,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -18,16 +23,28 @@ import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,6 +57,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -50,17 +68,15 @@ import mich.gwan.sarensa.adapters.CategoryRecyclerAdapter;
 import mich.gwan.sarensa.adapters.ItemRecyclerAdapter;
 import mich.gwan.sarensa.databinding.ActivityCategoryBinding;
 import mich.gwan.sarensa.helpers.InputValidation;
+import mich.gwan.sarensa.helpers.ProgressDialogHelper;
 import mich.gwan.sarensa.helpers.RecyclerTouchListener;
-import mich.gwan.sarensa.info.InformationApi;
 import mich.gwan.sarensa.model.Cart;
 import mich.gwan.sarensa.model.Category;
 import mich.gwan.sarensa.model.Item;
 import mich.gwan.sarensa.model.Receipt;
 import mich.gwan.sarensa.model.Sales;
-import mich.gwan.sarensa.pdf.PDFUtility;
 import mich.gwan.sarensa.pdf.ReceiptPDF;
 import mich.gwan.sarensa.sql.DatabaseHelper;
-import mich.gwan.sarensa.ui.sale.SaleFragment;
 
 public class SaleCategoryViewActivity extends AppCompatActivity implements ReceiptPDF.OnDocumentClose {
     private RecyclerView recyclerViewCat;
@@ -74,7 +90,6 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
     private CategoryRecyclerAdapter categoryRecyclerAdapter;
     private CartRecyclerAdapter cartRecyclerAdapter;
     private ItemRecyclerAdapter itemRecyclerAdapter;
-    //private ItemListAdapter itemLIstAdapter;
     private InputValidation inputValidation;
     private ActivityCategoryBinding binding;
     private AppCompatTextView stationName;
@@ -84,22 +99,50 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
     private FloatingActionButton itemRegister;
     private RelativeLayout relativeLayout;
     private CardView sellCard;
+    private DatePickerDialog datePickerDialog;
+    private TextView selectDate;
+    private ImageView toolbarBackIcon;
+    private ImageView toolbarFilterIcon;
+    private TextView toolbarTitleTextView;
+    private CardView toolbarCardView;
+    private EditText toolbarFilterEditText;
+    private ImageView toolbarCancelIcon;
+    private SearchView searchView;
+    private Window window;
     private Intent intent;
     public  String myStation;
     public  String myCategory;
     private String filePath;
     HashMap<String,Integer> cartPosition;
+    private boolean isDateSet = false;
+    private boolean isFilterMode = false;
+    private ProgressBar progressBar;
+    private ConstraintLayout dateLayout;
+    private RecyclerView.LayoutManager itemLayoutManager;
+    private LinearLayoutManager linearLayoutManager;
+    private boolean isDateLayoutVisible = false;
+
+    public ItemRecyclerAdapter.ItemViewHolder.OnFirstItemVisibilityCallBack onFirstItemVisibilityCallback;
+
+    public void setOnFirstItemVisibilityCallback(ItemRecyclerAdapter.ItemViewHolder.OnFirstItemVisibilityCallBack onFirstItemVisibilityCallback) {
+        this.onFirstItemVisibilityCallback = onFirstItemVisibilityCallback;
+    }
 
     protected void onCreate(Bundle savedInstanceState){
         try{
         super.onCreate(savedInstanceState);
         binding = ActivityCategoryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        /**Objects.requireNonNull(this.getSupportActionBar()).setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.toolbar_content);
+        /**/
         //getSupportActionBar().setTitle("Gas Transactions");
         initViews();
         initobjects();
+        enableFilterMode();
         //setListItem(listItem);
-        Window window = this.getWindow();
+        window = this.getWindow();
         window.setStatusBarColor(this.getResources().getColor(R.color.window));
         } catch (InflateException e){
             e.getCause().printStackTrace();
@@ -126,6 +169,34 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
         emptyItem = binding.categoryView.noItemTextView;
         sellCard = binding.sellCard;
         relativeLayout = binding.relativeLayout;
+        selectDate = binding.categoryView.selectDate;
+        progressBar = binding.categoryView.progressbar;
+        dateLayout = binding.categoryView.dateLayout;
+
+        //initialize the custom toolbar views
+        ///View view = Objects.requireNonNull(getSupportActionBar()).getCustomView();
+        toolbarBackIcon = binding.categoryView.backIcon;
+        toolbarFilterIcon = binding.categoryView.filterIcon;
+        toolbarTitleTextView = binding.categoryView.titleTextView;
+        toolbarCardView = binding.categoryView.searchCardView;
+        toolbarFilterEditText = binding.categoryView.searchTextField;
+        toolbarCancelIcon = binding.categoryView.cancelIcon;
+
+        //searchView = (SearchView) toolbarFilterIcon.getActionView()
+    }
+
+    /**
+     * Enable filter mode
+     */
+    public void enableFilterMode(){
+        if(isFilterMode){
+            toolbarCardView.setVisibility(View.VISIBLE);
+            toolbarTitleTextView.setVisibility(View.GONE);
+        } else {
+            toolbarCardView.setVisibility(View.GONE);
+            toolbarTitleTextView.setVisibility(View.VISIBLE);
+            inputValidation.hideKeyboardFrom(toolbarFilterEditText);
+        }
     }
 
     /**
@@ -153,12 +224,48 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
         recyclerViewCat.setHasFixedSize(true);
         recyclerViewCat.setAdapter(categoryRecyclerAdapter);
 
-
-        RecyclerView.LayoutManager itemLayoutManager = new LinearLayoutManager(getApplicationContext());
-         recyclerViewItem.setLayoutManager(itemLayoutManager);
+        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+         //itemLayoutManager = new LinearLayoutManager(getApplicationContext());
+         recyclerViewItem.setLayoutManager(linearLayoutManager);
          recyclerViewItem.setItemAnimator(new DefaultItemAnimator());
          recyclerViewItem.setHasFixedSize(true);
          recyclerViewItem.setAdapter(itemRecyclerAdapter);
+
+         selectDate.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 final Calendar c = Calendar.getInstance();
+                 int mYear = c.get(Calendar.YEAR);
+                 int mMonth = c.get(Calendar.MONTH);
+                 int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                 datePickerDialog = new DatePickerDialog(SaleCategoryViewActivity.this, R.style.CustomDatePickerDialogTheme, new DatePickerDialog.OnDateSetListener() {
+                     @SuppressLint("SetTextI18n")
+                     @Override
+                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                         if (dayOfMonth < 10 && month < 9 ){
+                             String strDate = year + "-0" + (month + 1) + "-0" + dayOfMonth;
+                             selectDate.setText(strDate);
+                         }
+                         if (dayOfMonth < 10 && month >= 9){
+                             String strDate = year + "-" + (month + 1) + "-0" + dayOfMonth;
+                             selectDate.setText(strDate);
+                         }
+                         if (dayOfMonth >= 10 && month < 9){
+                             String strDate = year + "-0" + (month + 1) + "-" + dayOfMonth;
+                             selectDate.setText(strDate);
+                         }
+                         if (dayOfMonth >= 10 && month >= 9){
+                             String strDate = year + "-" + (month + 1) + "-" + dayOfMonth;
+                             selectDate.setText(strDate);
+                         }
+                         isDateSet = true;
+                     }
+                 }, mYear, mMonth, mDay);
+                 datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+                 datePickerDialog.show();
+             }
+         });
 
          /* *
          * Attach adapter to listview
@@ -166,7 +273,8 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
         //recyclerViewItem.setAdapter(itemLIstAdapter);
         itemRecyclerAdapter.setOnItemClickListener(position -> addToCart(position));
         cartRecyclerAdapter.setOnItemClickListener(position -> removeFromCart(position));
-        /**
+
+        /*
          * On long press on RecyclerView item, open alert dialog
          * with options to choose
          * Edit and Delete
@@ -176,6 +284,8 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
                 recyclerViewCat, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, final int position) {
+                //showLoader(this, "Loading data ...");
+                progressBar.setVisibility(View.VISIBLE);
                 myCategory = listCat.get(position).getCategoryName();
                 listItem.clear();
                 showAddFAB();
@@ -184,6 +294,11 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
                     public void run() {
                         getItemsFromSQlite();
                         toggleItemViews();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBar.setVisibility(View.INVISIBLE);                            }
+                        }, 600);
                     }
                 }, 1000);
             }
@@ -193,6 +308,43 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
                 showCategoryActionsDialog(position);
             }
         }));
+
+        recyclerViewItem.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                if(linearLayoutManager.findFirstVisibleItemPosition() == 0){
+                    //hide
+                    if(onFirstItemVisibilityCallback != null){
+                        onFirstItemVisibilityCallback.onChange(false);
+                    }
+                }else{
+                    //show
+                    if(onFirstItemVisibilityCallback != null){
+                        onFirstItemVisibilityCallback.onChange(true);
+                    }
+                }
+
+            }
+        });
+
+        setOnFirstItemVisibilityCallback(new ItemRecyclerAdapter.ItemViewHolder.OnFirstItemVisibilityCallBack() {
+            @Override
+            public void onChange(boolean isVisible) {
+                if(isVisible){
+                    if(!isDateLayoutVisible){
+                        isDateLayoutVisible = true;
+                        dateLayout.setVisibility(View.GONE);
+                    }
+                }else{
+                    if(isDateLayoutVisible){
+                        isDateLayoutVisible = false;
+                        dateLayout.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+
         /**
          * action for item model recycler
         **/
@@ -215,6 +367,66 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
         //getCartFromSQlite();
         toggleCatViews();
         toggleSellCardView();
+
+        toolbarFilterIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isFilterMode = true;
+                enableFilterMode();
+                toolbarFilterEditText.requestFocus();
+                WindowCompat.getInsetsController(getWindow(), toolbarFilterEditText).show(WindowInsetsCompat.Type.ime());
+                Toast.makeText(SaleCategoryViewActivity.this, "Filter mode enabled", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        toolbarCancelIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isFilterMode = false;
+                enableFilterMode();
+                InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                itemRecyclerAdapter.updateList(listItem);
+                Toast.makeText(SaleCategoryViewActivity.this, "Filter mode disabled", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        toolbarBackIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activity.finish();
+            }
+        });
+
+        toolbarFilterEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                filter(editable.toString());
+            }
+        });
+    }
+
+    void filter(String text){
+        List<Item> temp = new ArrayList<>();
+        for(Item item: listItem){
+            //or use .equal(text) with you want equal match
+            //use .toLowerCase() for better matches
+            if(item.getItemName().contains(text.toUpperCase())){
+                temp.add(item);
+            }
+        }
+        //update recyclerview
+        itemRecyclerAdapter.updateList(temp);
     }
 
 
@@ -280,62 +492,66 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
 
     @SuppressLint("NotifyDataSetChanged")
     private void addToCart(int position) {
-        //int position = holder.getLayoutPosition();
-        // add item to cart
-        int count = databaseHelper.getItemQnty(listItem.get(position).getStationName(),
-                listItem.get(position).getCategoryName(), listItem.get(position).getItemName());
-        count--;
-        if (count >= 0) {
-            Item parr = new Item();
-            parr.setStationName(listItem.get(position).getStationName());
-            parr.setCategoryName(listItem.get(position).getCategoryName());
-            parr.setItemName(listItem.get(position).getItemName());
-            parr.setBuyPrice(listItem.get(position).getBuyPrice());
-            parr.setSellPrice(listItem.get(position).getSellPrice());
-            Cart par = new Cart();
-            par.setStationName(listItem.get(position).getStationName());
-            par.setCategoryName(listItem.get(position).getCategoryName());
-            par.setItemName(listItem.get(position).getItemName());
-            par.setBuyPrice(listItem.get(position).getBuyPrice());
-            par.setSellPrice(listItem.get(position).getSellPrice());
-            if (!databaseHelper.checkCart(listItem.get(position).getStationName(), listItem.get(position).getCategoryName(),
-                    listItem.get(position).getItemName())) {
-                //add 1 quantity
-                par.setItemQnty(1);
-                databaseHelper.addCart(par);
-                int qnty = databaseHelper.getItemQnty(listItem.get(position).getStationName(),
-                        listItem.get(position).getCategoryName(), listItem.get(position).getItemName());
-                // less 1 quantity from items
-                parr.setItemQnty(qnty-1);
-                // update values
-                databaseHelper.updateItemQnty(parr);
-                // notify adapter
-                itemRecyclerAdapter.notifyItemChanged(position);
+        if (isDateSet) {
+            // add item to cart
+            int count = databaseHelper.getItemQnty(listItem.get(position).getStationName(),
+                    listItem.get(position).getCategoryName(), listItem.get(position).getItemName());
+            count--;
+            if (count >= 0) {
+                Item parr = new Item();
+                parr.setStationName(listItem.get(position).getStationName());
+                parr.setCategoryName(listItem.get(position).getCategoryName());
+                parr.setItemName(listItem.get(position).getItemName());
+                parr.setBuyPrice(listItem.get(position).getBuyPrice());
+                parr.setSellPrice(listItem.get(position).getSellPrice());
+                Cart par = new Cart();
+                par.setStationName(listItem.get(position).getStationName());
+                par.setCategoryName(listItem.get(position).getCategoryName());
+                par.setItemName(listItem.get(position).getItemName());
+                par.setBuyPrice(listItem.get(position).getBuyPrice());
+                par.setSellPrice(listItem.get(position).getSellPrice());
+                if (!databaseHelper.checkCart(listItem.get(position).getStationName(), listItem.get(position).getCategoryName(),
+                        listItem.get(position).getItemName())) {
+                    //add 1 quantity
+                    par.setItemQnty(1);
+                    databaseHelper.addCart(par);
+                    int qnty = databaseHelper.getItemQnty(listItem.get(position).getStationName(),
+                            listItem.get(position).getCategoryName(), listItem.get(position).getItemName());
+                    // less 1 quantity from items
+                    parr.setItemQnty(qnty - 1);
+                    // update values
+                    databaseHelper.updateItemQnty(parr);
+                    // notify adapter
+                    itemRecyclerAdapter.notifyItemChanged(position);
 
+                } else {
+                    // get existing cart quantity
+                    int qnty = databaseHelper.getCartQnty(listItem.get(position).getStationName(),
+                            listItem.get(position).getCategoryName(), listItem.get(position).getItemName());
+                    //set new qnty value
+                    par.setItemQnty(qnty + 1);
+                    // update quantity instead
+                    databaseHelper.updateQuantity(par);
+                    int quanty = databaseHelper.getItemQnty(listItem.get(position).getStationName(),
+                            listItem.get(position).getCategoryName(), listItem.get(position).getItemName());
+                    // less 1 quantity from items
+                    parr.setItemQnty(quanty - 1);
+                    // update values
+                    databaseHelper.updateItemQnty(parr);
+                    itemRecyclerAdapter.notifyDataSetChanged();
+                    //itemRecyclerAdapter.notifyItemChanged(position);
+                }
             } else {
-                // get existing cart quantity
-                int qnty = databaseHelper.getCartQnty(listItem.get(position).getStationName(),
-                        listItem.get(position).getCategoryName(), listItem.get(position).getItemName());
-                //set new qnty value
-                par.setItemQnty(qnty + 1);
-                // update quantity instead
-                databaseHelper.updateQuantity(par);
-                int quanty = databaseHelper.getItemQnty(listItem.get(position).getStationName(),
-                        listItem.get(position).getCategoryName(), listItem.get(position).getItemName());
-                // less 1 quantity from items
-                parr.setItemQnty(quanty-1);
-                // update values
-                databaseHelper.updateItemQnty(parr);
-                itemRecyclerAdapter.notifyDataSetChanged();
+                Toast.makeText(this, "Stock is Depleted, Kindly update Stock", Toast.LENGTH_SHORT).show();
+                System.out.println("OUT OF STOCK. PLEASE UPDATE STOCK");
                 //itemRecyclerAdapter.notifyItemChanged(position);
+                itemRecyclerAdapter.notifyDataSetChanged();
             }
-        } else {
-            Toast.makeText(this, "Stock is Depleted, Kindly update Stock", Toast.LENGTH_SHORT).show();
-            System.out.println("OUT OF STOCK. PLEASE UPDATE STOCK");
-            //itemRecyclerAdapter.notifyItemChanged(position);
-            itemRecyclerAdapter.notifyDataSetChanged();
+            toggleSellCardView();
+        }else{
+            Toast.makeText(this, "Please set date first", Toast.LENGTH_SHORT).show();
+            selectDate.requestFocus();
         }
-        toggleSellCardView();
     }
 
 
@@ -347,7 +563,11 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
     }
     public void actionSell(View view) {
         getCartFromSQlite();
-        cartDialog();
+        if (isDateSet) {
+            cartDialog();
+        } else {
+            Toast.makeText(getApplicationContext(),"Please set date first",Toast.LENGTH_LONG).show();
+        }
 
     }
 
@@ -706,7 +926,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
             LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getApplicationContext());
             View view = layoutInflaterAndroid.inflate(R.layout.cart_dialog, null);
 
-            final AlertDialog.Builder cartBuilder = new AlertDialog.Builder(activity);
+            final AlertDialog.Builder cartBuilder = new AlertDialog.Builder(activity,R.style.BottomSheetDialog);
 
             final EditText customerName = view.findViewById(R.id.editTextCustomerName);
             final EditText transType = view.findViewById(R.id.editTextTransactionType);
@@ -722,12 +942,14 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
 
             cartBuilder
                     .setCancelable(false)
-                    .setPositiveButton("COMPLETE", new DialogInterface.OnClickListener() {
+                    .setPositiveButtonIcon(ContextCompat.getDrawable(activity,R.drawable.complete))
+                    .setNegativeButtonIcon(ContextCompat.getDrawable(activity,R.drawable.close))
+                    .setPositiveButton("", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogBox, int id) {
 
                         }
                     })
-                    .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("", new DialogInterface.OnClickListener() {
                         @SuppressLint("NotifyDataSetChanged")
                         public void onClick(DialogInterface dialogBox, int id) {
                             //itemLIstAdapter.notifyDataSetChanged();
@@ -769,14 +991,13 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
 
                     //perform sale transaction
                     Sales par = new Sales();
-                    System.out.println("Beginning loop");
                     for (int i = 0; i < catList.size(); i++) {
                         int sellPrice = databaseHelper.getSellingPrice(myStation, catList.get(i).getCategoryName(), catList.get(i).getItemName());
                         int buyPrice = databaseHelper.getBuyingPrice(myStation, catList.get(i).getCategoryName(), catList.get(i).getItemName());
                         int total = sellPrice * catList.get(i).getItemQnty();
                         int profit = total - (buyPrice * catList.get(i).getItemQnty());
                         par.setTime(String.valueOf(LocalTime.now()));
-                        par.setDate(String.valueOf(LocalDate.now()));
+                        par.setDate(String.valueOf(selectDate.getText()));
                         par.setStationName(myStation);
                         par.setSaleType(transaction);
                         par.setItemCategory(catList.get(i).getCategoryName());
@@ -787,14 +1008,11 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
                         par.setProfit(profit);
                         // complete transactions
                         databaseHelper.addSale(par);
-                        databaseHelper.addReceipt(new Receipt(String.valueOf(LocalDate.now()),String.valueOf(LocalTime.now()),
+                        databaseHelper.addReceipt(new Receipt(String.valueOf(selectDate.getText()),String.valueOf(LocalTime.now()),
                                 transaction,customer, myStation,catList.get(i).getCategoryName(),catList.get(i).getItemName(),
                                 catList.get(i).getItemQnty(), catList.get(i).getSellPrice(),total));
-                        System.out.println("Data updated");
                     }
                     int receiptNO = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddHHmm")));
-                    System.out.println("End of loop");
-                    System.out.println("Sales completed!!!!!!!");
                     Toast.makeText(activity, "Transaction Completed Successfully!", Toast.LENGTH_SHORT).show();
                     filePath = path();
                     // Make sure the path directory exists.
@@ -948,7 +1166,7 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
         Intent pdfOpenIntent = new Intent(Intent.ACTION_VIEW);
         pdfOpenIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         pdfOpenIntent.setClipData(ClipData.newRawUri("", uriPdfPath));
-        pdfOpenIntent.setDataAndType(uriPdfPath, "application/pdf");
+        pdfOpenIntent.setDataAndType(uriPdfPath, "pdf");
         pdfOpenIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
         try {
@@ -998,4 +1216,5 @@ public class SaleCategoryViewActivity extends AppCompatActivity implements Recei
         }
         return total;
     }
+
 }

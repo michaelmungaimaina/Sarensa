@@ -4,6 +4,15 @@ public class Station {
     int stationId;
     String stationName;
     String location;
+    String stationIdentifier;
+
+    public String getStationIdentifier() {
+        return stationIdentifier;
+    }
+
+    public void setStationIdentifier(String stationIdentifier) {
+        this.stationIdentifier = stationIdentifier;
+    }
 
     public void setName(String name) {
         this.stationName = name;

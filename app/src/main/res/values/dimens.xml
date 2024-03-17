@@ -7,4 +7,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="activity_margin">16dp</dimen>
     <dimen name="dimen_10">10dp</dimen>
+    <dimen name="_11ssp">11sp</dimen>
 </resources>

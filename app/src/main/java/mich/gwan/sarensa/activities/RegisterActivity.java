@@ -195,6 +195,7 @@ public class RegisterActivity extends AppCompatActivity {
             // display success message
             informationApi.snackBar(nestedScrollView, getString(R.string.success_message), Color.BLUE);
             emptyInputEditText();
+            finish();
 
         } else {
             // display error message

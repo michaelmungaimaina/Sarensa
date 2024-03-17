@@ -56,4 +56,5 @@
     <string name="error_message_credit_name">Enter \'Credit\' or \'Cash\'</string>
     <string name="error_message_cash_name">Cash Transaction</string>
     <string name="error_no_date">Specify Date, Station and Customer!</string>
+    <string name="action_trigger">Set Trigger</string>
 </resources>

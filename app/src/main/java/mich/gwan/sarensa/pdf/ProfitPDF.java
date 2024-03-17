@@ -114,7 +114,8 @@ public class ProfitPDF {
 
         if(mCallback!=null)
         {
-            mCallback.onPDFClose(file);
+            mCallback.
+                    onPDFClose(file);
         }
     }
 
@@ -443,9 +444,9 @@ public class ProfitPDF {
      */
     private static PdfPTable createDataTable(List<String[]> dataTable) throws DocumentException
     {
-        PdfPTable table1 = new PdfPTable(2);
+        PdfPTable table1 = new PdfPTable(4);
         table1.setWidthPercentage(100);
-        table1.setWidths(new float[]{1.5f,1f});
+        table1.setWidths(new float[]{0.6f,0.8f,0.25f,0.5f});
         table1.setHeaderRows(1);
         table1.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
         table1.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -453,12 +454,29 @@ public class ProfitPDF {
         //create the header columns
         PdfPCell cell;
         {
-            cell = new PdfPCell(new Phrase("ITEM NAME", FONT_COLUMN));
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell = new PdfPCell(new Phrase("DATE RANGE", FONT_COLUMN));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.NO_BORDER);
             cell.setBackgroundColor(BaseColor.BLUE.darker());
-            cell.setPadding(3f);
+            cell.setPaddingLeft(10f);
+            cell.setPadding(7f);
+            table1.addCell(cell);
+
+            cell = new PdfPCell(new Phrase("ITEM NAME", FONT_COLUMN));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBorder(Rectangle.NO_BORDER);
+            cell.setBackgroundColor(BaseColor.BLUE.darker());
+            cell.setPadding(7f);
+            table1.addCell(cell);
+
+            cell = new PdfPCell(new Phrase("UNIT(S)", FONT_COLUMN));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBorder(Rectangle.NO_BORDER);
+            cell.setBackgroundColor(BaseColor.BLUE.darker());
+            cell.setPadding(7f);
             table1.addCell(cell);
 
             cell = new PdfPCell(new Phrase("PROFIT", FONT_COLUMN));
@@ -466,7 +484,7 @@ public class ProfitPDF {
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.NO_BORDER);
             cell.setBackgroundColor(BaseColor.BLUE.darker());
-            cell.setPadding(3f);
+            cell.setPadding(7f);
             table1.addCell(cell);
         }
 
@@ -493,19 +511,41 @@ public class ProfitPDF {
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.NO_BORDER);
-            cell.setPaddingLeft(90f);
+            cell.setPaddingLeft(10f);
             cell.setPaddingRight(left_right_Padding);
             cell.setPaddingTop(top_bottom_Padding);
             cell.setPaddingBottom(top_bottom_Padding);
             cell.setBackgroundColor(cell_color);
             table1.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(temp[1]+"0", FONT_CELL));
+            cell = new PdfPCell(new Phrase(temp[1], FONT_CELL));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBorder(Rectangle.NO_BORDER);
+            cell.setPaddingLeft(10f);
+            cell.setPaddingRight(left_right_Padding);
+            cell.setPaddingTop(top_bottom_Padding);
+            cell.setPaddingBottom(top_bottom_Padding);
+            cell.setBackgroundColor(cell_color);
+            table1.addCell(cell);
+
+            cell = new PdfPCell(new Phrase(temp[2] + "      ", FONT_CELL));
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBorder(Rectangle.NO_BORDER);
+            cell.setPaddingLeft(5f);
+            cell.setPaddingRight(left_right_Padding);
+            cell.setPaddingTop(top_bottom_Padding);
+            cell.setPaddingBottom(top_bottom_Padding);
+            cell.setBackgroundColor(cell_color);
+            table1.addCell(cell);
+
+            cell = new PdfPCell(new Phrase(temp[3]+".00", FONT_CELL));
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.NO_BORDER);
             cell.setPaddingLeft(left_right_Padding);
-            cell.setPaddingRight(90f);
+            cell.setPaddingRight(30f);
             cell.setPaddingTop(top_bottom_Padding);
             cell.setPaddingBottom(top_bottom_Padding);
             cell.setBackgroundColor(cell_color);
@@ -522,7 +562,7 @@ public class ProfitPDF {
         cell.setBorder(Rectangle.TOP);
         cell.setBorderWidthTop(2f);
         cell.setBorderColorTop(BaseColor.BLUE.darker());
-        cell.setPaddingLeft(90f);
+        cell.setPaddingLeft(10f);
         cell.setPaddingRight(left_right_Padding);
         cell.setPaddingTop(top_bottom_Padding);
         cell.setPaddingBottom(top_bottom_Padding);
@@ -530,6 +570,34 @@ public class ProfitPDF {
         table1.addCell(cell);
 
         cell = new PdfPCell(new Phrase(m[1], FONT_LAST_ROW));
+        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setUseBorderPadding(true);
+        cell.setBorder(Rectangle.TOP);
+        cell.setBorderWidthTop(2f);
+        cell.setBorderColorTop(BaseColor.BLUE.darker());
+        cell.setPaddingLeft(10f);
+        cell.setPaddingRight(left_right_Padding);
+        cell.setPaddingTop(top_bottom_Padding);
+        cell.setPaddingBottom(top_bottom_Padding);
+        cell.setBackgroundColor(BaseColor.WHITE);
+        table1.addCell(cell);
+
+        cell = new PdfPCell(new Phrase(m[2], FONT_LAST_ROW));
+        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setUseBorderPadding(true);
+        cell.setBorder(Rectangle.TOP);
+        cell.setBorderWidthTop(2f);
+        cell.setBorderColorTop(BaseColor.BLUE.darker());
+        cell.setPaddingLeft(5f);
+        cell.setPaddingRight(left_right_Padding);
+        cell.setPaddingTop(top_bottom_Padding);
+        cell.setPaddingBottom(top_bottom_Padding);
+        cell.setBackgroundColor(BaseColor.WHITE);
+        table1.addCell(cell);
+
+        cell = new PdfPCell(new Phrase(m[3], FONT_LAST_ROW));
         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setUseBorderPadding(true);
@@ -539,7 +607,7 @@ public class ProfitPDF {
         cell.setBorderColorTop(BaseColor.BLUE.darker());
         cell.setBorderColorBottom(BaseColor.BLUE.darker());
         cell.setPaddingLeft(left_right_Padding);
-        cell.setPaddingRight(90f);
+        cell.setPaddingRight(30f);
         cell.setPaddingTop(top_bottom_Padding);
         cell.setPaddingBottom(top_bottom_Padding);
         cell.setBackgroundColor(BaseColor.WHITE);

@@ -42,7 +42,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
     }
 
     @Override
-    public void onBindViewHolder(CategoryRecyclerAdapter.CategoryViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(CategoryViewHolder holder, @SuppressLint("RecyclerView") int position) {
         char firstChar = list.get(position).getCategoryName().charAt(0);
         holder.catName.setText(list.get(position).getCategoryName());
         holder.textInitial.setText(String.valueOf(firstChar));
@@ -87,10 +87,6 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
         public TextView catName;
         public TextView count;
         public TextView textInitial;
-        public TextView textView;
-        public CardView inner;
-        public CardView outer;
-        public AppCompatCheckBox checkBox;
         public LinearLayout parentLayout;
         private final SaleCategoryViewActivity saleActivity;
 
@@ -99,9 +95,6 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
             catName = view.findViewById(R.id.catName);
             count = view.findViewById(R.id.textCount);
             textInitial = view.findViewById(R.id.textInitial);
-            inner = view.findViewById(R.id.cardInitialInner);
-            outer = view.findViewById(R.id.cardInitialOuter);
-            checkBox = view.findViewById(R.id.categoryCheckBox);
             parentLayout = view.findViewById(R.id.parentLayout);
             saleActivity = new SaleCategoryViewActivity();
         }

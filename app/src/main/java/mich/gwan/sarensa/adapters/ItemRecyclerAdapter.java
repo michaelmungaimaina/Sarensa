@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
@@ -33,15 +35,16 @@ import mich.gwan.sarensa.model.Sales;
 import mich.gwan.sarensa.sql.DatabaseHelper;
 
 public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapter.ItemViewHolder>{
-    private final List<Item> list;
+    private List<Item> list;
     private int index = RecyclerView.NO_POSITION;
     private CartAdapterCallback listener;
     private Context context;
     private OnItemClickListener onItemClickListener;
     private int count;
 
+    private final static int FADE_DURATION = 1000; //FADE_DURATION in milliseconds
+
     public ItemRecyclerAdapter( List<Item> list) {
-        //this.context = context;
         this.list = list;
     }
 
@@ -60,7 +63,7 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_recycler, parent, false);
         context = parent.getContext();
-        return new ItemRecyclerAdapter.ItemViewHolder(itemView,onItemClickListener);
+        return new ItemViewHolder(itemView, onItemClickListener);
     }
 
     @Override
@@ -69,7 +72,6 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
         holder.itemName.setText(list.get(position).getItemName());
         holder.buyPrice.setText(String.valueOf(list.get(position).getBuyPrice()));
         holder.sellPrice.setText(String.valueOf(list.get(position).getSellPrice()));
-        holder.textInitial.setText(String.valueOf(firstChar));
         holder.textWarning.setText("");
         holder.textWarning.setTextColor(Color.TRANSPARENT);
         holder.textWarning.setBackgroundColor(Color.TRANSPARENT);
@@ -100,13 +102,9 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
         if (databaseHelper.getItemQnty(list.get(position).getStationName(),list.get(position).getCategoryName(),
                 list.get(position).getItemName()) <= 5){
             //holder.inner.setCardBackgroundColor(ContextCompat.getColor(context,R.color.less_item));
-            holder.outer.setCardBackgroundColor(Color.RED);
-            holder.textInitial.setTextColor(Color.RED);
             holder.itemName.setTextColor(ContextCompat.getColor(context,R.color.less_item));
         } else {
-            holder.outer.setCardBackgroundColor(Color.BLUE);
             holder.itemName.setTextColor(Color.BLACK);
-            holder.textInitial.setTextColor(Color.BLACK);
         }
 
         holder.itemView.setSelected(index == position);
@@ -130,6 +128,8 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
             }
         });
 
+        setScaleAnimation(holder.itemView);
+
     }
 
     @Override
@@ -138,23 +138,29 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
         return list.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    public void updateList(List<Item> listItem){
+        list = listItem;
+        notifyDataSetChanged();
+    }
 
+    private void setScaleAnimation(View view) {
+        ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim.setDuration(FADE_DURATION);
+        view.startAnimation(anim);
+    }
     /**
      * ViewHolder class
      */
-    public class ItemViewHolder extends RecyclerView.ViewHolder{
+    public static class ItemViewHolder extends RecyclerView.ViewHolder{
 
         public TextView itemName;
         public TextView count;
         public TextView quantity;
         public TextView buyPrice;
         public TextView sellPrice;
-        public TextView textInitial;
         public TextView textWarning;
-        public CardView inner;
-        public CardView outer;
         public CardView cardSell;
-        private final SaleCategoryViewActivity saleActivity;
 
         public ItemViewHolder(View view, OnItemClickListener onItemClickListener) {
             super(view);
@@ -162,17 +168,17 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
             quantity = view.findViewById(R.id.textItemQuantity);
             buyPrice = view.findViewById(R.id.textBuyPrice);
             sellPrice = view.findViewById(R.id.textSellPrice);
-            textInitial = view.findViewById(R.id.textInitial);
             textWarning = view.findViewById(R.id.textWarning);
-            inner = view.findViewById(R.id.cardInitialInner);
             cardSell = view.findViewById(R.id.cardSell);
             count = view.findViewById(R.id.textCount);
-            outer = view.findViewById(R.id.cardInitialOuter);
-            saleActivity = new SaleCategoryViewActivity();
 
             cardSell.setOnClickListener(v -> onItemClickListener.onClick(getAdapterPosition()));
         }
 
+        public interface OnFirstItemVisibilityCallBack{
 
+            void onChange(boolean isVisible);
+
+        }
     }
 }

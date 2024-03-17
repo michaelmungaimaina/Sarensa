@@ -39,16 +39,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
+import mich.gwan.sarensa.R;
 import mich.gwan.sarensa.adapters.SalesRecyclerAdapter;
 import mich.gwan.sarensa.databinding.ActivitySaleBinding;
 import mich.gwan.sarensa.helpers.InputValidation;
@@ -129,7 +135,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
                 int mMonth = c.get(Calendar.MONTH);
                 int mDay = c.get(Calendar.DAY_OF_MONTH);
 
-                froDatePickerDialog = new DatePickerDialog(mContext, new DatePickerDialog.OnDateSetListener() {
+                froDatePickerDialog = new DatePickerDialog(mContext, R.style.CustomDatePickerDialogTheme, new DatePickerDialog.OnDateSetListener() {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -151,6 +157,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
                         }
                     }
                 }, mYear, mMonth, mDay);
+                froDatePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
                 froDatePickerDialog.show();
             }
         });
@@ -180,7 +187,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
                 int mMonth = c.get(Calendar.MONTH);
                 int mDay = c.get(Calendar.DAY_OF_MONTH);
 
-                toDatePickerDialog = new DatePickerDialog(mContext, new DatePickerDialog.OnDateSetListener() {
+                toDatePickerDialog = new DatePickerDialog(mContext, R.style.CustomDatePickerDialogTheme, new DatePickerDialog.OnDateSetListener() {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -202,6 +209,7 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
                         }
                     }
                 }, mYear, mMonth, mDay);
+                toDatePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
                 toDatePickerDialog.show();
             }
         });
@@ -248,8 +256,28 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
                                 profitData(), filePath, true);
                     } catch (Exception e) {
                         e.printStackTrace();
+                        StringWriter stringWriter = new StringWriter();
+                        PrintWriter printWriter = new PrintWriter(stringWriter);
+                        e.printStackTrace(printWriter);
+                        String stackTrace = stringWriter.toString();
+                        String path = null;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                        {
+                            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) +
+                                    "/_Error.txt";
+                        }
+                        else
+                        {
+                            path = Environment.getExternalStorageDirectory() + "/Sarensa/_Error.txt";
+                        }
+                        try (FileWriter fileWriter = new FileWriter(path)){
+                            fileWriter.write(stackTrace);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         //Log.e(TAG,"Error Creating Pdf");
                         Toast.makeText(mContext, "Error Creating Pdf", Toast.LENGTH_SHORT).show();
+                        informationApi.snackBar(coordinatorLayout,"Error saved in "+ path,Color.RED);
                     }
                 }
             }
@@ -453,29 +481,37 @@ public class SaleFragment extends Fragment implements PDFUtility.OnDocumentClose
         return profit;
     }
 
+    private List<String> date(){
+        List<String> date = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++){
+            date.add(list.get(i).getDate());
+        }
+        return date;
+    }
+
     /**
      * Hashmap for grouping similar items and sum them.
      * @return an arrylist of item name and the total profit
      */
     public List<String[]> profitData(){
-        List<String[]> temp = new ArrayList<>();
-        Map<String, Double> result = list.stream()
+        String maxDate = list.stream().map(Sales::getDate).max(String::compareTo).get();
+        String minDate = list.stream().map(Sales::getDate).min(String::compareTo).get();
+        List<Item> temp = new ArrayList<>();
+        List<String> count = new ArrayList<>();
+        List<String[]> value = new ArrayList<>();
+        Map<String, Double> totalProfit = list.stream()
                 .collect(groupingBy(Sales::getItemName, TreeMap::new, summingDouble(Sales::getProfit)));
+        Map<String, Double> quantity = list.stream()
+                .collect(groupingBy(Sales::getItemName, TreeMap::new, summingDouble(Sales::getItemQnty)));
 
-        result.forEach((k, v) -> temp.add(new String[]{k,String.valueOf(v)}));
-        temp.add(new String[]{"TOTAL",String.valueOf(prof()+".00")});
-        return temp;
-    }
-    public int totalProfit(){
-        int total = 0;
-        String[] arr = new String[1];
-        for (int i = 0;i<profitData().size();i++){
-            arr = profitData().get(i);
-            total += Integer.parseInt(arr[1]);
+        quantity.forEach((k,v) -> count.add(String.valueOf((int) Math.abs(v))));
+        totalProfit.forEach((k, v) -> temp.add(new Item(minDate + " - " + maxDate, k, (int) Math.abs(v))));
+        for (int i = 0; i < count.size(); i++) {
+            value.add(new String[]{temp.get(i).getCategoryName(),temp.get(i).getItemName(),count.get(i), String.valueOf(temp.get(i).getItemQnty())});
         }
-        return total;
+        value.add(new String[]{" ","TOTAL","",String.valueOf(prof()+".00")});
+        return value;
     }
-
     @SuppressLint("StaticFieldLeak")
     private void buttonEvents(){
             if(Objects.equals(categoryEditText.getText().toString(), "") &&

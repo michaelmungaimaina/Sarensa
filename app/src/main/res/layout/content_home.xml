@@ -25,7 +25,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerStation"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_marginStart="7dp"
+            android:layout_marginEnd="6dp"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
     <TextView
         android:id="@+id/emptyStation"

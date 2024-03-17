@@ -28,6 +28,7 @@
         </activity>
         <activity
             android:name=".activities.MainActivity"
+            android:configChanges="orientation|screenSize"
             android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.LoginActivity"
@@ -37,6 +38,7 @@
             android:screenOrientation="fullSensor" />
         <activity
             android:name=".activities.SaleCategoryViewActivity"
+            android:configChanges="orientation|screenSize"
             android:screenOrientation="fullSensor" />
 
         <provider

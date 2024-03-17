@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
          dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
          spinner.setAdapter(dataAdapter);
         Window window = this.getWindow();
-        window.setStatusBarColor(this.getResources().getColor(android.R.color.holo_green_dark));
+        window.setStatusBarColor(this.getResources().getColor(R.color.loginWindow));
         } catch (InflateException e){
             e.getCause().printStackTrace();
         } catch (Exception e) {
@@ -148,13 +148,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.appCompatButtonLogin:
                 verifyFromSQLite();
-                //emptyInputEditText();
                 break;
             case R.id.textViewLinkRegister:
                 // Navigate to RegisterActivity
-                Intent intentRegister = new Intent(getApplicationContext(), mich.gwan.sarensa.activities.RegisterActivity.class);
-                startActivity(intentRegister);
-                //emptyInputEditText();
+                if (!databaseHelper.checkUser()) {
+                    Intent intentRegister = new Intent(getApplicationContext(), mich.gwan.sarensa.activities.RegisterActivity.class);
+                    startActivity(intentRegister);
+                } else {
+                    informationApi.snackBar(nestedScrollView,"A user already exists! Please login.",Color.MAGENTA);
+                }
                 break;
         }
     }
@@ -175,7 +177,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (!inputValidation.isInputEditTextFilled(textInputEditTextPassword, textInputLayoutPassword, getString(R.string.error_message_password))) {
             return;
         }
-        if (databaseHelper.checkUser( spinner.getSelectedItem().toString().trim().toLowerCase(), textInputEditTextEmail.getText().toString().trim(), textInputEditTextPassword.getText().toString().trim())){
+        if (databaseHelper.checkUser( spinner.getSelectedItem().toString().trim().toUpperCase(), textInputEditTextEmail.getText().toString().trim(), textInputEditTextPassword.getText().toString().trim())){
 
             new java.util.Timer().schedule(
                     new java.util.TimerTask() {
@@ -188,11 +190,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                             startActivity(intent);
+                            finish();
                         }
                     },
                     1000
             );
-            informationApi.snackBar(nestedScrollView, "Session opened Successfully!", Color.MAGENTA);
+            informationApi.snackBar(nestedScrollView, "Session opened Successfully!", Color.GREEN);
             @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPreferences.edit();
             // put values for password, email and usertype
             editor.putString(EMAIL_KEY, textInputEditTextEmail.getText().toString());

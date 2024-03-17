@@ -14,7 +14,7 @@
     <fragment
         android:id="@+id/nav_sales"
         android:name="mich.gwan.sarensa.ui.sale.SaleFragment"
-        android:label="Sales"
+        android:label="Sales Information"
         tools:layout="@layout/activity_sale" />
     <fragment
         android:id="@+id/nav_stock"

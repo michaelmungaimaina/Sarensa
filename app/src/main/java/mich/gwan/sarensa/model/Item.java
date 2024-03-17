@@ -8,7 +8,14 @@ public class Item {
     int itemQnty;
     int buyPrice;
     int sellPrice;
+    public Item(){
 
+    }
+    public Item(String date, String itemName, int quantity){
+        this.categoryName = date;
+        this.itemName = itemName;
+        this.itemQnty = quantity;
+    }
     public int getItemId() {
         return itemId;
     }

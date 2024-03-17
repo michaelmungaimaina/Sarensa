@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/clear"
+        android:title="Clear"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/filter"
+        android:title="title"
+        app:actionLayout="@layout/filter_icon"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/app_bar_search"
+        android:icon="@drawable/ic_search"
+        android:title="Search"
+        app:showAsAction="ifRoom|withText"
+        app:actionViewClass="android.widget.SearchView"/>
+
+    <item
+        android:title="Option"
+        app:showAsAction="never" />
+</menu>
